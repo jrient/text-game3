@@ -10,9 +10,11 @@ services:
       - SECRET_KEY=dark-zone-secret-key-change-in-production
       - FLASK_ENV=production
     restart: unless-stopped
+    volumes:
+      - ./saves:/app/saves
     networks:
-      - game-network
+      - shared-network
 
 networks:
-  game-network:
-    driver: bridge
+  shared-network:
+    external: true
