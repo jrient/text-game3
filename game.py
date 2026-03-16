@@ -649,240 +649,690 @@ CONSUMABLES = {
 }
 
 LOOT_ITEMS = {
-    # 普通物资
+    # ===== 灰色物品 - 最常见 =====
     "loot_bolts": {
         "name": "螺丝零件",
         "type": "物资",
-        "weight": 0.2,
+        "grid": 1,
         "value": 50,
         "rarity": Rarity.COMMON,
-        "description": "普通的机械零件"
+        "description": "普通的机械零件，随处可见"
     },
     "loot_tape": {
         "name": "工业胶带",
         "type": "物资",
-        "weight": 0.3,
+        "grid": 1,
         "value": 80,
         "rarity": Rarity.COMMON,
-        "description": "用途广泛的胶带"
+        "description": "用途广泛的胶带，修补利器"
+    },
+    "loot_wire": {
+        "name": "电线束",
+        "type": "物资",
+        "grid": 1,
+        "value": 120,
+        "rarity": Rarity.COMMON,
+        "description": "一捆铜芯电线，可回收利用"
+    },
+    "loot_battery_old": {
+        "name": "废旧电池",
+        "type": "物资",
+        "grid": 1,
+        "value": 150,
+        "rarity": Rarity.COMMON,
+        "description": "还能勉强使用的旧电池"
+    },
+    "loot_plastic": {
+        "name": "塑料制品",
+        "type": "物资",
+        "grid": 1,
+        "value": 60,
+        "rarity": Rarity.COMMON,
+        "description": "可回收的塑料材料"
+    },
+    "loot_cardboard": {
+        "name": "纸箱",
+        "type": "物资",
+        "grid": 1,
+        "value": 40,
+        "rarity": Rarity.COMMON,
+        "description": "废弃的包装纸箱"
+    },
+    "loot_rags": {
+        "name": "破旧衣物",
+        "type": "物资",
+        "grid": 1,
+        "value": 70,
+        "rarity": Rarity.COMMON,
+        "description": "还能当抹布使用的旧衣物"
+    },
+    "loot_glass": {
+        "name": "玻璃碎片",
+        "type": "物资",
+        "grid": 1,
+        "value": 30,
+        "rarity": Rarity.COMMON,
+        "description": "锋利的玻璃碎片，小心割伤"
+    },
+
+    # ===== 绿色物品 - 常见 =====
+    "loot_circuit_board": {
+        "name": "印刷电路板",
+        "type": "物资",
+        "grid": 1,
+        "value": 800,
+        "rarity": Rarity.UNCOMMON,
+        "description": "可回收的电路板，含少量贵金属"
+    },
+    "loot_led_tube": {
+        "name": "LED灯管",
+        "type": "物资",
+        "grid": 1,
+        "value": 600,
+        "rarity": Rarity.UNCOMMON,
+        "description": "节能LED照明灯管"
+    },
+    "loot_phone_battery": {
+        "name": "手机电池",
+        "type": "物资",
+        "grid": 1,
+        "value": 500,
+        "rarity": Rarity.UNCOMMON,
+        "description": "通用的锂离子电池"
+    },
+    "loot_adapter": {
+        "name": "转换插头",
+        "type": "物资",
+        "grid": 1,
+        "value": 700,
+        "rarity": Rarity.UNCOMMON,
+        "description": "多功能电源转换插头"
+    },
+    "loot_alcohol": {
+        "name": "消毒酒精",
+        "type": "医疗",
+        "grid": 1,
+        "value": 450,
+        "rarity": Rarity.UNCOMMON,
+        "description": "医用消毒酒精，必备品"
+    },
+    "loot_thermometer": {
+        "name": "额温枪",
+        "type": "医疗",
+        "grid": 1,
+        "value": 600,
+        "rarity": Rarity.UNCOMMON,
+        "description": "红外线体温测量仪"
+    },
+    "loot_solid_fuel": {
+        "name": "固体燃料",
+        "type": "物资",
+        "grid": 1,
+        "value": 400,
+        "rarity": Rarity.UNCOMMON,
+        "description": "便携式固体燃料块"
+    },
+    "loot_multi_battery": {
+        "name": "多用途电池",
+        "type": "物资",
+        "grid": 1,
+        "value": 550,
+        "rarity": Rarity.UNCOMMON,
+        "description": "可用于多种设备的电池"
+    },
+    "loot_candles": {
+        "name": "盒装蜡烛",
+        "type": "物资",
+        "grid": 1,
+        "value": 300,
+        "rarity": Rarity.UNCOMMON,
+        "description": "应急照明用的蜡烛套装"
+    },
+    "loot_blowtorch": {
+        "name": "燃气喷灯",
+        "type": "工具",
+        "grid": 2,
+        "value": 1200,
+        "rarity": Rarity.UNCOMMON,
+        "description": "工业用高温喷灯"
+    },
+    "loot_camping_lamp": {
+        "name": "军用露营灯",
+        "type": "工具",
+        "grid": 2,
+        "value": 1500,
+        "rarity": Rarity.UNCOMMON,
+        "description": "耐用型野外照明灯"
     },
     "loot_electronics": {
         "name": "电子元件",
         "type": "物资",
-        "weight": 0.4,
+        "grid": 1,
         "value": 500,
         "rarity": Rarity.UNCOMMON,
         "description": "拆解得来的电子零件"
     },
+    "loot_9v_battery": {
+        "name": "9V电池",
+        "type": "物资",
+        "grid": 1,
+        "value": 350,
+        "rarity": Rarity.UNCOMMON,
+        "description": "方形9伏电池"
+    },
+
+    # ===== 蓝色物品 - 较稀有 =====
     "loot_cpu": {
         "name": "CPU处理器",
         "type": "物资",
-        "weight": 0.2,
-        "value": 1500,
+        "grid": 1,
+        "value": 3500,
         "rarity": Rarity.RARE,
         "description": "高端处理器，有市无价"
     },
-    "loot_gpu": {
-        "name": "显卡GPU",
+    "loot_hdd": {
+        "name": "硬盘驱动器",
         "type": "物资",
-        "weight": 1.0,
-        "value": 28000,
-        "rarity": Rarity.EPIC,
-        "description": "稀缺的高端显卡"
-    },
-    "loot_bitcoin": {
-        "name": "比特币矿机",
-        "type": "物资",
-        "weight": 8.0,
-        "value": 50000,
-        "rarity": Rarity.LEGENDARY,
-        "description": "可运行的比特币矿机"
-    },
-    "loot_rolex": {
-        "name": "劳力士手表",
-        "type": "贵重品",
-        "weight": 0.2,
-        "value": 50000,
-        "rarity": Rarity.EPIC,
-        "description": "高档奢侈手表"
-    },
-    "loot_usb_secret": {
-        "name": "加密U盘",
-        "type": "贵重品",
-        "weight": 0.1,
-        "value": 80000,
-        "rarity": Rarity.LEGENDARY,
-        "description": "包含机密数据的加密U盘"
-    },
-    "loot_goldbar": {
-        "name": "金条",
-        "type": "贵重品",
-        "weight": 1.0,
-        "value": 100000,
-        "rarity": Rarity.LEGENDARY,
-        "description": "纯金条"
-    },
-    "loot_document": {
-        "name": "机密文件",
-        "type": "贵重品",
-        "weight": 0.1,
-        "value": 45000,
-        "rarity": Rarity.EPIC,
-        "description": "含有敏感信息的文件"
-    },
-    # ===== 钥匙和任务物品 =====
-    "key_lab_keycard": {
-        "name": "实验室钥匙卡",
-        "type": "钥匙",
-        "weight": 0.0,
-        "value": 15000,
-        "rarity": Rarity.EPIC,
-        "description": "可打开研究实验室的磁卡"
-    },
-    "key_armory": {
-        "name": "军火库钥匙",
-        "type": "钥匙",
-        "weight": 0.0,
-        "value": 20000,
-        "rarity": Rarity.EPIC,
-        "description": "通往军火库的钥匙"
-    },
-    "key_server": {
-        "name": "服务器机房钥匙卡",
-        "type": "钥匙",
-        "weight": 0.0,
-        "value": 25000,
-        "rarity": Rarity.LEGENDARY,
-        "description": "数据服务器机房的高级权限卡"
-    },
-    "key_safe": {
-        "name": "保险柜密码条",
-        "type": "钥匙",
-        "weight": 0.0,
-        "value": 10000,
+        "grid": 1,
+        "value": 2000,
         "rarity": Rarity.RARE,
-        "description": "某个保险柜的密码"
+        "description": "可能存有有价值数据的硬盘"
     },
-    # ===== 更多战利品 =====
+    "loot_motor": {
+        "name": "电机",
+        "type": "物资",
+        "grid": 2,
+        "value": 1800,
+        "rarity": Rarity.RARE,
+        "description": "完好的工业电机"
+    },
+    "loot_fuel_can": {
+        "name": "燃料罐",
+        "type": "物资",
+        "grid": 2,
+        "value": 1500,
+        "rarity": Rarity.RARE,
+        "description": "满载的燃料容器"
+    },
+    "loot_portable_power": {
+        "name": "军用便携电源",
+        "type": "物资",
+        "grid": 2,
+        "value": 2500,
+        "rarity": Rarity.RARE,
+        "description": "高容量军用级移动电源"
+    },
+    "loot_bp_monitor": {
+        "name": "血压监测器",
+        "type": "医疗",
+        "grid": 1,
+        "value": 2200,
+        "rarity": Rarity.RARE,
+        "description": "电子血压监测设备"
+    },
+    "loot_uv_lamp": {
+        "name": "紫外线灯",
+        "type": "工具",
+        "grid": 1,
+        "value": 1800,
+        "rarity": Rarity.RARE,
+        "description": "紫外线消毒灯"
+    },
+    "loot_coffee_machine": {
+        "name": "胶囊咖啡机套组",
+        "type": "物资",
+        "grid": 2,
+        "value": 3000,
+        "rarity": Rarity.RARE,
+        "description": "便携式胶囊咖啡机套装"
+    },
+    "loot_coffee_beans": {
+        "name": "袋装咖啡豆",
+        "type": "物资",
+        "grid": 1,
+        "value": 800,
+        "rarity": Rarity.RARE,
+        "description": "高级咖啡豆"
+    },
+    "loot_laptop": {
+        "name": "笔记本电脑",
+        "type": "电子产品",
+        "grid": 4,
+        "value": 15000,
+        "rarity": Rarity.RARE,
+        "description": "配置不错的笔记本电脑"
+    },
+    "loot_camera": {
+        "name": "摄像机",
+        "type": "电子产品",
+        "grid": 2,
+        "value": 8000,
+        "rarity": Rarity.RARE,
+        "description": "专业级摄像设备"
+    },
+    "loot_info_terminal": {
+        "name": "军用信息终端",
+        "type": "电子产品",
+        "grid": 3,
+        "value": 12000,
+        "rarity": Rarity.RARE,
+        "description": "军用加固型便携终端"
+    },
     "loot_military_flash": {
         "name": "军用闪存盘",
         "type": "物资",
-        "weight": 0.1,
-        "value": 3000,
+        "grid": 1,
+        "value": 5000,
         "rarity": Rarity.RARE,
         "description": "军用规格的高容量闪存"
+    },
+    "loot_med_tools": {
+        "name": "手术器械",
+        "type": "医疗",
+        "grid": 2,
+        "value": 12000,
+        "rarity": Rarity.RARE,
+        "description": "成套的专业手术工具"
+    },
+
+    # ===== 紫色物品 - 稀有 =====
+    "loot_gpu": {
+        "name": "显卡GPU",
+        "type": "物资",
+        "grid": 2,
+        "value": 35000,
+        "rarity": Rarity.EPIC,
+        "description": "稀缺的高端显卡"
+    },
+    "loot_military_radio": {
+        "name": "军用通讯器",
+        "type": "物资",
+        "grid": 1,
+        "value": 8000,
+        "rarity": Rarity.EPIC,
+        "description": "加密的军用通讯设备"
     },
     "loot_thermal_scope": {
         "name": "热成像瞄准镜",
         "type": "贵重品",
-        "weight": 0.3,
-        "value": 35000,
+        "grid": 2,
+        "value": 45000,
         "rarity": Rarity.EPIC,
         "description": "高端热成像光学设备"
     },
     "loot_nv_goggles": {
         "name": "夜视仪",
         "type": "贵重品",
-        "weight": 0.5,
-        "value": 25000,
+        "grid": 1,
+        "value": 30000,
         "rarity": Rarity.EPIC,
         "description": "军用级夜视装备"
     },
-    "loot_hdd": {
-        "name": "硬盘驱动器",
-        "type": "物资",
-        "weight": 0.3,
-        "value": 2000,
-        "rarity": Rarity.UNCOMMON,
-        "description": "可能存有有价值数据的硬盘"
-    },
-    "loot_motor": {
-        "name": "电机",
-        "type": "物资",
-        "weight": 1.5,
-        "value": 1200,
-        "rarity": Rarity.UNCOMMON,
-        "description": "完好的工业电机"
-    },
-    "loot_wire": {
-        "name": "电线束",
-        "type": "物资",
-        "weight": 0.4,
-        "value": 200,
-        "rarity": Rarity.COMMON,
-        "description": "一捆铜芯电线"
-    },
-    "loot_circuit_board": {
-        "name": "电路板",
-        "type": "物资",
-        "weight": 0.2,
-        "value": 800,
-        "rarity": Rarity.UNCOMMON,
-        "description": "可回收的电路板"
-    },
-    "loot_fuel_can": {
-        "name": "燃料罐",
-        "type": "物资",
-        "weight": 2.0,
-        "value": 1500,
-        "rarity": Rarity.UNCOMMON,
-        "description": "满载的燃料容器"
-    },
-    "loot_med_tools": {
-        "name": "手术器械",
+    "loot_document": {
+        "name": "机密文件",
         "type": "贵重品",
-        "weight": 0.5,
-        "value": 8000,
-        "rarity": Rarity.RARE,
-        "description": "成套的专业手术工具"
-    },
-    "loot_military_radio": {
-        "name": "军用通讯器",
-        "type": "物资",
-        "weight": 0.8,
-        "value": 5000,
-        "rarity": Rarity.RARE,
-        "description": "加密的军用通讯设备"
-    },
-    "loot_lion_statue": {
-        "name": "黄金雄狮像",
-        "type": "贵重品",
-        "weight": 3.0,
-        "value": 120000,
-        "rarity": Rarity.LEGENDARY,
-        "description": "纯金打造的雄狮雕像，极其沉重"
-    },
-    "loot_diamond": {
-        "name": "未切割钻石",
-        "type": "贵重品",
-        "weight": 0.1,
-        "value": 75000,
-        "rarity": Rarity.LEGENDARY,
-        "description": "非洲之心级别的原钻"
-    },
-    "loot_tank_model": {
-        "name": "坦克模型",
-        "type": "贵重品",
-        "weight": 2.5,
-        "value": 90000,
-        "rarity": Rarity.LEGENDARY,
-        "description": "精密制作的限量版坦克模型"
+        "grid": 1,
+        "value": 45000,
+        "rarity": Rarity.EPIC,
+        "description": "含有敏感信息的文件"
     },
     "loot_intel_folder": {
         "name": "情报文件夹",
         "type": "任务物品",
-        "weight": 0.2,
-        "value": 20000,
+        "grid": 1,
+        "value": 25000,
         "rarity": Rarity.EPIC,
         "description": "装满军事情报的文件夹"
     },
     "loot_water_sample": {
         "name": "水样本",
         "type": "任务物品",
-        "weight": 0.5,
-        "value": 10000,
-        "rarity": Rarity.RARE,
+        "grid": 1,
+        "value": 12000,
+        "rarity": Rarity.EPIC,
         "description": "大坝水库中采集的可疑水样"
+    },
+    "loot_carbon_fiber": {
+        "name": "强化碳纤维板",
+        "type": "物资",
+        "grid": 4,
+        "value": 80000,
+        "rarity": Rarity.EPIC,
+        "description": "高强度碳纤维复合材料"
+    },
+    "loot_blade_server": {
+        "name": "刀片服务器",
+        "type": "电子产品",
+        "grid": 6,
+        "value": 90000,
+        "rarity": Rarity.EPIC,
+        "description": "企业级刀片服务器单元"
+    },
+    "loot_flight_recorder": {
+        "name": "飞行记录仪",
+        "type": "电子产品",
+        "grid": 2,
+        "value": 60000,
+        "rarity": Rarity.EPIC,
+        "description": "飞机黑匣子，数据珍贵"
+    },
+    "loot_cloud_storage": {
+        "name": "云存储阵列",
+        "type": "电子产品",
+        "grid": 6,
+        "value": 100000,
+        "rarity": Rarity.EPIC,
+        "description": "企业级存储阵列"
+    },
+    "loot_disk_array": {
+        "name": "高速磁盘阵列",
+        "type": "电子产品",
+        "grid": 6,
+        "value": 95000,
+        "rarity": Rarity.EPIC,
+        "description": "高速数据存储系统"
+    },
+    "loot_rolex": {
+        "name": "劳力士手表",
+        "type": "贵重品",
+        "grid": 1,
+        "value": 60000,
+        "rarity": Rarity.EPIC,
+        "description": "高档奢侈手表"
+    },
+    "loot_satellite_phone": {
+        "name": "卫星电话",
+        "type": "电子产品",
+        "grid": 2,
+        "value": 150000,
+        "rarity": Rarity.EPIC,
+        "description": "铱星卫星通讯电话"
+    },
+    "loot_defibrillator": {
+        "name": "自体除颤器",
+        "type": "医疗",
+        "grid": 3,
+        "value": 120000,
+        "rarity": Rarity.EPIC,
+        "description": "便携式心脏除颤设备"
+    },
+
+    # ===== 金色物品 - 极稀有 =====
+    "loot_usb_secret": {
+        "name": "加密U盘",
+        "type": "贵重品",
+        "grid": 1,
+        "value": 100000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "包含机密数据的加密U盘"
+    },
+    "loot_bitcoin": {
+        "name": "比特币矿机",
+        "type": "物资",
+        "grid": 4,
+        "value": 65000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "可运行的比特币矿机"
+    },
+    "loot_bust": {
+        "name": "半身像",
+        "type": "贵重品",
+        "grid": 4,
+        "value": 150000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "古董大理石半身雕像"
+    },
+    "loot_golden_gazelle": {
+        "name": "黄金瞪羚",
+        "type": "贵重品",
+        "grid": 3,
+        "value": 180000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "镀金瞪羚雕塑，精美绝伦"
+    },
+    "loot_crown": {
+        "name": "珠宝头冠",
+        "type": "贵重品",
+        "grid": 3,
+        "value": 250000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "镶嵌宝石的贵族头冠"
+    },
+    "loot_vacuum": {
+        "name": "强力吸尘器",
+        "type": "物资",
+        "grid": 6,
+        "value": 200000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "工业级大功率吸尘设备"
+    },
+    "loot_mandel_unit": {
+        "name": "曼德尔超算单元",
+        "type": "电子产品",
+        "grid": 6,
+        "value": 280000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "超级计算机核心单元"
+    },
+    "loot_portable_radar": {
+        "name": "便携军用雷达",
+        "type": "电子产品",
+        "grid": 6,
+        "value": 350000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "小型战术雷达系统"
+    },
+    "loot_secret_server": {
+        "name": "绝密服务器",
+        "type": "电子产品",
+        "grid": 6,
+        "value": 400000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "军用级加密服务器"
+    },
+    "loot_ecmo": {
+        "name": "ECMO",
+        "type": "医疗",
+        "grid": 9,
+        "value": 500000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "体外膜肺氧合设备"
+    },
+    "loot_respirator": {
+        "name": "复苏呼吸机",
+        "type": "医疗",
+        "grid": 9,
+        "value": 550000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "高级生命支持呼吸机"
+    },
+
+    # ===== 红色物品 - 传说级 =====
+    "loot_goldbar": {
+        "name": "金条",
+        "type": "贵重品",
+        "grid": 1,
+        "value": 150000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "纯金条，硬通货"
+    },
+    "loot_diamond": {
+        "name": "未切割钻石",
+        "type": "贵重品",
+        "grid": 1,
+        "value": 200000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "非洲之心级别的原钻"
+    },
+    "loot_lion_statue": {
+        "name": "黄金雄狮像",
+        "type": "贵重品",
+        "grid": 4,
+        "value": 250000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "纯金打造的雄狮雕像"
+    },
+    "loot_tank_model": {
+        "name": "坦克模型",
+        "type": "贵重品",
+        "grid": 4,
+        "value": 300000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "精密制作的限量版坦克模型"
+    },
+    "loot_ifv_model": {
+        "name": "步战车模型",
+        "type": "贵重品",
+        "grid": 4,
+        "value": 220000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "步兵战车精密模型"
+    },
+    "loot_artillery_shell": {
+        "name": "军用炮弹",
+        "type": "物资",
+        "grid": 6,
+        "value": 280000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "未引爆的军用炮弹，极其危险"
+    },
+    "loot_robot_vacuum": {
+        "name": "扫拖机器",
+        "type": "物资",
+        "grid": 9,
+        "value": 400000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "智能扫拖一体机器人"
+    },
+    "loot_reactor": {
+        "name": "微型反应炉",
+        "type": "物资",
+        "grid": 9,
+        "value": 450000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "微型核反应堆原型"
+    },
+    "loot_zongheng": {
+        "name": "纵横",
+        "type": "贵重品",
+        "grid": 9,
+        "value": 500000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "古代名剑复制品，工艺精湛"
+    },
+    "loot_tears_crown": {
+        "name": "万金泪冠",
+        "type": "贵重品",
+        "grid": 9,
+        "value": 480000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "镶嵌泪滴状宝石的皇冠"
+    },
+    "loot_armor_battery": {
+        "name": "装甲车电池",
+        "type": "物资",
+        "grid": 6,
+        "value": 350000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "军用装甲车辆动力电池"
+    },
+    "loot_african_heart": {
+        "name": "非洲之心",
+        "type": "贵重品",
+        "grid": 1,
+        "value": 800000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "世界最大的切割钻石"
+    },
+    "loot_ocean_tear": {
+        "name": "海洋之泪",
+        "type": "贵重品",
+        "grid": 1,
+        "value": 1200000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "稀世蓝钻，传说来自深海"
+    },
+
+    # ===== 钥匙和任务物品 =====
+    "key_lab_keycard": {
+        "name": "实验室钥匙卡",
+        "type": "钥匙",
+        "grid": 0,
+        "value": 20000,
+        "rarity": Rarity.EPIC,
+        "description": "可打开研究实验室的磁卡"
+    },
+    "key_armory": {
+        "name": "军火库钥匙",
+        "type": "钥匙",
+        "grid": 0,
+        "value": 25000,
+        "rarity": Rarity.EPIC,
+        "description": "通往军火库的钥匙"
+    },
+    "key_server": {
+        "name": "服务器机房钥匙卡",
+        "type": "钥匙",
+        "grid": 0,
+        "value": 30000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "数据服务器机房的高级权限卡"
+    },
+    "key_safe": {
+        "name": "保险柜密码条",
+        "type": "钥匙",
+        "grid": 0,
+        "value": 15000,
+        "rarity": Rarity.RARE,
+        "description": "某个保险柜的密码"
+    },
+    "key_substation": {
+        "name": "变电站钥匙",
+        "type": "钥匙",
+        "grid": 0,
+        "value": 18000,
+        "rarity": Rarity.RARE,
+        "description": "主变电站的通行钥匙"
+    },
+    "key_control_room": {
+        "name": "控制室门禁卡",
+        "type": "钥匙",
+        "grid": 0,
+        "value": 25000,
+        "rarity": Rarity.EPIC,
+        "description": "大坝控制室的高级门禁卡"
+    },
+    "key_radar_station": {
+        "name": "雷达站钥匙卡",
+        "type": "钥匙",
+        "grid": 0,
+        "value": 35000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "哈夫克雷达站通行证"
+    },
+    "key_director_office": {
+        "name": "总裁室钥匙卡",
+        "type": "钥匙",
+        "grid": 0,
+        "value": 40000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "航天基地总裁办公室权限卡"
+    },
+    "key_launch_area": {
+        "name": "发射区通行证",
+        "type": "钥匙",
+        "grid": 0,
+        "value": 30000,
+        "rarity": Rarity.EPIC,
+        "description": "航天发射区通行证件"
+    },
+    "key_babel": {
+        "name": "巴别塔钥匙",
+        "type": "钥匙",
+        "grid": 0,
+        "value": 50000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "通往巴别塔顶层的古铜钥匙"
     }
 }
 
@@ -1984,6 +2434,7 @@ class Item:
     weight: float
     value: int
     rarity: Rarity
+    grid: int = 1  # 占用格子数
     stackable: bool = False
     stack_size: int = 1
     description: str = ""
@@ -3252,11 +3703,12 @@ class Game:
                 return False, f"{zone_name}已锁定！需要对应钥匙才能进入。"
 
         # 消耗行动点（减速debuff增加50%消耗）
-        ap_cost = 10 + int(target_zone.get("danger_level", 1) * 2)
+        ap_cost = 2
         if self.player.stats.has_debuff('slowed'):
             ap_cost = int(ap_cost * 1.5)
         if self.player.action_points < ap_cost:
-            return False, f"行动点不足！需要 {ap_cost} 点"
+            self.handle_action_failed()
+            return False, "行动力耗尽！行动失败，丢失所有物品..."
 
         self.player.action_points -= ap_cost
         self.player.current_zone = zone_id
@@ -3304,9 +3756,10 @@ class Game:
         if not zone:
             return False, "区域错误！"
 
-        ap_cost = 15
+        ap_cost = 3
         if self.player.action_points < ap_cost:
-            return False, f"行动点不足！需要 {ap_cost} 点"
+            self.handle_action_failed()
+            return False, "行动力耗尽！行动失败，丢失所有物品..."
 
         self.player.action_points -= ap_cost
 
@@ -3325,7 +3778,8 @@ class Game:
                 item = LootItem(
                     id=loot_entry["id"],
                     name=item_data["name"],
-                    weight=item_data["weight"],
+                    weight=0.1,  # 战利品重量忽略
+                    grid=item_data.get("grid", 1),
                     value=item_data["value"],
                     rarity=item_data["rarity"],
                     item_type=item_data.get("type", "物资"),
@@ -3363,6 +3817,13 @@ class Game:
         success = True
 
         if action == "attack":
+            # 攻击消耗行动点
+            ap_cost = 3
+            if self.player.action_points < ap_cost:
+                self.handle_action_failed()
+                return False, "行动力耗尽！行动失败，丢失所有物品..."
+            self.player.action_points -= ap_cost
+
             damage, attack_msg = self.player.attack(self.current_enemy, target or "body")
             msg = attack_msg
 
@@ -3391,9 +3852,12 @@ class Game:
                             item = LootItem(
                                 id=f"loot_{random.randint(1000, 9999)}",
                                 name=item_data["name"],
-                                weight=item_data["weight"],
+                                weight=0.1,
+                                grid=item_data.get("grid", 1),
                                 value=item_data["value"],
-                                rarity=item_data["rarity"]
+                                rarity=item_data["rarity"],
+                                item_type=item_data.get("type", "物资"),
+                                description=item_data.get("description", "")
                             )
                             if self.player.equipment.backpack.add_item(item):
                                 msg += f"\n获得: {item.name}"
@@ -3620,6 +4084,28 @@ class Game:
 
         self.add_message(msg)
 
+    def handle_action_failed(self):
+        """处理行动失败（行动点耗尽）"""
+        self.state = GameState.DEAD
+        msg = "=== 行动力耗尽 ===\n"
+        msg += "你的行动力已耗尽，无法继续行动！\n"
+        msg += "在撤离前力竭倒下，丢失了背包中的所有物品...\n"
+
+        # 保险箱物品保留
+        secure_items = self.player.equipment.secure_container.get_all_items()
+        if secure_items:
+            msg += f"保险箱保留了 {len(secure_items)} 件物品。"
+
+        # 丢失背包物品
+        self.player.equipment.backpack.clear()
+
+        # 重置装备（除了保险箱）
+        self.player.equipment.primary_weapon = None
+        self.player.equipment.armor = None
+        self.player.equipment.helmet = None
+
+        self.add_message(msg)
+
     def buy_weapon(self, weapon_id: str) -> Tuple[bool, str]:
         """购买武器"""
         if weapon_id not in WEAPONS:
@@ -3757,14 +4243,15 @@ class Game:
         return False, "找不到该物品"
 
     def clear_backpack(self) -> str:
-        """清空背包所有物品"""
+        """清空背包所有物品到仓库"""
         items = self.player.equipment.backpack.get_all_items()
         if not items:
             return "背包是空的"
         count = len(items)
         for item in items:
             self.player.equipment.backpack.remove_item(item.id)
-        return f"已清空背包，丢弃了{count}件物品"
+            self.player.stash_items.append(item)
+        return f"已将{count}件物品移至仓库"
 
     def sell_stash_weapon(self, weapon_id: str) -> Tuple[bool, str]:
         """出售仓库武器"""
@@ -3884,8 +4371,8 @@ def serialize_item(item: Item) -> dict:
     """序列化物品"""
     data = {
         'id': item.id, 'name': item.name, 'weight': item.weight,
-        'value': item.value, 'rarity': item.rarity.name,
-        'type': type(item).__name__
+        'grid': item.grid, 'value': item.value, 'rarity': item.rarity.name,
+        'type': type(item).__name__, 'description': item.description
     }
     if isinstance(item, Consumable):
         data['effect'] = item.effect
@@ -3900,15 +4387,18 @@ def deserialize_item(data: dict) -> Item:
     item_type = data.get('type', 'Item')
     if item_type == 'Consumable':
         return Consumable(
-            id=data['id'], name=data['name'], weight=data['weight'],
+            id=data['id'], name=data['name'], weight=data.get('weight', 0.1),
+            grid=data.get('grid', 1),
             value=data['value'], rarity=rarity,
             effect=data.get('effect', {}), use_time=data.get('use_time', 2)
         )
     elif item_type == 'LootItem':
         return LootItem(
-            id=data['id'], name=data['name'], weight=data['weight'],
+            id=data['id'], name=data['name'], weight=data.get('weight', 0.1),
+            grid=data.get('grid', 1),
             value=data['value'], rarity=rarity,
-            item_type=data.get('item_type', '物资')
+            item_type=data.get('item_type', '物资'),
+            description=data.get('description', '')
         )
     elif item_type == 'Armor':
         return deserialize_armor(data)

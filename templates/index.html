@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>暗区文字 - Dark Zone: Text</title>
+    <title>暗区行动 - Dark Operations: Text</title>
     <style>
         * {
             margin: 0;
@@ -776,7 +776,7 @@
     <!-- 登录/注册面板 -->
     <div id="auth-panel" class="auth-panel" style="display: none;">
         <div class="auth-box">
-            <h2>🎮 暗区文字</h2>
+            <h2>🎮 暗区行动</h2>
             <div class="auth-tabs">
                 <div class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">登录</div>
                 <div class="auth-tab" data-tab="register" onclick="switchAuthTab('register')">注册</div>
@@ -795,8 +795,8 @@
 
     <div class="container">
         <header>
-            <h1>暗区文字</h1>
-            <p>Dark Zone: Text - 撤离射击文字游戏</p>
+            <h1>暗区行动</h1>
+            <p>Dark Operations: Text - 搜打撤文字游戏</p>
         </header>
 
         <div class="game-container">
@@ -870,8 +870,16 @@
                 <div class="item-grid" id="shop-backpacks"></div>
             </div>
             <div class="shop-section">
-                <h3>💊 物品</h3>
-                <div class="item-grid" id="shop-consumables"></div>
+                <h3>💊 医疗</h3>
+                <div class="item-grid" id="shop-medical"></div>
+            </div>
+            <div class="shop-section">
+                <h3>🔧 修甲</h3>
+                <div class="item-grid" id="shop-repair"></div>
+            </div>
+            <div class="shop-section">
+                <h3>📦 子弹</h3>
+                <div class="item-grid" id="shop-ammo"></div>
             </div>
         </div>
     </div>
@@ -1399,11 +1407,13 @@
 
             let html = '';
             for (const weapon of gameState.shop_weapons) {
+                const ammoInfo = weapon.ammo_type ? `<span style="color:#ff9800;">子弹:${weapon.ammo_type}</span>` : '';
                 html += `
                     <div class="item-card">
                         <div class="item-info">
                             <div class="item-name">${weapon.name}</div>
                             <div class="item-details">伤害:${weapon.damage} 命中:${Math.round(weapon.accuracy*100)}% 射速:${weapon.fire_rate} 穿透:${weapon.penetration}</div>
+                            <div class="item-details" style="font-size:0.75em;">${ammoInfo}</div>
                         </div>
                         <div class="item-price">$${weapon.value}</div>
                         <button class="btn item-btn" onclick="doAction('buy_weapon', {weapon_id: '${weapon.id}'})">购买</button>
@@ -1468,14 +1478,37 @@
             }
             document.getElementById('shop-backpacks').innerHTML = backpackHtml || '<p style="color:#666">暂无背包</p>';
 
-            // 消耗品
-            let consumablesHtml = '';
+            // 消耗品分类：医疗、修甲、子弹
+            let medicalHtml = '', repairHtml = '', ammoHtml = '';
             if (gameState.shop_consumables) {
                 for (const item of gameState.shop_consumables) {
-                    const effectText = item.type === 'medical'
-                        ? `治疗${item.effect.heal || 0}HP`
-                        : `修复${item.effect.repair_armor || 0}护甲耐久`;
-                    consumablesHtml += `
+                    const effect = item.effect || {};
+                    let effectText = '', category = 'other';
+
+                    // 判断分类
+                    if (effect.heal || effect.stop_bleed || effect.regen || effect.fix_bodypart || item.type === '医疗' || item.type === '药物') {
+                        category = 'medical';
+                        const parts = [];
+                        if (effect.heal) parts.push(`治疗${effect.heal}HP`);
+                        if (effect.stop_bleed) parts.push('止血');
+                        if (effect.regen) parts.push(`持续恢复${effect.regen}`);
+                        if (effect.fix_bodypart) parts.push('修复部位');
+                        if (effect.stamina_boost) parts.push(`耐力+${effect.stamina_boost}`);
+                        if (effect.pain_relief) parts.push(`镇痛${effect.pain_relief}s`);
+                        effectText = parts.join(' ');
+                    } else if (effect.repair_armor || item.type === '工具') {
+                        category = 'repair';
+                        effectText = `修复${effect.repair_armor || 0}护甲耐久`;
+                    } else if (effect.reload_weapon || item.type === '弹药') {
+                        category = 'ammo';
+                        const ammoType = effect.ammo_type || '通用';
+                        effectText = `弹药类型: ${ammoType}`;
+                    } else {
+                        // 其他物品跳过或归类
+                        continue;
+                    }
+
+                    const cardHtml = `
                         <div class="item-card">
                             <div class="item-info">
                                 <div class="item-name">${item.name}</div>
@@ -1485,9 +1518,15 @@
                             <button class="btn item-btn" onclick="doAction('buy_consumable', {consumable_id: '${item.id}'})">购买</button>
                         </div>
                     `;
+
+                    if (category === 'medical') medicalHtml += cardHtml;
+                    else if (category === 'repair') repairHtml += cardHtml;
+                    else if (category === 'ammo') ammoHtml += cardHtml;
                 }
             }
-            document.getElementById('shop-consumables').innerHTML = consumablesHtml || '<p style="color:#666">暂无物品</p>';
+            document.getElementById('shop-medical').innerHTML = medicalHtml || '<p style="color:#666">暂无物品</p>';
+            document.getElementById('shop-repair').innerHTML = repairHtml || '<p style="color:#666">暂无物品</p>';
+            document.getElementById('shop-ammo').innerHTML = ammoHtml || '<p style="color:#666">暂无物品</p>';
         }
 
         // 渲染仓库页面

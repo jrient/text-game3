@@ -238,6 +238,7 @@ def get_state():
             'fire_rate': wdata['fire_rate'],
             'penetration': wdata['penetration'],
             'mag_size': wdata['mag_size'],
+            'ammo_type': wdata.get('ammo_type', ''),
             'value': wdata['value'],
             'rarity': wdata['rarity'].cn_name
         })
