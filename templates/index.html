@@ -355,6 +355,127 @@
             font-size: 0.8em;
             transition: all 0.2s ease;
             margin: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(233, 69, 96, 0.4);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            top: 50%;
+            left: 50%;
+            margin-left: -6px;
+            margin-top: -6px;
+            border: 2px solid transparent;
+            border-top-color: white;
+            border-radius: 50%;
+            animation: btn-spin 0.8s linear infinite;
+        }
+
+        @keyframes btn-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #4CAF50, #388E3C) !important;
+            animation: btn-pulse 0.3s ease;
+        }
+
+        .btn.error {
+            background: linear-gradient(135deg, #f44336, #c62828) !important;
+            animation: btn-shake 0.3s ease;
+        }
+
+        @keyframes btn-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes btn-shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            75% { transform: translateX(3px); }
+        }
+
+        /* Toast 通知 */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: rgba(30, 30, 40, 0.95);
+            border-radius: 8px;
+            padding: 12px 20px;
+            min-width: 200px;
+            max-width: 350px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            animation: toast-in 0.3s ease;
+            border-left: 4px solid #e94560;
+        }
+
+        .toast.success {
+            border-left-color: #4CAF50;
+        }
+
+        .toast.error {
+            border-left-color: #f44336;
+        }
+
+        .toast.warning {
+            border-left-color: #ff9800;
+        }
+
+        .toast.info {
+            border-left-color: #2196f3;
+        }
+
+        .toast.hiding {
+            animation: toast-out 0.3s ease forwards;
+        }
+
+        @keyframes toast-in {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes toast-out {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100px);
+            }
         }
 
         .btn:hover {
@@ -773,6 +894,9 @@
     </style>
 </head>
 <body>
+    <!-- Toast 通知容器 -->
+    <div class="toast-container" id="toast-container"></div>
+
     <!-- 登录/注册面板 -->
     <div id="auth-panel" class="auth-panel" style="display: none;">
         <div class="auth-box">
@@ -834,10 +958,17 @@
                     <div id="action-content">
                         <p>加载中...</p>
                     </div>
-                    <h2 style="margin-top: 8px;">背包 <span id="backpack-value"></span></h2>
-                    <div class="inventory" id="inventory-content">
-                        <p>加载中...</p>
+                    <!-- 区域战利品面板 -->
+                    <div id="zone-loot-panel" style="display: none; margin-top: 10px; padding: 8px; background: rgba(0,100,0,0.2); border-radius: 4px;">
+                        <h3 style="font-size: 0.9em; color: #4ecdc4; margin-bottom: 8px;">📦 地面物品</h3>
+                        <div id="zone-loot-content"></div>
                     </div>
+                    <!-- 消耗品层 -->
+                    <h3 style="margin-top: 8px; font-size: 0.9em; color: #ffd700;">💊 消耗品</h3>
+                    <div id="consumables-content" style="max-height: 120px; overflow-y: auto;"></div>
+                    <!-- 物资层 -->
+                    <h3 style="margin-top: 8px; font-size: 0.9em; color: #aaa;">📦 物资 <span id="backpack-value" style="color: #ffd700;"></span></h3>
+                    <div id="loot-content" style="max-height: 150px; overflow-y: auto;"></div>
                 </div>
             </div>
         </div>
@@ -889,7 +1020,8 @@
         <div class="stash-page-header">
             <h2>📦 仓库</h2>
             <div>
-                <span style="color: #ffd700; margin-right: 20px;">💰 $<span id="stash-money">0</span></span>
+                <span style="color: #ffd700; margin-right: 20px;">💰 余额: $<span id="stash-money">0</span></span>
+                <span style="color: #4CAF50; margin-right: 20px;">📊 资产: $<span id="stash-total-value">0</span></span>
                 <button class="btn btn-secondary" onclick="closeStash()">返回基地</button>
             </div>
         </div>
@@ -1026,7 +1158,21 @@
             }
         }
 
-        // 执行动作
+        // Toast 通知系统
+        function showToast(message, type = 'info', duration = 3000) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('hiding');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+
+        // 执行动作（带反馈）
         async function doAction(action, params = {}) {
             try {
                 const response = await fetch('/api/action', {
@@ -1036,9 +1182,48 @@
                 });
                 const result = await response.json();
                 await updateState();
+
+                // 显示操作结果通知
+                if (result.message) {
+                    const type = result.success ? 'success' : 'error';
+                    showToast(result.message, type);
+                }
+
                 return result;
             } catch (error) {
                 console.error('执行动作失败:', error);
+                showToast('操作失败，请重试', 'error');
+            }
+        }
+
+        // 执行动作（带按钮反馈）
+        async function doActionWithFeedback(button, action, params = {}) {
+            if (button && button.classList) {
+                button.classList.add('loading');
+            }
+
+            try {
+                const result = await doAction(action, params);
+
+                if (button && button.classList) {
+                    button.classList.remove('loading');
+                    if (result && result.success) {
+                        button.classList.add('success');
+                        setTimeout(() => button.classList.remove('success'), 500);
+                    } else if (result && !result.success) {
+                        button.classList.add('error');
+                        setTimeout(() => button.classList.remove('error'), 500);
+                    }
+                }
+
+                return result;
+            } catch (error) {
+                if (button && button.classList) {
+                    button.classList.remove('loading');
+                    button.classList.add('error');
+                    setTimeout(() => button.classList.remove('error'), 500);
+                }
+                throw error;
             }
         }
 
@@ -1301,9 +1486,7 @@
                         <button class="btn btn-secondary" onclick="openShop()">🏪 商店</button>
                         <button class="btn btn-secondary" onclick="openStash()">📦 仓库</button>
                         <button class="btn btn-secondary" onclick="doAction('rest')">💤 休息</button>
-                        <button class="btn btn-success" onclick="doAction('save_game')">💾 保存</button>
-                        <button class="btn btn-secondary" onclick="doAction('load_game')">📂 读取</button>
-                        <button class="btn btn-danger" onclick="doAction('new_game')">🔄 重来</button>
+                        <button class="btn btn-warning" onclick="doAction('welfare')">💰 低保</button>
                     </div>
                 </div>`;
             }
@@ -1370,12 +1553,12 @@
                     </div>
                 </div>
                 <div class="combat-actions">
-                    <button class="btn" onclick="doAction('attack', {target: 'chest'})">🎯 胸部</button>
-                    <button class="btn btn-danger" onclick="doAction('attack', {target: 'head'})">💀 头部</button>
-                    <button class="btn" onclick="doAction('attack', {target: 'legs'})">🦵 腿部</button>
-                    <button class="btn btn-secondary" onclick="doAction('reload')">🔄 换弹</button>
-                    <button class="btn btn-success" onclick="doAction('heal')">💊 治疗</button>
-                    <button class="btn btn-warning" onclick="doAction('flee')">🏃 撤退</button>
+                    <button class="btn" onclick="doActionWithFeedback(this, 'attack', {target: 'chest'})">🎯 胸部</button>
+                    <button class="btn btn-danger" onclick="doActionWithFeedback(this, 'attack', {target: 'head'})">💀 头部</button>
+                    <button class="btn" onclick="doActionWithFeedback(this, 'attack', {target: 'legs'})">🦵 腿部</button>
+                    <button class="btn btn-secondary" onclick="doActionWithFeedback(this, 'reload')">🔄 换弹</button>
+                    <button class="btn btn-success" onclick="doActionWithFeedback(this, 'heal')">💊 治疗</button>
+                    <button class="btn btn-warning" onclick="doActionWithFeedback(this, 'flee')">🏃 撤退</button>
                 </div>
             `;
         }
@@ -1416,7 +1599,7 @@
                             <div class="item-details" style="font-size:0.75em;">${ammoInfo}</div>
                         </div>
                         <div class="item-price">$${weapon.value}</div>
-                        <button class="btn item-btn" onclick="doAction('buy_weapon', {weapon_id: '${weapon.id}'})">购买</button>
+                        <button class="btn item-btn" onclick="doActionWithFeedback(this, 'buy_weapon', {weapon_id: '${weapon.id}'})">购买</button>
                     </div>
                 `;
             }
@@ -1430,7 +1613,7 @@
                             <div class="item-details">甲级:${armor.armor_class} 耐久:${armor.durability}</div>
                         </div>
                         <div class="item-price">$${armor.value}</div>
-                        <button class="btn item-btn" onclick="doAction('buy_armor', {armor_id: '${armor.id}'})">购买</button>
+                        <button class="btn item-btn" onclick="doActionWithFeedback(this, 'buy_armor', {armor_id: '${armor.id}'})">购买</button>
                     </div>
                 `;
             }
@@ -1449,7 +1632,7 @@
                                 <div class="item-details">甲级:${helmet.armor_class} 耐久:${helmet.durability}</div>
                             </div>
                             <div class="item-price">$${helmet.value}</div>
-                            <button class="btn item-btn" onclick="doAction('buy_helmet', {helmet_id: '${helmet.id}'})">购买</button>
+                            <button class="btn item-btn" onclick="doActionWithFeedback(this, 'buy_helmet', {helmet_id: '${helmet.id}'})">购买</button>
                         </div>
                     `;
                 }
@@ -1533,6 +1716,7 @@
         function renderStashPage() {
             if (!gameState) return;
             document.getElementById('stash-money').textContent = gameState.player.money;
+            document.getElementById('stash-total-value').textContent = gameState.stash_total_value || 0;
 
             const equippedWeaponId = gameState.equipment.weapon_id;
             const equippedArmorId = gameState.equipment.armor_id;
@@ -1565,27 +1749,45 @@
                     <div style="background: #1a1a2e; padding: 8px; border-radius: 6px; text-align: center;">
                         <div style="font-size: 0.7em; color: #aaa;">🎒 背包</div>
                         <div style="color: #fff; font-size: 0.85em; margin: 4px 0;">${gameState.equipment.backpack_name || '无'}</div>
-                        <div style="color: #ffd700; font-size: 0.65em;">${gameState.backpack ? gameState.backpack.length : 0}/${gameState.equipment.backpack_capacity || 0}</div>
+                        <div style="color: #ffd700; font-size: 0.65em;">${gameState.equipment.backpack_used_slots || 0}/${gameState.equipment.backpack_capacity || 0}格</div>
                     </div>
                 </div>
+                const rarityClass = (rarity) => {
+                    return rarity === '灰色' ? 'common' :
+                           rarity === '绿色' ? 'uncommon' :
+                           rarity === '蓝色' ? 'rare' :
+                           rarity === '紫色' ? 'epic' : 'legendary';
+                };
+
+                let backpackItemsHtml = '';
+                if (gameState.backpack && gameState.backpack.length > 0) {
+                    for (const item of gameState.backpack) {
+                        backpackItemsHtml += `
+                            <div class="item-card ${rarityClass(item.rarity)}" style="padding: 4px 8px;">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="font-size: 0.7em;">[${item.rarity}] ${item.name}</span>
+                                    <span style="color: #ffd700; font-size: 0.6em;">💰${item.value}</span>
+                                </div>
+                                <div style="display: flex; gap: 4px; margin-top: 4px;">
+                                    <button class="btn btn-secondary" style="font-size: 0.55em; padding: 1px 4px;" onclick="doActionWithFeedback(this, 'move_to_stash', {item_id: '${item.id}'})">存仓</button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                } else {
+                    backpackItemsHtml = '<span style="color: #666; font-size: 0.65em;">(空)</span>';
+                }
+                html += `
                 <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #333;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                         <span style="font-size: 0.75em; color: #aaa;">📦 背包物品</span>
-                        ${gameState.backpack && gameState.backpack.length > 0 ? `<button class="btn btn-secondary" style="font-size: 0.6em; padding: 2px 6px;" onclick="if(confirm('确定清空背包？')) doAction('clear_backpack')">一键清空</button>` : ''}
+                        ${gameState.backpack && gameState.backpack.length > 0 ? `<button class="btn btn-secondary" style="font-size: 0.6em; padding: 2px 6px;" onclick="if(confirm('确定将所有物品移至仓库？')) doAction('clear_backpack')">一键转移</button>` : ''}
                     </div>
                     <div style="display: flex; flex-wrap: wrap; gap: 4px; max-height: 100px; overflow-y: auto;">
-                        ${gameState.backpack && gameState.backpack.length > 0 ?
-                            gameState.backpack.map(item => `
-                                <div style="background: #2a2a3e; padding: 4px 8px; border-radius: 4px; display: flex; align-items: center; gap: 6px;">
-                                    <span style="font-size: 0.65em; color: #ccc;">${item.name}</span>
-                                    <button class="btn btn-secondary" style="font-size: 0.55em; padding: 1px 4px;" onclick="doAction('drop_backpack_item', {item_id: '${item.id}'})">丢弃</button>
-                                    <button class="btn btn-secondary" style="font-size: 0.55em; padding: 1px 4px;" onclick="doAction('move_to_stash', {item_id: '${item.id}'})">存仓</button>
-                                </div>
-                            `).join('') :
-                            '<span style="color: #666; font-size: 0.65em;">(空)</span>'
-                        }
+                        ${backpackItemsHtml}
                     </div>
                 </div>
+                `;
             `;
             document.getElementById('stash-equipped-panel').innerHTML = equippedHtml;
 
@@ -1602,8 +1804,8 @@
                                 <div class="item-details">伤害:${weapon.damage} 命中:${Math.round(weapon.accuracy*100)}% [${weapon.ammo_type}]</div>
                             </div>
                             ${!isEquipped ? `<div class="item-price">$${Math.floor(weapon.value/2)}</div>` : ''}
-                            ${!isEquipped ? `<button class="btn item-btn" onclick="doAction('equip_weapon', {weapon_id: '${weapon.id}'})">装备</button>` : ''}
-                            ${!isEquipped ? `<button class="btn item-btn btn-secondary" onclick="doAction('sell_weapon', {weapon_id: '${weapon.id}'})">出售</button>` : ''}
+                            ${!isEquipped ? `<button class="btn item-btn" onclick="doActionWithFeedback(this, 'equip_weapon', {weapon_id: '${weapon.id}'})">装备</button>` : ''}
+                            ${!isEquipped ? `<button class="btn item-btn btn-secondary" onclick="doActionWithFeedback(this, 'sell_weapon', {weapon_id: '${weapon.id}'})">出售</button>` : ''}
                         </div>
                     `;
                 }
@@ -1622,8 +1824,8 @@
                                 <div class="item-details">甲级:${armor.armor_class} 耐久:${armor.durability}/${armor.max_durability}</div>
                             </div>
                             ${!isEquipped ? `<div class="item-price">$${Math.floor(armor.value/2)}</div>` : ''}
-                            ${!isEquipped ? `<button class="btn item-btn" onclick="doAction('equip_armor', {armor_id: '${armor.id}'})">装备</button>` : ''}
-                            ${!isEquipped ? `<button class="btn item-btn btn-secondary" onclick="doAction('sell_armor', {armor_id: '${armor.id}'})">出售</button>` : ''}
+                            ${!isEquipped ? `<button class="btn item-btn" onclick="doActionWithFeedback(this, 'equip_armor', {armor_id: '${armor.id}'})">装备</button>` : ''}
+                            ${!isEquipped ? `<button class="btn item-btn btn-secondary" onclick="doActionWithFeedback(this, 'sell_armor', {armor_id: '${armor.id}'})">出售</button>` : ''}
                         </div>
                     `;
                 }
@@ -1656,6 +1858,13 @@
             let ammoHtml = '<p style="color:#666">仓库为空</p>';
             let otherHtml = '<p style="color:#666">仓库为空</p>';
 
+            const rarityClass = (rarity) => {
+                return rarity === '灰色' ? 'common' :
+                       rarity === '绿色' ? 'uncommon' :
+                       rarity === '蓝色' ? 'rare' :
+                       rarity === '紫色' ? 'epic' : 'legendary';
+            };
+
             if (gameState.stash_items && gameState.stash_items.length > 0) {
                 const medicalItems = gameState.stash_items.filter(i => i.type === '医疗');
                 const repairItems = gameState.stash_items.filter(i => i.type === '护甲修理');
@@ -1664,12 +1873,13 @@
 
                 if (medicalItems.length > 0) {
                     medicalHtml = medicalItems.map(item => `
-                        <div class="item-card">
+                        <div class="item-card ${rarityClass(item.rarity)}">
                             <div class="item-info">
-                                <div class="item-name">${item.name}</div>
+                                <div class="item-name">[${item.rarity}] ${item.name}</div>
                                 <div class="item-details">${item.description || ''}</div>
                             </div>
                             <div class="item-price">$${Math.floor(item.value/2)}</div>
+                            <button class="btn item-btn" onclick="doAction('move_to_backpack', {item_id: '${item.id}'})">背包</button>
                             <button class="btn item-btn btn-secondary" onclick="doAction('sell_item', {item_id: '${item.id}'})">出售</button>
                         </div>
                     `).join('');
@@ -1677,12 +1887,13 @@
 
                 if (repairItems.length > 0) {
                     repairHtml = repairItems.map(item => `
-                        <div class="item-card">
+                        <div class="item-card ${rarityClass(item.rarity)}">
                             <div class="item-info">
-                                <div class="item-name">${item.name}</div>
+                                <div class="item-name">[${item.rarity}] ${item.name}</div>
                                 <div class="item-details">${item.description || ''}</div>
                             </div>
                             <div class="item-price">$${Math.floor(item.value/2)}</div>
+                            <button class="btn item-btn" onclick="doAction('move_to_backpack', {item_id: '${item.id}'})">背包</button>
                             <button class="btn item-btn btn-secondary" onclick="doAction('sell_item', {item_id: '${item.id}'})">出售</button>
                         </div>
                     `).join('');
@@ -1690,11 +1901,12 @@
 
                 if (ammoItems.length > 0) {
                     ammoHtml = ammoItems.map(item => `
-                        <div class="item-card">
+                        <div class="item-card ${rarityClass(item.rarity)}">
                             <div class="item-info">
-                                <div class="item-name">${item.name}</div>
+                                <div class="item-name">[${item.rarity}] ${item.name}</div>
                             </div>
                             <div class="item-price">$${Math.floor(item.value/2)}</div>
+                            <button class="btn item-btn" onclick="doAction('move_to_backpack', {item_id: '${item.id}'})">背包</button>
                             <button class="btn item-btn btn-secondary" onclick="doAction('sell_item', {item_id: '${item.id}'})">出售</button>
                         </div>
                     `).join('');
@@ -1702,12 +1914,13 @@
 
                 if (otherItems.length > 0) {
                     otherHtml = otherItems.map(item => `
-                        <div class="item-card">
+                        <div class="item-card ${rarityClass(item.rarity)}">
                             <div class="item-info">
-                                <div class="item-name">${item.name}</div>
+                                <div class="item-name">[${item.rarity}] ${item.name}</div>
                                 <div class="item-details">${item.description || ''}</div>
                             </div>
                             <div class="item-price">$${Math.floor(item.value/2)}</div>
+                            <button class="btn item-btn" onclick="doAction('move_to_backpack', {item_id: '${item.id}'})">背包</button>
                             <button class="btn item-btn btn-secondary" onclick="doAction('sell_item', {item_id: '${item.id}'})">出售</button>
                         </div>
                     `).join('');
@@ -1806,25 +2019,82 @@
         function renderInventory() {
             document.getElementById('backpack-value').textContent = `(💰${gameState.backpack_value})`;
 
-            let html = '';
-            if (gameState.backpack.length === 0) {
-                html = '<p style="color: #666; font-size: 0.85em;">(空)</p>';
+            // 判断是否在行动中（显示按钮）
+            const inRaid = gameState.game_state === 'raid' || gameState.game_state === 'combat';
+
+            // 分离消耗品和物资
+            const consumables = [];
+            const lootItems = [];
+
+            for (const item of gameState.backpack) {
+                if (item.type === '医疗' || item.type === '护甲修理' || item.type === '子弹' || item.type === '消耗品' || item.type === '药物' || item.type === '食物' || item.type === '饮品') {
+                    consumables.push(item);
+                } else {
+                    lootItems.push(item);
+                }
+            }
+
+            const rarityClass = (rarity) => {
+                return rarity === '灰色' ? 'common' :
+                       rarity === '绿色' ? 'uncommon' :
+                       rarity === '蓝色' ? 'rare' :
+                       rarity === '紫色' ? 'epic' : 'legendary';
+            };
+
+            // 渲染消耗品层
+            let consumablesHtml = '';
+            if (consumables.length === 0) {
+                consumablesHtml = '<p style="color: #666; font-size: 0.75em;">(空)</p>';
             } else {
-                for (const item of gameState.backpack) {
-                    const rarityClass = item.rarity === '灰色' ? 'common' :
-                                       item.rarity === '绿色' ? 'uncommon' :
-                                       item.rarity === '蓝色' ? 'rare' :
-                                       item.rarity === '紫色' ? 'epic' : 'legendary';
-                    html += `
-                        <div class="inventory-item ${rarityClass}">
+                for (const item of consumables) {
+                    const buttons = inRaid ?
+                        `<button class="btn btn-secondary" style="font-size: 0.6em; padding: 1px 4px; margin-left: 4px;" onclick="doActionWithFeedback(this, 'use_item', {item_id: '${item.id}'})">使用</button>
+                         <button class="btn btn-secondary" style="font-size: 0.6em; padding: 1px 4px;" onclick="doActionWithFeedback(this, 'drop_backpack_item', {item_id: '${item.id}'})">丢弃</button>` : '';
+                    consumablesHtml += `
+                        <div class="inventory-item ${rarityClass(item.rarity)}" style="font-size: 0.8em; padding: 3px 6px; margin: 2px 0;">
                             <span>[${item.rarity}] ${item.name}</span>
-                            <span style="color: #ffd700;">${item.value}</span>
+                            ${buttons}
                         </div>
                     `;
                 }
             }
+            document.getElementById('consumables-content').innerHTML = consumablesHtml;
 
-            document.getElementById('inventory-content').innerHTML = html;
+            // 渲染物资层
+            let lootHtml = '';
+            if (lootItems.length === 0) {
+                lootHtml = '<p style="color: #666; font-size: 0.75em;">(空)</p>';
+            } else {
+                for (const item of lootItems) {
+                    const dropBtn = inRaid ?
+                        `<button class="btn btn-secondary" style="font-size: 0.6em; padding: 1px 4px; margin-left: 4px;" onclick="doAction('drop_backpack_item', {item_id: '${item.id}'})">丢弃</button>` : '';
+                    lootHtml += `
+                        <div class="inventory-item ${rarityClass(item.rarity)}" style="font-size: 0.8em; padding: 3px 6px; margin: 2px 0;">
+                            <span>[${item.rarity}] ${item.name} <span style="color: #ffd700;">💰${item.value}</span></span>
+                            ${dropBtn}
+                        </div>
+                    `;
+                }
+            }
+            document.getElementById('loot-content').innerHTML = lootHtml;
+
+            // 渲染区域战利品面板
+            const zoneLootPanel = document.getElementById('zone-loot-panel');
+            if (gameState.raid && gameState.raid.zone_loot && gameState.raid.zone_loot.length > 0) {
+                zoneLootPanel.style.display = 'block';
+                let zoneLootHtml = '';
+                for (const item of gameState.raid.zone_loot) {
+                    zoneLootHtml += `
+                        <div class="inventory-item ${rarityClass(item.rarity)}" style="font-size: 0.8em; padding: 3px 6px; margin: 2px 0; background: rgba(0,80,0,0.3);">
+                            <span>[${item.rarity}] ${item.name} <span style="color: #ffd700;">💰${item.value}</span></span>
+                            <button class="btn" style="font-size: 0.6em; padding: 1px 4px; margin-left: 4px; background: #4ecdc4;" onclick="doActionWithFeedback(this, 'pickup_loot', {loot_id: '${item.id}'})">拾取</button>
+                        </div>
+                    `;
+                }
+                document.getElementById('zone-loot-content').innerHTML = zoneLootHtml;
+            } else {
+                zoneLootPanel.style.display = 'none';
+            }
         }
 
         // 初始化

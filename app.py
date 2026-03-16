@@ -177,6 +177,7 @@ def get_state():
             'helmet_id': game.player.equipment.helmet.id if game.player.equipment.helmet else None,
             'backpack_name': '标准背包',
             'backpack_capacity': game.player.equipment.backpack.rows * game.player.equipment.backpack.cols,
+            'backpack_used_slots': game.player.equipment.backpack.get_used_slots(),
         },
         'stash_weapons': [],
         'stash_armors': [],
@@ -290,10 +291,26 @@ def get_state():
 
     # 仓库物品（医疗、护甲修理、子弹、其他）
     state['stash_items'] = []
+
+    # 计算仓库物品总价值
+    stash_total_value = 0
+    for weapon in game.player.stash_weapons:
+        stash_total_value += weapon.value
+    for armor in game.player.stash_armors:
+        stash_total_value += armor.value
+    for helmet in game.player.stash_helmets:
+        stash_total_value += helmet.value
     for item in game.player.stash_items:
+        stash_total_value += item.value
+
+    state['stash_total_value'] = stash_total_value
+
+    for item in game.player.stash_items:
+        item_type = '其他'
+        rarity_name = item.rarity.cn_name if hasattr(item.rarity, 'cn_name') else str(item.rarity)
+
+        # 处理Consumable类型
         if isinstance(item, g.Consumable):
-            # 确定物品分类
-            item_type = '其他'
             effect = item.effect or {}
             if 'heal' in effect or 'stop_bleed' in effect or 'regen' in effect:
                 item_type = '医疗'
@@ -303,15 +320,18 @@ def get_state():
                 item_type = '子弹'
             elif 'energy' in effect or 'hydration' in effect:
                 item_type = '消耗品'
+        # 处理LootItem类型
+        elif hasattr(item, 'item_type'):
+            item_type = item.item_type or '其他'
 
-            state['stash_items'].append({
-                'id': item.id,
-                'name': item.name,
-                'type': item_type,
-                'value': item.value,
-                'rarity': item.rarity.cn_name,
-                'description': item.description if hasattr(item, 'description') else ''
-            })
+        state['stash_items'].append({
+            'id': item.id,
+            'name': item.name,
+            'type': item_type,
+            'value': item.value,
+            'rarity': rarity_name,
+            'description': item.description if hasattr(item, 'description') else ''
+        })
 
     # 商店配件
     state['shop_attachments'] = []
@@ -474,8 +494,21 @@ def get_state():
             'active_extraction_name': game.current_raid.zones[game.current_raid.active_extraction]['name'] if game.current_raid.active_extraction else '',
             'zones': map_zones,
             'connections': [],
-            'events': [e['message'] for e in game.current_raid.pending_events] if game.current_raid.pending_events else []
+            'events': [e['message'] for e in game.current_raid.pending_events] if game.current_raid.pending_events else [],
+            'zone_loot': []
         }
+
+        # 当前区域战利品
+        zone_loot = zone.get("loot", [])
+        for loot_entry in zone_loot:
+            item_data = loot_entry.get("data", {})
+            state['raid']['zone_loot'].append({
+                'id': loot_entry["id"],
+                'name': item_data.get("name", "未知物品"),
+                'rarity': item_data.get("rarity", g.Rarity.COMMON).cn_name if hasattr(item_data.get("rarity", g.Rarity.COMMON), 'cn_name') else item_data.get("rarity", "灰色"),
+                'value': item_data.get("value", 0),
+                'type': item_data.get("type", "物资")
+            })
 
         for conn_id in zone.get('connections', []):
             conn_zone = game.current_raid.get_zone(conn_id)
@@ -698,6 +731,28 @@ def do_action():
         result['success'] = True
         result['message'] = '新游戏开始'
 
+    elif action == 'welfare':
+        # 低保功能：总资产低于5000时可领取10000元
+        # 计算总资产
+        total_assets = game.player.stats.money
+        for weapon in game.player.stash_weapons:
+            total_assets += weapon.value
+        for armor in game.player.stash_armors:
+            total_assets += armor.value
+        for helmet in game.player.stash_helmets:
+            total_assets += helmet.value
+        for item in game.player.stash_items:
+            total_assets += item.value
+
+        if total_assets >= 5000:
+            result['success'] = False
+            result['message'] = f'总资产为{total_assets}，不低于5000，无法领取低保！'
+        else:
+            game.player.stats.money += 10000
+            game.add_message(f'领取低保成功！获得10000元。当前余额：{game.player.stats.money}')
+            result['success'] = True
+            result['message'] = '领取低保成功！获得10000元'
+
     # 商店操作
     elif action == 'buy_weapon':
         weapon_id = params.get('weapon_id')
@@ -824,6 +879,13 @@ def do_action():
             result['success'] = success
             result['message'] = msg
 
+    elif action == 'pickup_loot':
+        loot_id = params.get('loot_id')
+        if loot_id:
+            success, msg = game.pickup_loot(loot_id)
+            result['success'] = success
+            result['message'] = msg
+
     elif action == 'clear_backpack':
         msg = game.clear_backpack()
         result['success'] = True
@@ -833,6 +895,13 @@ def do_action():
         item_id = params.get('item_id')
         if item_id:
             success, msg = game.move_to_stash(item_id)
+            result['success'] = success
+            result['message'] = msg
+
+    elif action == 'move_to_backpack':
+        item_id = params.get('item_id')
+        if item_id:
+            success, msg = game.move_to_backpack(item_id)
             result['success'] = success
             result['message'] = msg
 

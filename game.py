@@ -2753,28 +2753,52 @@ class Backpack:
         self.grid = [[None for _ in range(cols)] for _ in range(rows)]
         self.items: Dict[str, Item] = {}
 
+    def get_total_capacity(self) -> int:
+        """获取背包总容量"""
+        return self.rows * self.cols
+
+    def get_used_slots(self) -> int:
+        """获取已使用的格子数"""
+        used = 0
+        for item in self.items.values():
+            used += getattr(item, 'grid', 1)
+        return used
+
+    def get_free_slots(self) -> int:
+        """获取剩余空闲格子数"""
+        return self.get_total_capacity() - self.get_used_slots()
+
     def can_fit(self, item: Item) -> bool:
-        """检查是否能放入物品"""
-        for row in range(self.rows):
-            for col in range(self.cols):
-                if self.grid[row][col] is None:
-                    return True
-        return False
+        """检查是否能放入物品（考虑物品占用的格子数）"""
+        grid_size = getattr(item, 'grid', 1) if item else 1
+        return self.get_free_slots() >= grid_size
 
     def add_item(self, item: Item) -> bool:
-        """添加物品到背包"""
+        """添加物品到背包（占用grid指定的格子数）"""
+        grid_size = getattr(item, 'grid', 1)
+        if self.get_free_slots() < grid_size:
+            return False
+
+        # 找到足够的空格子并标记
+        slots_needed = grid_size
         for row in range(self.rows):
             for col in range(self.cols):
                 if self.grid[row][col] is None:
                     self.grid[row][col] = item.id
-                    self.items[item.id] = item
-                    return True
-        return False
+                    slots_needed -= 1
+                    if slots_needed == 0:
+                        break
+            if slots_needed == 0:
+                break
+
+        self.items[item.id] = item
+        return True
 
     def remove_item(self, item_id: str) -> Optional[Item]:
-        """从背包移除物品"""
+        """从背包移除物品（释放所有占用的格子）"""
         if item_id in self.items:
             item = self.items.pop(item_id)
+            # 释放所有该物品占用的格子
             for row in range(self.rows):
                 for col in range(self.cols):
                     if self.grid[row][col] == item_id:
@@ -3769,33 +3793,8 @@ class Game:
             self.add_message(msg)
             return True, msg
 
-        # 发现物品
-        found_items = []
-        for loot_entry in loot[:]:  # 使用副本迭代
-            item_data = loot_entry["data"]
-
-            if self.player.equipment.backpack.can_fit(None):
-                item = LootItem(
-                    id=loot_entry["id"],
-                    name=item_data["name"],
-                    weight=0.1,  # 战利品重量忽略
-                    grid=item_data.get("grid", 1),
-                    value=item_data["value"],
-                    rarity=item_data["rarity"],
-                    item_type=item_data.get("type", "物资"),
-                    description=item_data.get("description", "")
-                )
-                self.player.equipment.backpack.add_item(item)
-                found_items.append(item)
-                zone["loot"].remove(loot_entry)
-
-        if found_items:
-            msg = f"你发现了 {len(found_items)} 件物品：\n"
-            for item in found_items:
-                msg += f"  - [{item.rarity.cn_name}]{item.name} (价值: {item.value})\n"
-        else:
-            msg = "你的背包已满，无法携带更多物品。"
-
+        # 不自动拾取，只提示发现了物品
+        msg = f"你发现了 {len(loot)} 件物品！点击拾取按钮将物品放入背包。"
         self.add_message(msg)
 
         # 时间流逝
@@ -4048,8 +4047,16 @@ class Game:
         self.player.total_loot_value += loot_value
         self.player.stats.money += loot_value
 
+        # 将背包物品移入仓库
+        backpack_items = self.player.equipment.backpack.get_all_items()
+        for item in backpack_items:
+            self.player.stash_items.append(item)
+        self.player.equipment.backpack.clear()
+
         msg = f"=== 撤离成功 ===\n"
         msg += f"获得物资价值: {loot_value}\n"
+        if backpack_items:
+            msg += f"物品已存入仓库: {len(backpack_items)} 件\n"
         msg += f"当前余额: {self.player.stats.money}"
         self.add_message(msg)
 
@@ -4228,10 +4235,64 @@ class Game:
         return "\n".join(msgs) if msgs else "没有可卸下的装备"
 
     def drop_backpack_item(self, item_id: str) -> Tuple[bool, str]:
-        """丢弃背包中的物品"""
+        """丢弃背包中的物品到当前区域"""
         item = self.player.equipment.backpack.remove_item(item_id)
         if item:
+            # 将物品放入当前区域的战利品列表
+            if self.state == GameState.RAID and self.current_raid:
+                zone = self.current_raid.get_zone(self.player.current_zone)
+                if zone:
+                    if "loot" not in zone:
+                        zone["loot"] = []
+                    zone["loot"].append({
+                        "id": item.id,
+                        "item_id": item.id,
+                        "data": {
+                            "name": item.name,
+                            "weight": item.weight,
+                            "value": item.value,
+                            "rarity": item.rarity,
+                            "type": getattr(item, 'item_type', '物资'),
+                            "description": getattr(item, 'description', ''),
+                            "grid": getattr(item, 'grid', 1)
+                        }
+                    })
             return True, f"丢弃了 {item.name}"
+        return False, "找不到该物品"
+
+    def pickup_loot(self, loot_id: str) -> Tuple[bool, str]:
+        """从当前区域拾取物品到背包"""
+        if self.state != GameState.RAID:
+            return False, "当前不在行动中！"
+
+        zone = self.current_raid.get_zone(self.player.current_zone)
+        if not zone:
+            return False, "区域错误！"
+
+        loot_list = zone.get("loot", [])
+        for loot_entry in loot_list[:]:
+            if loot_entry["id"] == loot_id:
+                item_data = loot_entry["data"]
+                item = LootItem(
+                    id=loot_entry["id"],
+                    name=item_data["name"],
+                    weight=item_data.get("weight", 0.1),
+                    value=item_data["value"],
+                    rarity=item_data["rarity"],
+                    item_type=item_data.get("type", "物资"),
+                    description=item_data.get("description", ""),
+                    grid=item_data.get("grid", 1)
+                )
+
+                # 检查背包容量（考虑物品占用格子数）
+                if not self.player.equipment.backpack.can_fit(item):
+                    free = self.player.equipment.backpack.get_free_slots()
+                    return False, f"背包容量不足！需要 {item.grid} 格，剩余 {free} 格"
+
+                self.player.equipment.backpack.add_item(item)
+                zone["loot"].remove(loot_entry)
+                return True, f"拾取了 {item.name} ({item.grid}格)"
+
         return False, "找不到该物品"
 
     def move_to_stash(self, item_id: str) -> Tuple[bool, str]:
@@ -4240,6 +4301,18 @@ class Game:
         if item:
             self.player.stash_items.append(item)
             return True, f"{item.name} 已移至仓库"
+        return False, "找不到该物品"
+
+    def move_to_backpack(self, item_id: str) -> Tuple[bool, str]:
+        """将仓库物品移到背包"""
+        for item in self.player.stash_items[:]:
+            if item.id == item_id:
+                if not self.player.equipment.backpack.can_fit(item):
+                    free = self.player.equipment.backpack.get_free_slots()
+                    return False, f"背包容量不足！需要 {item.grid} 格，剩余 {free} 格"
+                self.player.stash_items.remove(item)
+                self.player.equipment.backpack.add_item(item)
+                return True, f"{item.name} 已放入背包"
         return False, "找不到该物品"
 
     def clear_backpack(self) -> str:
