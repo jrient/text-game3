@@ -75,24 +75,45 @@
 
 ## 安装运行
 
+### 方式一：Docker部署（推荐）
+
 ```bash
 # 克隆项目
 git clone https://github.com/yourusername/text-game3.git
 cd text-game3
 
-# 运行游戏
+# 构建并运行
+docker compose up -d
+
+# 访问游戏
+# 浏览器打开 http://localhost:5001
+```
+
+### 方式二：直接运行
+
+```bash
+# 安装依赖
+pip install flask
+
+# 运行Web版本
+python3 app.py
+
+# 或运行命令行版本
 python3 game.py
 ```
 
 ## 技术架构
 
 - **语言**: Python 3
-- **架构**: 单文件模块化设计
+- **Web框架**: Flask
+- **架构**: 模块化设计
+- **部署**: Docker支持
 - **核心模块**:
+  - `game.py` - 游戏核心逻辑
+  - `app.py` - Flask Web服务
   - `Game` - 游戏主控制器
   - `Player` - 玩家数据
   - `Raid` - 行动管理
-  - `GameUI` - 用户界面
 
 ## 开发计划
 

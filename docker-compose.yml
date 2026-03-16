@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  dark-zone:
+    build: .
+    container_name: dark-zone-game
+    ports:
+      - "5001:5000"
+    environment:
+      - SECRET_KEY=dark-zone-secret-key-change-in-production
+      - FLASK_ENV=production
+    restart: unless-stopped
+    networks:
+      - game-network
+
+networks:
+  game-network:
+    driver: bridge

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>暗区文字 - Dark Zone: Text</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #e94560;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            color: #e94560;
+            text-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
+        }
+
+        header p {
+            color: #888;
+            margin-top: 10px;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            gap: 20px;
+        }
+
+        .panel {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .panel h2 {
+            font-size: 1.2em;
+            color: #e94560;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* 状态栏 */
+        .stat-bar {
+            margin: 10px 0;
+        }
+
+        .stat-bar label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .bar-container {
+            background: #222;
+            border-radius: 5px;
+            height: 20px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .bar-hp { background: linear-gradient(90deg, #e94560, #ff6b6b); }
+        .bar-ap { background: linear-gradient(90deg, #4ecdc4, #44a08d); }
+        .bar-xp { background: linear-gradient(90deg, #f9d423, #ff4e50); }
+
+        /* 身体部位 */
+        .body-parts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .body-part {
+            background: #1a1a2e;
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 0.8em;
+        }
+
+        .body-part.damaged {
+            border: 1px solid #e94560;
+        }
+
+        .body-part.broken {
+            border: 1px solid #ff0000;
+            background: rgba(255, 0, 0, 0.2);
+        }
+
+        /* 主游戏区域 */
+        .main-area {
+            min-height: 500px;
+        }
+
+        .zone-info {
+            background: rgba(233, 69, 96, 0.1);
+            border-left: 4px solid #e94560;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .zone-info h3 {
+            color: #e94560;
+            margin-bottom: 10px;
+        }
+
+        .danger-level {
+            color: #ffd700;
+        }
+
+        /* 消息日志 */
+        .message-log {
+            background: #0a0a0a;
+            border-radius: 5px;
+            padding: 15px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+
+        .message-log p {
+            margin: 5px 0;
+            padding: 5px;
+            border-bottom: 1px solid #222;
+        }
+
+        /* 按钮 */
+        .btn {
+            background: linear-gradient(135deg, #e94560, #c23a51);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(233, 69, 96, 0.4);
+        }
+
+        .btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #4a4a6a, #3a3a5a);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #44a08d, #0f3460);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff4e50, #fc4a1a);
+        }
+
+        /* 连接区域 */
+        .connections {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .connection-btn {
+            background: #1a1a2e;
+            border: 2px solid #444;
+            color: #e0e0e0;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .connection-btn:hover {
+            border-color: #e94560;
+            background: rgba(233, 69, 96, 0.2);
+        }
+
+        .connection-btn.extract {
+            border-color: #44a08d;
+            background: rgba(68, 160, 141, 0.1);
+        }
+
+        .connection-btn.extract:hover {
+            border-color: #44a08d;
+            background: rgba(68, 160, 141, 0.3);
+        }
+
+        /* 战斗界面 */
+        .combat-area {
+            text-align: center;
+        }
+
+        .enemy-info {
+            background: rgba(255, 0, 0, 0.1);
+            border: 2px solid #e94560;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .enemy-info h3 {
+            color: #e94560;
+            font-size: 1.5em;
+        }
+
+        .enemy-info.boss {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: #ffd700;
+        }
+
+        .enemy-info.boss h3 {
+            color: #ffd700;
+        }
+
+        .combat-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* 背包 */
+        .inventory {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .inventory-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1a1a2e;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 3px solid;
+        }
+
+        .inventory-item.common { border-color: #888; }
+        .inventory-item.uncommon { border-color: #4caf50; }
+        .inventory-item.rare { border-color: #2196f3; }
+        .inventory-item.epic { border-color: #9c27b0; }
+        .inventory-item.legendary { border-color: #ffd700; }
+
+        .inventory-item .item-name {
+            font-weight: bold;
+        }
+
+        .inventory-item .item-value {
+            color: #ffd700;
+        }
+
+        /* 主菜单 */
+        .main-menu {
+            text-align: center;
+            padding: 50px;
+        }
+
+        .main-menu h2 {
+            font-size: 2em;
+            margin-bottom: 30px;
+        }
+
+        .main-menu .btn {
+            display: block;
+            width: 250px;
+            margin: 15px auto;
+            padding: 15px;
+            font-size: 1.2em;
+        }
+
+        /* 基地 */
+        .base-menu .btn {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .game-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 加载动画 */
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>暗区文字</h1>
+            <p>Dark Zone: Text - 一款撤离射击文字游戏</p>
+        </header>
+
+        <div class="game-container">
+            <!-- 左侧面板 - 玩家状态 -->
+            <div class="panel" id="player-panel">
+                <h2>玩家状态</h2>
+                <div id="player-info">
+                    <p>加载中...</p>
+                </div>
+            </div>
+
+            <!-- 中间 - 主游戏区域 -->
+            <div class="panel main-area" id="main-panel">
+                <div id="game-content">
+                    <p>加载中...</p>
+                </div>
+            </div>
+
+            <!-- 右侧面板 - 背包 -->
+            <div class="panel" id="inventory-panel">
+                <h2>背包 <span id="backpack-value"></span></h2>
+                <div class="inventory" id="inventory-content">
+                    <p>加载中...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 游戏状态
+        let gameState = null;
+
+        // 更新游戏状态
+        async function updateState() {
+            try {
+                const response = await fetch('/api/state');
+                gameState = await response.json();
+                renderGame();
+            } catch (error) {
+                console.error('获取状态失败:', error);
+            }
+        }
+
+        // 执行动作
+        async function doAction(action, params = {}) {
+            try {
+                const response = await fetch('/api/action', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ action, params })
+                });
+                const result = await response.json();
+                await updateState();
+                return result;
+            } catch (error) {
+                console.error('执行动作失败:', error);
+            }
+        }
+
+        // 渲染游戏
+        function renderGame() {
+            if (!gameState) return;
+
+            renderPlayerInfo();
+            renderGameContent();
+            renderInventory();
+        }
+
+        // 渲染玩家信息
+        function renderPlayerInfo() {
+            const p = gameState.player;
+            const eq = gameState.equipment;
+
+            let html = `
+                <div class="stat-bar">
+                    <label><span>等级</span><span>${p.level}</span></label>
+                    <div class="bar-container">
+                        <div class="bar-fill bar-xp" style="width: ${(p.xp / p.xp_needed) * 100}%"></div>
+                    </div>
+                </div>
+                <div class="stat-bar">
+                    <label><span>生命值</span><span>${p.total_hp}/${p.max_hp}</span></label>
+                    <div class="bar-container">
+                        <div class="bar-fill bar-hp" style="width: ${(p.total_hp / p.max_hp) * 100}%"></div>
+                    </div>
+                </div>
+                <div class="stat-bar">
+                    <label><span>行动点</span><span>${p.action_points}/${p.max_action_points}</span></label>
+                    <div class="bar-container">
+                        <div class="bar-fill bar-ap" style="width: ${(p.action_points / p.max_action_points) * 100}%"></div>
+                    </div>
+                </div>
+                <p style="margin: 15px 0;">
+                    <span style="color: #ffd700;">💰 ${p.money} 哈夫币</span>
+                </p>
+                <p>经验: ${p.xp}/${p.xp_needed} | 击杀: ${p.kills}</p>
+                <h3 style="margin-top: 15px; color: #e94560;">装备</h3>
+                <p>🔫 ${eq.weapon || '无武器'} (${eq.weapon_ammo}/${eq.weapon_mag})</p>
+                <p>🛡️ ${eq.armor || '无护甲'} (${eq.armor_durability}/${eq.armor_max_durability})</p>
+                <h3 style="margin-top: 15px; color: #e94560;">身体部位</h3>
+                <div class="body-parts">
+            `;
+
+            for (const [key, part] of Object.entries(p.body_parts)) {
+                const statusClass = part.is_broken ? 'broken' : (part.hp < part.max_hp ? 'damaged' : '');
+                const hpPercent = (part.hp / part.max_hp) * 100;
+                html += `
+                    <div class="body-part ${statusClass}">
+                        <div>${part.name}</div>
+                        <div style="color: ${hpPercent > 50 ? '#4caf50' : hpPercent > 25 ? '#ff9800' : '#f44336'}">
+                            ${part.hp}/${part.max_hp}
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            document.getElementById('player-info').innerHTML = html;
+        }
+
+        // 渲染游戏内容
+        function renderGameContent() {
+            const state = gameState.game_state;
+            let html = '';
+
+            // 消息日志
+            if (gameState.messages && gameState.messages.length > 0) {
+                html += '<div class="message-log">';
+                for (const msg of gameState.messages) {
+                    html += `<p>${msg}</p>`;
+                }
+                html += '</div>';
+            }
+
+            switch (state) {
+                case 'main_menu':
+                    html += renderMainMenu();
+                    break;
+                case 'base':
+                    html += renderBase();
+                    break;
+                case 'raid':
+                    html += renderRaid();
+                    break;
+                case 'combat':
+                    html += renderCombat();
+                    break;
+                case 'dead':
+                    html += renderDead();
+                    break;
+                case 'extracted':
+                    html += '<div class="zone-info"><h3>撤离成功！</h3><p>正在返回基地...</p></div>';
+                    break;
+            }
+
+            document.getElementById('game-content').innerHTML = html;
+        }
+
+        // 主菜单
+        function renderMainMenu() {
+            return `
+                <div class="main-menu">
+                    <h2>欢迎来到暗区</h2>
+                    <p style="margin-bottom: 30px; color: #888;">
+                        进入危险区域，搜集高价值物资，然后撤离！<br>
+                        死亡将丢失背包中所有物品。
+                    </p>
+                    <button class="btn" onclick="doAction('new_game')">开始游戏</button>
+                    <button class="btn btn-secondary" onclick="showHelp()">游戏帮助</button>
+                </div>
+            `;
+        }
+
+        // 基地
+        function renderBase() {
+            return `
+                <div class="base-menu">
+                    <h2 style="text-align: center; margin-bottom: 20px;">基地</h2>
+                    <button class="btn" onclick="doAction('start_raid')">🏭 开始行动 (工业区)</button>
+                    <button class="btn btn-secondary" onclick="doAction('rest')">💤 休息恢复</button>
+                    <button class="btn btn-secondary" onclick="showHelp()">❓ 游戏帮助</button>
+                    <button class="btn btn-danger" onclick="doAction('new_game')">🔄 重新开始</button>
+                </div>
+            `;
+        }
+
+        // 行动中
+        function renderRaid() {
+            const raid = gameState.raid;
+            if (!raid) return '<p>加载中...</p>';
+
+            let html = `
+                <div class="zone-info">
+                    <h3>📍 ${raid.zone_name}</h3>
+                    <p>${raid.zone_description}</p>
+                    <p class="danger-level">危险等级: ${'★'.repeat(raid.danger_level)}${'☆'.repeat(5 - raid.danger_level)}</p>
+                    <p>⏱️ 回合: ${raid.time_elapsed}/${raid.max_time}</p>
+                </div>
+                <h3>可前往区域</h3>
+                <div class="connections">
+            `;
+
+            for (const conn of raid.connections) {
+                const btnClass = conn.is_extract ? 'connection-btn extract' : 'connection-btn';
+                const extractLabel = conn.is_extract ? ' [撤离点]' : '';
+                html += `
+                    <button class="${btnClass}" onclick="doAction('move', {zone_id: '${conn.id}'})">
+                        ${conn.name}${extractLabel}
+                    </button>
+                `;
+            }
+
+            html += `
+                </div>
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="doAction('search')">🔍 搜索区域</button>
+            `;
+
+            // 检查是否在撤离点
+            const currentZone = raid.connections.find(c => c.is_extract && c.id === raid.current_zone);
+            if (currentZone) {
+                html += `<button class="btn btn-success" onclick="doAction('extract')">🚁 撤离</button>`;
+            }
+
+            html += `
+                    <button class="btn btn-danger" onclick="doAction('emergency_extract')">⚠️ 紧急撤离</button>
+                </div>
+            `;
+
+            return html;
+        }
+
+        // 战斗
+        function renderCombat() {
+            const combat = gameState.combat;
+            if (!combat) return '<p>加载中...</p>';
+
+            const bossClass = combat.is_boss ? 'boss' : '';
+            const hpPercent = (combat.enemy_hp / combat.enemy_max_hp) * 100;
+
+            let html = `
+                <div class="combat-area">
+                    <h2>⚔️ 战斗中</h2>
+                    <div class="enemy-info ${bossClass}">
+                        <h3>${combat.is_boss ? '👑 ' : ''}${combat.enemy_name}</h3>
+                        <div class="stat-bar">
+                            <label><span>HP</span><span>${combat.enemy_hp}/${combat.enemy_max_hp}</span></label>
+                            <div class="bar-container">
+                                <div class="bar-fill bar-hp" style="width: ${hpPercent}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="combat-actions">
+                        <button class="btn" onclick="doAction('attack', {target: 'body'})">🎯 攻击躯干</button>
+                        <button class="btn btn-danger" onclick="doAction('attack', {target: 'head'})">💀 瞄准头部</button>
+                        <button class="btn" onclick="doAction('attack', {target: 'legs'})">🦵 瞄准腿部</button>
+                        <button class="btn btn-secondary" onclick="doAction('reload')">🔄 换弹</button>
+                        <button class="btn btn-success" onclick="doAction('heal')">💊 使用医疗</button>
+                        <button class="btn btn-danger" onclick="doAction('flee')">🏃 撤退</button>
+                    </div>
+                </div>
+            `;
+
+            return html;
+        }
+
+        // 死亡
+        function renderDead() {
+            return `
+                <div class="main-menu">
+                    <h2 style="color: #e94560;">💀 你阵亡了</h2>
+                    <p style="margin-bottom: 30px; color: #888;">
+                        你在行动中倒下，丢失了背包中的所有物品...
+                    </p>
+                    <button class="btn" onclick="doAction('return_base')">返回基地</button>
+                </div>
+            `;
+        }
+
+        // 渲染背包
+        function renderInventory() {
+            document.getElementById('backpack-value').textContent = `(价值: ${gameState.backpack_value})`;
+
+            let html = '<h3 style="color: #4a4a6a;">背包</h3>';
+
+            if (gameState.backpack.length === 0) {
+                html += '<p style="color: #666;">(空)</p>';
+            } else {
+                for (const item of gameState.backpack) {
+                    const rarityClass = item.rarity === '灰色' ? 'common' :
+                                       item.rarity === '绿色' ? 'uncommon' :
+                                       item.rarity === '蓝色' ? 'rare' :
+                                       item.rarity === '紫色' ? 'epic' : 'legendary';
+                    html += `
+                        <div class="inventory-item ${rarityClass}">
+                            <span class="item-name">[${item.rarity}] ${item.name}</span>
+                            <span class="item-value">${item.value}</span>
+                        </div>
+                    `;
+                }
+            }
+
+            html += '<h3 style="color: #4a4a6a; margin-top: 20px;">保险箱</h3>';
+            if (gameState.secure_container.length === 0) {
+                html += '<p style="color: #666;">(空)</p>';
+            } else {
+                for (const item of gameState.secure_container) {
+                    html += `<p>[${item.rarity}] ${item.name}</p>`;
+                }
+            }
+
+            document.getElementById('inventory-content').innerHTML = html;
+        }
+
+        // 显示帮助
+        function showHelp() {
+            alert(`
+【游戏目标】
+进入战区搜集高价值物资，然后成功撤离。
+
+【核心机制】
+- 撤离射击: 进入地图 → 搜刮物资 → 撤离
+- 死亡惩罚: 死亡会丢失背包中所有物品
+- 保险箱: 保险箱中的物品死亡后保留
+
+【战斗系统】
+- 身体部位: 头部(2.5x伤害)、胸部(1x)、四肢(0.7x)
+- 护甲减伤: 根据护甲等级减少伤害
+- 瞄准系统: 可选择瞄准不同部位
+
+【物品稀有度】
+灰色(普通) < 绿色 < 蓝色 < 紫色 < 金色(传说)
+            `);
+        }
+
+        // 初始化
+        updateState();
+        setInterval(updateState, 5000); // 每5秒更新状态
+    </script>
+</body>
+</html>
