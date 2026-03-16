@@ -11,9 +11,14 @@ import uuid
 import os
 import json
 import random
+import auth
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dark-zone-secret-key-2024')
+# 配置 session
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['PERMANENT_SESSION_LIFETIME'] = 86400  # 24小时
 
 # 存储游戏实例
 games = {}
@@ -21,14 +26,117 @@ SAVE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'saves')
 
 def get_game():
     """获取或创建游戏实例"""
-    if 'game_id' not in session:
-        session['game_id'] = str(uuid.uuid4())
+    # 已登录用户使用 user_{username} 作为 game_id
+    if 'username' in session:
+        game_id = f"user_{session['username']}"
+    else:
+        # 游客模式
+        if 'game_id' not in session:
+            session['game_id'] = str(uuid.uuid4())
+        game_id = session['game_id']
 
-    game_id = session['game_id']
     if game_id not in games:
         games[game_id] = g.Game()
 
     return games[game_id]
+
+
+def get_save_path(username=None):
+    """获取存档路径"""
+    if username:
+        return os.path.join(SAVE_DIR, username, 'save.json')
+    else:
+        game_id = session.get('game_id', 'default')
+        return os.path.join(SAVE_DIR, f'{game_id}.json')
+
+
+# ============ 认证路由 ============
+
+@app.route('/api/auth/register', methods=['POST'])
+def api_register():
+    """用户注册"""
+    data = request.json
+    username = data.get('username', '').strip()
+    password = data.get('password', '')
+
+    success, message = auth.register_user(username, password)
+
+    if success:
+        # 注册成功后自动登录
+        session['username'] = username
+        return jsonify({'success': True, 'message': '注册成功', 'username': username})
+    else:
+        return jsonify({'success': False, 'message': message})
+
+
+@app.route('/api/auth/login', methods=['POST'])
+def api_login():
+    """用户登录"""
+    data = request.json
+    username = data.get('username', '').strip()
+    password = data.get('password', '')
+
+    success, result = auth.login_user(username, password)
+
+    if success:
+        session['username'] = result
+        # 清除旧的游客 game_id
+        session.pop('game_id', None)
+        # 尝试加载已登录用户的存档
+        save_path = get_save_path(result)
+        if os.path.exists(save_path):
+            try:
+                with open(save_path, 'r', encoding='utf-8') as f:
+                    save_data = json.load(f)
+                game_id = f"user_{result}"
+                games[game_id] = g.load_game(save_data)
+            except Exception:
+                pass
+        return jsonify({'success': True, 'message': '登录成功', 'username': result})
+    else:
+        return jsonify({'success': False, 'message': result})
+
+
+@app.route('/api/auth/logout', methods=['POST'])
+def api_logout():
+    """用户登出"""
+    # 保存当前游戏状态
+    if 'username' in session:
+        game_id = f"user_{session['username']}"
+        if game_id in games:
+            os.makedirs(os.path.join(SAVE_DIR, session['username']), exist_ok=True)
+            save_path = get_save_path(session['username'])
+            save_data = g.save_game(games[game_id])
+            with open(save_path, 'w', encoding='utf-8') as f:
+                json.dump(save_data, f, ensure_ascii=False, indent=2)
+            # 清除内存中的游戏实例
+            del games[game_id]
+
+    session.clear()
+    return jsonify({'success': True, 'message': '已登出'})
+
+
+@app.route('/api/auth/status')
+def api_auth_status():
+    """获取登录状态"""
+    if 'username' in session:
+        username = session['username']
+        save_path = get_save_path(username)
+        has_save = os.path.exists(save_path)
+        return jsonify({
+            'logged_in': True,
+            'username': username,
+            'has_save': has_save
+        })
+    else:
+        return jsonify({
+            'logged_in': False,
+            'username': None,
+            'has_save': False
+        })
+
+
+# ============ 页面路由 ============
 
 @app.route('/')
 def index():
@@ -60,13 +168,19 @@ def get_state():
             'weapon_id': game.player.equipment.primary_weapon.id if game.player.equipment.primary_weapon else None,
             'weapon_ammo': game.player.equipment.primary_weapon.current_ammo if game.player.equipment.primary_weapon else 0,
             'weapon_mag': game.player.equipment.primary_weapon.mag_size if game.player.equipment.primary_weapon else 0,
+            'weapon_ammo_type': game.player.equipment.primary_weapon.ammo_type if game.player.equipment.primary_weapon else None,
             'armor': game.player.equipment.armor.name if game.player.equipment.armor else None,
             'armor_id': game.player.equipment.armor.id if game.player.equipment.armor else None,
             'armor_durability': game.player.equipment.armor.durability if game.player.equipment.armor else 0,
             'armor_max_durability': game.player.equipment.armor.max_durability if game.player.equipment.armor else 0,
+            'helmet': game.player.equipment.helmet.name if game.player.equipment.helmet else None,
+            'helmet_id': game.player.equipment.helmet.id if game.player.equipment.helmet else None,
+            'backpack_name': '标准背包',
+            'backpack_capacity': game.player.equipment.backpack.rows * game.player.equipment.backpack.cols,
         },
         'stash_weapons': [],
         'stash_armors': [],
+        'stash_helmets': [],
         'shop_weapons': [],
         'shop_armors': [],
         'backpack': [],
@@ -99,6 +213,18 @@ def get_state():
             'max_durability': armor.max_durability,
             'value': armor.value,
             'rarity': armor.rarity.cn_name
+        })
+
+    # 仓库头盔
+    for helmet in game.player.stash_helmets:
+        state['stash_helmets'].append({
+            'id': helmet.id,
+            'name': helmet.name,
+            'armor_class': helmet.armor_class,
+            'durability': helmet.durability,
+            'max_durability': helmet.max_durability,
+            'value': helmet.value,
+            'rarity': helmet.rarity.cn_name
         })
 
     # 商店武器
@@ -161,6 +287,58 @@ def get_state():
     state['equipment']['helmet'] = game.player.equipment.helmet.name if game.player.equipment.helmet else None
     state['equipment']['helmet_id'] = game.player.equipment.helmet.id if game.player.equipment.helmet else None
 
+    # 仓库物品（医疗、护甲修理、子弹、其他）
+    state['stash_items'] = []
+    for item in game.player.stash_items:
+        if isinstance(item, g.Consumable):
+            # 确定物品分类
+            item_type = '其他'
+            effect = item.effect or {}
+            if 'heal' in effect or 'stop_bleed' in effect or 'regen' in effect:
+                item_type = '医疗'
+            elif 'repair_armor' in effect:
+                item_type = '护甲修理'
+            elif 'reload_weapon' in effect or 'ammo_type' in effect:
+                item_type = '子弹'
+            elif 'energy' in effect or 'hydration' in effect:
+                item_type = '消耗品'
+
+            state['stash_items'].append({
+                'id': item.id,
+                'name': item.name,
+                'type': item_type,
+                'value': item.value,
+                'rarity': item.rarity.cn_name,
+                'description': item.description if hasattr(item, 'description') else ''
+            })
+
+    # 商店配件
+    state['shop_attachments'] = []
+    for aid, adata in g.ATTACHMENTS.items():
+        state['shop_attachments'].append({
+            'id': aid,
+            'name': adata['name'],
+            'slot': adata['slot'],
+            'effects': adata['effects'],
+            'value': adata['value'],
+            'rarity': adata['rarity'].cn_name,
+            'description': adata['description']
+        })
+
+    # 当前武器配件
+    weapon = game.player.equipment.primary_weapon
+    if weapon:
+        state['equipment']['attachments'] = {}
+        for slot, att_id in weapon.attachments.items():
+            att = g.ATTACHMENTS.get(att_id, {})
+            state['equipment']['attachments'][slot] = {
+                'id': att_id,
+                'name': att.get('name', att_id),
+                'effects': att.get('effects', {})
+            }
+        state['equipment']['effective_accuracy'] = round(weapon.get_effective_accuracy(), 2)
+        state['equipment']['effective_fire_rate'] = weapon.get_effective_fire_rate()
+
     # 商店背包
     state['shop_backpacks'] = []
     for bid, bdata in g.BACKPACKS.items():
@@ -173,6 +351,16 @@ def get_state():
             'value': bdata['value'],
             'rarity': bdata['rarity'].cn_name,
             'description': bdata['description']
+        })
+
+    # 可用地图
+    state['available_maps'] = []
+    for map_id, map_data in g.ALL_MAPS.items():
+        state['available_maps'].append({
+            'id': map_id,
+            'name': map_data['name'],
+            'description': map_data['description'],
+            'zone_count': len([z for z in map_data['zones'].values() if not z.get('is_spawn') and not z.get('is_extract')]),
         })
 
     # 商店消耗品（医疗和修理工具）
@@ -196,30 +384,49 @@ def get_state():
         'slots': game.player.equipment.backpack.rows * game.player.equipment.backpack.cols
     }
 
-    # 身体部位状态（简化为头/胸/腿）
-    for zone in g.DamageZone:
-        part = game.player.stats.get_body_part(zone)
+    # 身体部位护甲状态（HP是整体的，只有护甲分部位）
+    for zone in [g.DamageZone.HEAD, g.DamageZone.CHEST, g.DamageZone.LEGS]:
         armor = game.player.stats.get_armor(zone)
         state['player']['body_parts'][zone.name.lower()] = {
             'name': zone.cn_name,
-            'hp': part.hp,
-            'max_hp': part.max_hp,
-            'is_broken': part.is_broken,
-            'is_bleeding': part.is_bleeding,
-            'bleed_damage': part.bleed_damage,
             'has_armor': armor.armor_value > 0 if armor else False,
             'armor_value': armor.armor_value if armor else 0,
-            'armor_durability': armor.durability if armor else 0
+            'armor_durability': armor.durability if armor else 0,
+            'armor_max_durability': armor.max_durability if armor else 0
         }
+
+    # Debuff状态
+    state['player']['debuffs'] = []
+    for debuff in game.player.stats.debuffs:
+        state['player']['debuffs'].append({
+            'name': debuff.cn_name,
+            'type': debuff.name,
+            'remaining': debuff.remaining,
+            'damage': debuff.damage
+        })
 
     # 背包物品
     for item in game.player.equipment.backpack.get_all_items():
+        # 确定物品分类
+        item_type = '其他'
+        if hasattr(item, 'effect'):
+            effect = item.effect or {}
+            if 'heal' in effect or 'stop_bleed' in effect or 'regen' in effect:
+                item_type = '医疗'
+            elif 'repair_armor' in effect:
+                item_type = '护甲修理'
+            elif 'reload_weapon' in effect or 'ammo_type' in effect:
+                item_type = '子弹'
+            elif 'energy' in effect or 'hydration' in effect:
+                item_type = '消耗品'
+
         state['backpack'].append({
             'id': item.id,
             'name': item.name,
             'rarity': item.rarity.cn_name,
             'value': item.value,
-            'weight': item.weight
+            'weight': item.weight,
+            'type': item_type
         })
 
     # 保险箱物品
@@ -265,7 +472,8 @@ def get_state():
             'active_extraction': game.current_raid.active_extraction,
             'active_extraction_name': game.current_raid.zones[game.current_raid.active_extraction]['name'] if game.current_raid.active_extraction else '',
             'zones': map_zones,
-            'connections': []
+            'connections': [],
+            'events': [e['message'] for e in game.current_raid.pending_events] if game.current_raid.pending_events else []
         }
 
         for conn_id in zone.get('connections', []):
@@ -323,7 +531,9 @@ def do_action():
     game.clear_messages()
 
     if action == 'start_raid':
-        game.start_raid(g.MAP_INDUSTRIAL)
+        map_id = params if isinstance(params, str) else params.get('map_id', 'dam') if isinstance(params, dict) else 'dam'
+        map_data = g.ALL_MAPS.get(map_id, g.MAP_DAM)
+        game.start_raid(map_data)
         result['success'] = True
         result['message'] = '行动开始！'
 
@@ -471,13 +681,19 @@ def do_action():
 
     elif action == 'new_game':
         # 重置游戏
-        old_id = session.get('game_id')
-        if old_id and old_id in games:
-            del games[old_id]
-        new_id = str(uuid.uuid4())
-        session['game_id'] = new_id
-        games[new_id] = g.Game()
-        games[new_id].state = g.GameState.BASE  # 设置为基地状态
+        # 确定当前用户的game_id
+        if 'username' in session:
+            game_id = f"user_{session['username']}"
+        else:
+            game_id = session.get('game_id')
+
+        # 删除旧游戏
+        if game_id and game_id in games:
+            del games[game_id]
+
+        # 创建新游戏
+        games[game_id] = g.Game()
+        games[game_id].state = g.GameState.BASE  # 设置为基地状态
         result['success'] = True
         result['message'] = '新游戏开始'
 
@@ -579,15 +795,98 @@ def do_action():
             result['success'] = success
             result['message'] = msg
 
+    # 卸下装备
+    elif action == 'unequip_weapon':
+        success, msg = game.unequip_weapon()
+        result['success'] = success
+        result['message'] = msg
+
+    elif action == 'unequip_armor':
+        success, msg = game.unequip_armor()
+        result['success'] = success
+        result['message'] = msg
+
+    elif action == 'unequip_helmet':
+        success, msg = game.unequip_helmet()
+        result['success'] = success
+        result['message'] = msg
+
+    elif action == 'unequip_all':
+        msg = game.unequip_all()
+        result['success'] = True
+        result['message'] = msg
+
+    elif action == 'drop_backpack_item':
+        item_id = params.get('item_id')
+        if item_id:
+            success, msg = game.drop_backpack_item(item_id)
+            result['success'] = success
+            result['message'] = msg
+
+    elif action == 'clear_backpack':
+        msg = game.clear_backpack()
+        result['success'] = True
+        result['message'] = msg
+
+    elif action == 'move_to_stash':
+        item_id = params.get('item_id')
+        if item_id:
+            success, msg = game.move_to_stash(item_id)
+            result['success'] = success
+            result['message'] = msg
+
+    elif action == 'buy_attachment':
+        att_id = params.get('attachment_id') if isinstance(params, dict) else None
+        if att_id and att_id in g.ATTACHMENTS:
+            att = g.ATTACHMENTS[att_id]
+            if game.player.stats.money >= att['value']:
+                game.player.stats.money -= att['value']
+                # 直接安装到当前武器
+                weapon = game.player.equipment.primary_weapon
+                if weapon:
+                    success, msg = weapon.install_attachment(att_id)
+                    result['success'] = success
+                    result['message'] = f"花费${att['value']}，{msg}"
+                else:
+                    game.player.stats.money += att['value']
+                    result['success'] = False
+                    result['message'] = "没有装备武器，无法安装配件"
+            else:
+                result['success'] = False
+                result['message'] = f"金钱不足！需要${att['value']}"
+        else:
+            result['success'] = False
+            result['message'] = "配件不存在"
+
+    elif action == 'remove_attachment':
+        slot = params.get('slot') if isinstance(params, dict) else None
+        weapon = game.player.equipment.primary_weapon
+        if weapon and slot:
+            success, msg = weapon.remove_attachment(slot)
+            result['success'] = success
+            result['message'] = msg
+        else:
+            result['success'] = False
+            result['message'] = "无法拆卸配件"
+
     elif action == 'auto_equip':
         msg = game.auto_equip_best()
         result['success'] = True
         result['message'] = msg
 
     elif action == 'save_game':
-        os.makedirs(SAVE_DIR, exist_ok=True)
-        game_id = session.get('game_id', 'default')
-        save_path = os.path.join(SAVE_DIR, f'{game_id}.json')
+        if 'username' in session:
+            # 已登录用户保存到用户目录
+            username = session['username']
+            user_save_dir = os.path.join(SAVE_DIR, username)
+            os.makedirs(user_save_dir, exist_ok=True)
+            save_path = os.path.join(user_save_dir, 'save.json')
+            game_id = f"user_{username}"
+        else:
+            # 游客模式
+            os.makedirs(SAVE_DIR, exist_ok=True)
+            game_id = session.get('game_id', 'default')
+            save_path = os.path.join(SAVE_DIR, f'{game_id}.json')
         save_data = g.save_game(game)
         with open(save_path, 'w', encoding='utf-8') as f:
             json.dump(save_data, f, ensure_ascii=False, indent=2)
@@ -595,8 +894,15 @@ def do_action():
         result['message'] = '游戏已保存！'
 
     elif action == 'load_game':
-        game_id = session.get('game_id', 'default')
-        save_path = os.path.join(SAVE_DIR, f'{game_id}.json')
+        if 'username' in session:
+            # 已登录用户从用户目录加载
+            username = session['username']
+            game_id = f"user_{username}"
+            save_path = os.path.join(SAVE_DIR, username, 'save.json')
+        else:
+            # 游客模式
+            game_id = session.get('game_id', 'default')
+            save_path = os.path.join(SAVE_DIR, f'{game_id}.json')
         if os.path.exists(save_path):
             with open(save_path, 'r', encoding='utf-8') as f:
                 save_data = json.load(f)

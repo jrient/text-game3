@@ -12,6 +12,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./saves:/app/saves
+      - ./users:/app/users
     networks:
       - shared-network
 

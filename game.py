@@ -119,6 +119,163 @@ WEAPONS = {
         "weight": 3.5,
         "value": 1500,
         "rarity": Rarity.COMMON
+    },
+    # ===== 新增武器 =====
+    "pistol_glock17": {
+        "name": "Glock17手枪",
+        "type": "手枪",
+        "damage": 30,
+        "accuracy": 0.88,
+        "fire_rate": 3,
+        "penetration": 1,
+        "ammo_type": "9mm",
+        "mag_size": 17,
+        "weight": 0.9,
+        "value": 400,
+        "rarity": Rarity.COMMON
+    },
+    "pistol_deagle": {
+        "name": "沙漠之鹰",
+        "type": "手枪",
+        "damage": 65,
+        "accuracy": 0.70,
+        "fire_rate": 1,
+        "penetration": 3,
+        "ammo_type": ".50AE",
+        "mag_size": 7,
+        "weight": 2.0,
+        "value": 3000,
+        "rarity": Rarity.RARE
+    },
+    "smg_vector": {
+        "name": "KRISS Vector冲锋枪",
+        "type": "冲锋枪",
+        "damage": 25,
+        "accuracy": 0.72,
+        "fire_rate": 6,
+        "penetration": 1,
+        "ammo_type": "9mm",
+        "mag_size": 33,
+        "weight": 2.7,
+        "value": 3500,
+        "rarity": Rarity.UNCOMMON
+    },
+    "smg_pp19": {
+        "name": "PP-19野牛冲锋枪",
+        "type": "冲锋枪",
+        "damage": 26,
+        "accuracy": 0.60,
+        "fire_rate": 5,
+        "penetration": 2,
+        "ammo_type": "9mm",
+        "mag_size": 64,
+        "weight": 3.0,
+        "value": 2500,
+        "rarity": Rarity.UNCOMMON
+    },
+    "ar_hk416": {
+        "name": "HK416突击步枪",
+        "type": "突击步枪",
+        "damage": 44,
+        "accuracy": 0.82,
+        "fire_rate": 4,
+        "penetration": 3,
+        "ammo_type": "5.56x45mm",
+        "mag_size": 30,
+        "weight": 3.2,
+        "value": 7000,
+        "rarity": Rarity.RARE
+    },
+    "ar_scarh": {
+        "name": "SCAR-H战斗步枪",
+        "type": "突击步枪",
+        "damage": 55,
+        "accuracy": 0.78,
+        "fire_rate": 3,
+        "penetration": 4,
+        "ammo_type": "7.62x51mm",
+        "mag_size": 20,
+        "weight": 3.8,
+        "value": 9000,
+        "rarity": Rarity.EPIC
+    },
+    "dmr_svd": {
+        "name": "SVD射手步枪",
+        "type": "射手步枪",
+        "damage": 70,
+        "accuracy": 0.90,
+        "fire_rate": 2,
+        "penetration": 4,
+        "ammo_type": "7.62x54mmR",
+        "mag_size": 10,
+        "weight": 4.3,
+        "value": 6000,
+        "rarity": Rarity.RARE
+    },
+    "dmr_mk14": {
+        "name": "Mk14 EBR射手步枪",
+        "type": "射手步枪",
+        "damage": 65,
+        "accuracy": 0.88,
+        "fire_rate": 2,
+        "penetration": 4,
+        "ammo_type": "7.62x51mm",
+        "mag_size": 20,
+        "weight": 5.1,
+        "value": 12000,
+        "rarity": Rarity.EPIC
+    },
+    "sniper_awm": {
+        "name": "AWM狙击步枪",
+        "type": "狙击步枪",
+        "damage": 110,
+        "accuracy": 0.99,
+        "fire_rate": 1,
+        "penetration": 5,
+        "ammo_type": ".338 Lapua",
+        "mag_size": 5,
+        "weight": 6.5,
+        "value": 25000,
+        "rarity": Rarity.LEGENDARY
+    },
+    "lmg_pkm": {
+        "name": "PKM轻机枪",
+        "type": "轻机枪",
+        "damage": 50,
+        "accuracy": 0.55,
+        "fire_rate": 6,
+        "penetration": 3,
+        "ammo_type": "7.62x54mmR",
+        "mag_size": 100,
+        "weight": 7.5,
+        "value": 8000,
+        "rarity": Rarity.RARE
+    },
+    "lmg_m249": {
+        "name": "M249轻机枪",
+        "type": "轻机枪",
+        "damage": 45,
+        "accuracy": 0.50,
+        "fire_rate": 7,
+        "penetration": 3,
+        "ammo_type": "5.56x45mm",
+        "mag_size": 200,
+        "weight": 10.0,
+        "value": 15000,
+        "rarity": Rarity.EPIC
+    },
+    "shotgun_saiga12": {
+        "name": "Saiga-12霰弹枪",
+        "type": "霰弹枪",
+        "damage": 100,
+        "accuracy": 0.45,
+        "fire_rate": 3,
+        "penetration": 1,
+        "ammo_type": "12ga",
+        "mag_size": 10,
+        "weight": 3.8,
+        "value": 4000,
+        "rarity": Rarity.UNCOMMON
     }
 }
 
@@ -347,6 +504,147 @@ CONSUMABLES = {
         "value": 500,
         "rarity": Rarity.UNCOMMON,
         "description": "修复护甲耐久度40点"
+    },
+    # ===== 新增消耗品 =====
+    "med_salewa": {
+        "name": "Salewa急救包",
+        "type": "医疗",
+        "effect": {"heal": 80, "stop_bleed": True},
+        "use_time": 5,
+        "weight": 0.4,
+        "value": 600,
+        "rarity": Rarity.UNCOMMON,
+        "description": "军用急救包，恢复大量生命值"
+    },
+    "med_grizzly": {
+        "name": "灰熊急救箱",
+        "type": "医疗",
+        "effect": {"heal": 200, "stop_bleed": True, "fix_bodypart": True},
+        "use_time": 12,
+        "weight": 1.5,
+        "value": 3000,
+        "rarity": Rarity.EPIC,
+        "description": "大型急救箱，全面治疗"
+    },
+    "stim_adrenaline": {
+        "name": "肾上腺素注射器",
+        "type": "药物",
+        "effect": {"stamina_boost": 50, "pain_relief": 120, "ap_boost": 20},
+        "use_time": 1,
+        "weight": 0.1,
+        "value": 1500,
+        "rarity": Rarity.RARE,
+        "description": "快速恢复耐力，暂时提升行动力"
+    },
+    "stim_propital": {
+        "name": "Propital再生注射器",
+        "type": "药物",
+        "effect": {"heal": 30, "regen": 5, "regen_duration": 5},
+        "use_time": 1,
+        "weight": 0.1,
+        "value": 2000,
+        "rarity": Rarity.RARE,
+        "description": "持续恢复生命值5回合"
+    },
+    "grenade_frag": {
+        "name": "破片手雷",
+        "type": "战术",
+        "effect": {"grenade_damage": 120, "grenade_type": "frag"},
+        "use_time": 1,
+        "weight": 0.5,
+        "value": 800,
+        "rarity": Rarity.UNCOMMON,
+        "description": "高杀伤破片手雷"
+    },
+    "grenade_flash": {
+        "name": "闪光弹",
+        "type": "战术",
+        "effect": {"grenade_type": "flash", "stun_duration": 2},
+        "use_time": 1,
+        "weight": 0.3,
+        "value": 500,
+        "rarity": Rarity.COMMON,
+        "description": "致盲敌人2回合，降低命中率"
+    },
+    "grenade_smoke": {
+        "name": "烟雾弹",
+        "type": "战术",
+        "effect": {"grenade_type": "smoke", "flee_bonus": 0.3},
+        "use_time": 1,
+        "weight": 0.3,
+        "value": 400,
+        "rarity": Rarity.COMMON,
+        "description": "释放烟雾，大幅提高撤退成功率"
+    },
+    "food_mre": {
+        "name": "军用口粮MRE",
+        "type": "食物",
+        "effect": {"energy": 40, "hydration": 15},
+        "use_time": 4,
+        "weight": 0.5,
+        "value": 200,
+        "rarity": Rarity.COMMON,
+        "description": "标准军用即食口粮"
+    },
+    "food_tushonka": {
+        "name": "图申卡牛肉罐头",
+        "type": "食物",
+        "effect": {"energy": 55, "hydration": 10},
+        "use_time": 5,
+        "weight": 0.6,
+        "value": 350,
+        "rarity": Rarity.UNCOMMON,
+        "description": "经典俄制牛肉罐头，能量充沛"
+    },
+    "drink_water": {
+        "name": "瓶装水",
+        "type": "饮品",
+        "effect": {"hydration": 50},
+        "use_time": 2,
+        "weight": 0.5,
+        "value": 100,
+        "rarity": Rarity.COMMON,
+        "description": "干净的瓶装水"
+    },
+    "drink_juice": {
+        "name": "果汁饮料",
+        "type": "饮品",
+        "effect": {"hydration": 35, "energy": 10},
+        "use_time": 2,
+        "weight": 0.4,
+        "value": 180,
+        "rarity": Rarity.COMMON,
+        "description": "甜味果汁，补充水分和少量能量"
+    },
+    "ammo_box_9mm": {
+        "name": "9mm弹药箱",
+        "type": "弹药",
+        "effect": {"reload_weapon": True, "ammo_type": "9mm"},
+        "use_time": 3,
+        "weight": 0.3,
+        "value": 200,
+        "rarity": Rarity.COMMON,
+        "description": "9mm弹药补给箱"
+    },
+    "ammo_box_556": {
+        "name": "5.56mm弹药箱",
+        "type": "弹药",
+        "effect": {"reload_weapon": True, "ammo_type": "5.56x45mm"},
+        "use_time": 3,
+        "weight": 0.4,
+        "value": 350,
+        "rarity": Rarity.UNCOMMON,
+        "description": "5.56mm弹药补给箱"
+    },
+    "ammo_box_762": {
+        "name": "7.62mm弹药箱",
+        "type": "弹药",
+        "effect": {"reload_weapon": True, "ammo_type": "7.62x51mm"},
+        "use_time": 3,
+        "weight": 0.5,
+        "value": 500,
+        "rarity": Rarity.UNCOMMON,
+        "description": "7.62mm弹药补给箱"
     }
 }
 
@@ -431,244 +729,1013 @@ LOOT_ITEMS = {
         "value": 45000,
         "rarity": Rarity.EPIC,
         "description": "含有敏感信息的文件"
+    },
+    # ===== 钥匙和任务物品 =====
+    "key_lab_keycard": {
+        "name": "实验室钥匙卡",
+        "type": "钥匙",
+        "weight": 0.0,
+        "value": 15000,
+        "rarity": Rarity.EPIC,
+        "description": "可打开研究实验室的磁卡"
+    },
+    "key_armory": {
+        "name": "军火库钥匙",
+        "type": "钥匙",
+        "weight": 0.0,
+        "value": 20000,
+        "rarity": Rarity.EPIC,
+        "description": "通往军火库的钥匙"
+    },
+    "key_server": {
+        "name": "服务器机房钥匙卡",
+        "type": "钥匙",
+        "weight": 0.0,
+        "value": 25000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "数据服务器机房的高级权限卡"
+    },
+    "key_safe": {
+        "name": "保险柜密码条",
+        "type": "钥匙",
+        "weight": 0.0,
+        "value": 10000,
+        "rarity": Rarity.RARE,
+        "description": "某个保险柜的密码"
+    },
+    # ===== 更多战利品 =====
+    "loot_military_flash": {
+        "name": "军用闪存盘",
+        "type": "物资",
+        "weight": 0.1,
+        "value": 3000,
+        "rarity": Rarity.RARE,
+        "description": "军用规格的高容量闪存"
+    },
+    "loot_thermal_scope": {
+        "name": "热成像瞄准镜",
+        "type": "贵重品",
+        "weight": 0.3,
+        "value": 35000,
+        "rarity": Rarity.EPIC,
+        "description": "高端热成像光学设备"
+    },
+    "loot_nv_goggles": {
+        "name": "夜视仪",
+        "type": "贵重品",
+        "weight": 0.5,
+        "value": 25000,
+        "rarity": Rarity.EPIC,
+        "description": "军用级夜视装备"
+    },
+    "loot_hdd": {
+        "name": "硬盘驱动器",
+        "type": "物资",
+        "weight": 0.3,
+        "value": 2000,
+        "rarity": Rarity.UNCOMMON,
+        "description": "可能存有有价值数据的硬盘"
+    },
+    "loot_motor": {
+        "name": "电机",
+        "type": "物资",
+        "weight": 1.5,
+        "value": 1200,
+        "rarity": Rarity.UNCOMMON,
+        "description": "完好的工业电机"
+    },
+    "loot_wire": {
+        "name": "电线束",
+        "type": "物资",
+        "weight": 0.4,
+        "value": 200,
+        "rarity": Rarity.COMMON,
+        "description": "一捆铜芯电线"
+    },
+    "loot_circuit_board": {
+        "name": "电路板",
+        "type": "物资",
+        "weight": 0.2,
+        "value": 800,
+        "rarity": Rarity.UNCOMMON,
+        "description": "可回收的电路板"
+    },
+    "loot_fuel_can": {
+        "name": "燃料罐",
+        "type": "物资",
+        "weight": 2.0,
+        "value": 1500,
+        "rarity": Rarity.UNCOMMON,
+        "description": "满载的燃料容器"
+    },
+    "loot_med_tools": {
+        "name": "手术器械",
+        "type": "贵重品",
+        "weight": 0.5,
+        "value": 8000,
+        "rarity": Rarity.RARE,
+        "description": "成套的专业手术工具"
+    },
+    "loot_military_radio": {
+        "name": "军用通讯器",
+        "type": "物资",
+        "weight": 0.8,
+        "value": 5000,
+        "rarity": Rarity.RARE,
+        "description": "加密的军用通讯设备"
+    },
+    "loot_lion_statue": {
+        "name": "黄金雄狮像",
+        "type": "贵重品",
+        "weight": 3.0,
+        "value": 120000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "纯金打造的雄狮雕像，极其沉重"
+    },
+    "loot_diamond": {
+        "name": "未切割钻石",
+        "type": "贵重品",
+        "weight": 0.1,
+        "value": 75000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "非洲之心级别的原钻"
+    },
+    "loot_tank_model": {
+        "name": "坦克模型",
+        "type": "贵重品",
+        "weight": 2.5,
+        "value": 90000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "精密制作的限量版坦克模型"
+    },
+    "loot_intel_folder": {
+        "name": "情报文件夹",
+        "type": "任务物品",
+        "weight": 0.2,
+        "value": 20000,
+        "rarity": Rarity.EPIC,
+        "description": "装满军事情报的文件夹"
+    },
+    "loot_water_sample": {
+        "name": "水样本",
+        "type": "任务物品",
+        "weight": 0.5,
+        "value": 10000,
+        "rarity": Rarity.RARE,
+        "description": "大坝水库中采集的可疑水样"
     }
 }
 
 # ============== 地图数据 ==============
 # 地图坐标系统 - 用于计算距离和可视化
-MAP_INDUSTRIAL = {
-    "name": "工业区",
-    "description": "一座废弃的工业园区，传闻有大量高价值物资...",
-    "width": 14,  # 地图宽度
-    "height": 10,  # 地图高度
+_MAP_INDUSTRIAL_REMOVED = True  # 已迁移到三角洲行动地图
+
+# ============== 零号大坝地图 ==============
+MAP_DAM = {
+    "name": "零号大坝",
+    "description": "一座巨型水电站大坝，曾是重要的能源枢纽，现已沦为各方势力争夺的战场...",
+    "width": 22,
+    "height": 16,
     "zones": {
         # ============ 出生点 ============
-        "spawn_west": {
-            "name": "西侧入口",
-            "description": "工业区的西侧入口，杂草丛生。",
-            "x": 0, "y": 5,
-            "danger_level": 1,
-            "loot_tier": 1,
-            "connections": ["parking", "warehouse"],
-            "is_spawn": True,
-            "is_extract": False
+        "dam_spawn_east": {
+            "name": "东侧公路",
+            "description": "通往大坝的主公路，路面龟裂。",
+            "x": 20, "y": 8,
+            "danger_level": 1, "loot_tier": 1,
+            "connections": ["dam_admin_district", "dam_barracks"],
+            "is_spawn": True, "is_extract": False
         },
-        "spawn_south": {
-            "name": "南侧小径",
-            "description": "一条隐蔽的小径，可以绕过主路。",
-            "x": 5, "y": 0,
-            "danger_level": 1,
-            "loot_tier": 1,
-            "connections": ["gas_station", "forest", "sewer_entrance"],
-            "is_spawn": True,
-            "is_extract": False
+        "dam_spawn_south": {
+            "name": "南侧河滩",
+            "description": "大坝下游的河滩地带，水流湍急。",
+            "x": 10, "y": 1,
+            "danger_level": 1, "loot_tier": 1,
+            "connections": ["dam_hydroplant", "dam_visitor_center"],
+            "is_spawn": True, "is_extract": False
         },
-        "spawn_north": {
-            "name": "北侧小道",
-            "description": "一条通往工业园区北侧的隐蔽小道。",
-            "x": 10, "y": 9,
-            "danger_level": 1,
-            "loot_tier": 1,
-            "connections": ["power_plant", "research_lab"],
-            "is_spawn": True,
-            "is_extract": False
+        "dam_spawn_northwest": {
+            "name": "西北山路",
+            "description": "崎岖的山间小路，可以俯瞰大坝全貌。",
+            "x": 2, "y": 14,
+            "danger_level": 1, "loot_tier": 1,
+            "connections": ["dam_backup_station", "dam_construction"],
+            "is_spawn": True, "is_extract": False
         },
         # ============ 外围区域 ============
-        "parking": {
-            "name": "停车场",
-            "description": "废弃的停车场，有几辆锈迹斑斑的卡车。",
-            "x": 3, "y": 5,
-            "danger_level": 2,
-            "loot_tier": 2,
-            "connections": ["spawn_west", "warehouse", "admin", "extract_west", "guard_post"],
-            "is_spawn": False,
-            "is_extract": False
+        "dam_visitor_center": {
+            "name": "游客中心",
+            "description": "大坝旅游景区的游客服务中心，内有展览厅和纪念品商店。",
+            "x": 8, "y": 3,
+            "danger_level": 2, "loot_tier": 2,
+            "connections": ["dam_spawn_south", "dam_cement_factory", "dam_small_substation"],
+            "is_spawn": False, "is_extract": False
         },
-        "gas_station": {
-            "name": "加油站",
-            "description": "老旧的加油站，便利店或许还有存货。",
-            "x": 4, "y": 3,
-            "danger_level": 2,
-            "loot_tier": 2,
-            "connections": ["spawn_south", "warehouse", "forest", "garage"],
-            "is_spawn": False,
-            "is_extract": False
+        "dam_construction": {
+            "name": "建筑工地",
+            "description": "未完工的扩建工程，脚手架林立，可作绝佳掩体。",
+            "x": 4, "y": 12,
+            "danger_level": 2, "loot_tier": 2,
+            "connections": ["dam_spawn_northwest", "dam_backup_station", "dam_staff_dorm"],
+            "is_spawn": False, "is_extract": False
         },
-        "guard_post": {
-            "name": "岗哨站",
-            "description": "废弃的保安岗哨，可能有遗留物资。",
-            "x": 1, "y": 3,
-            "danger_level": 2,
-            "loot_tier": 2,
-            "connections": ["parking", "sewer_entrance", "medical_center"],
-            "is_spawn": False,
-            "is_extract": False
+        "dam_staff_dorm": {
+            "name": "员工宿舍",
+            "description": "大坝工作人员的生活区，废弃已久，个人物品散落一地。",
+            "x": 7, "y": 10,
+            "danger_level": 2, "loot_tier": 2,
+            "connections": ["dam_construction", "dam_cement_factory", "dam_admin_west"],
+            "is_spawn": False, "is_extract": False
         },
-        "sewer_entrance": {
-            "name": "下水道入口",
-            "description": "潮湿阴暗的下水道入口，散发着恶臭。",
-            "x": 3, "y": 1,
-            "danger_level": 3,
-            "loot_tier": 2,
-            "connections": ["spawn_south", "guard_post", "sewer_tunnel"],
-            "is_spawn": False,
-            "is_extract": False
+        "dam_cement_factory": {
+            "name": "水泥厂",
+            "description": "为大坝供应建材的水泥生产厂，粉尘弥漫。",
+            "x": 10, "y": 6,
+            "danger_level": 3, "loot_tier": 3,
+            "connections": ["dam_visitor_center", "dam_staff_dorm", "dam_admin_west", "dam_small_substation"],
+            "is_spawn": False, "is_extract": False
         },
-        "forest": {
-            "name": "森林边缘",
-            "description": "茂密的树林，适合潜伏。",
-            "x": 7, "y": 1,
-            "danger_level": 2,
-            "loot_tier": 1,
-            "connections": ["spawn_south", "gas_station", "extract_forest", "water_tower"],
-            "is_spawn": False,
-            "is_extract": False
+        "dam_small_substation": {
+            "name": "小变电站",
+            "description": "负责园区日常供电的小型变电设施。",
+            "x": 6, "y": 5,
+            "danger_level": 2, "loot_tier": 2,
+            "connections": ["dam_visitor_center", "dam_cement_factory", "dam_backup_station"],
+            "is_spawn": False, "is_extract": False
+        },
+        "dam_backup_station": {
+            "name": "备用电站",
+            "description": "大坝应急备用发电设施，关键时刻可恢复供电。",
+            "x": 4, "y": 8,
+            "danger_level": 3, "loot_tier": 3,
+            "connections": ["dam_spawn_northwest", "dam_construction", "dam_small_substation", "dam_extract_pipe"],
+            "is_spawn": False, "is_extract": False
         },
         # ============ 核心区域 ============
-        "warehouse": {
-            "name": "物资仓库",
-            "description": "大型仓库，堆满了各种物资箱。",
-            "x": 5, "y": 5,
-            "danger_level": 3,
-            "loot_tier": 3,
-            "connections": ["spawn_west", "parking", "admin", "gas_station", "factory_floor"],
-            "is_spawn": False,
-            "is_extract": False,
-            "requires_key": None
+        "dam_admin_west": {
+            "name": "行政西楼",
+            "description": "行政区西侧楼栋，财务和后勤部门驻扎于此。",
+            "x": 12, "y": 9,
+            "danger_level": 3, "loot_tier": 3,
+            "connections": ["dam_staff_dorm", "dam_cement_factory", "dam_admin_district", "dam_barracks"],
+            "is_spawn": False, "is_extract": False
         },
-        "admin": {
-            "name": "行政大楼",
-            "description": "园区行政大楼，据传有高价值物品。",
-            "x": 6, "y": 7,
-            "danger_level": 4,
-            "loot_tier": 4,
-            "connections": ["parking", "warehouse", "extract_bunker", "factory_floor", "research_lab"],
-            "is_spawn": False,
-            "is_extract": False,
-            "requires_key": None
+        "dam_admin_east": {
+            "name": "行政东楼",
+            "description": "行政区东侧楼栋，指挥和情报部门的据点。",
+            "x": 16, "y": 9,
+            "danger_level": 4, "loot_tier": 4,
+            "connections": ["dam_admin_district", "dam_barracks", "dam_main_substation"],
+            "is_spawn": False, "is_extract": False
         },
-        "garage": {
-            "name": "修车厂",
-            "description": "废弃的汽车修理厂，工具散落一地。",
-            "x": 6, "y": 3,
-            "danger_level": 3,
-            "loot_tier": 3,
-            "connections": ["gas_station", "factory_floor", "water_tower"],
-            "is_spawn": False,
-            "is_extract": False
+        "dam_admin_district": {
+            "name": "行政辖区",
+            "description": "大坝管理核心区域，各类行政设施密集分布。",
+            "x": 14, "y": 7,
+            "danger_level": 4, "loot_tier": 4,
+            "connections": ["dam_spawn_east", "dam_admin_west", "dam_admin_east", "dam_control_room"],
+            "is_spawn": False, "is_extract": False
         },
-        "factory_floor": {
-            "name": "生产车间",
-            "description": "巨大的生产车间，机器已经锈蚀。",
-            "x": 8, "y": 5,
-            "danger_level": 4,
-            "loot_tier": 4,
-            "connections": ["warehouse", "admin", "garage", "power_plant"],
-            "is_spawn": False,
-            "is_extract": False
+        "dam_barracks": {
+            "name": "军营",
+            "description": "驻守大坝的武装力量营地，武器储备充足。",
+            "x": 18, "y": 11,
+            "danger_level": 3, "loot_tier": 3,
+            "connections": ["dam_spawn_east", "dam_admin_west", "dam_admin_east", "dam_extract_village"],
+            "is_spawn": False, "is_extract": False
         },
-        "power_plant": {
-            "name": "发电站",
-            "description": "园区的发电设施，仍有微弱电力。",
-            "x": 10, "y": 6,
-            "danger_level": 4,
-            "loot_tier": 3,
-            "connections": ["factory_floor", "research_lab", "spawn_north", "extract_helipad"],
-            "is_spawn": False,
-            "is_extract": False
+        "dam_hydroplant": {
+            "name": "水电站厂房",
+            "description": "巨大的水力发电涡轮机组，轰鸣声震耳欲聋。",
+            "x": 11, "y": 3,
+            "danger_level": 4, "loot_tier": 4,
+            "connections": ["dam_spawn_south", "dam_control_room", "dam_extract_river"],
+            "is_spawn": False, "is_extract": False
         },
         # ============ 高价值区域 ============
-        "medical_center": {
-            "name": "医疗中心",
-            "description": "园区医疗中心，可能有珍贵的医疗物资。",
-            "x": 2, "y": 6,
-            "danger_level": 3,
-            "loot_tier": 3,
-            "connections": ["guard_post", "extract_west"],
-            "is_spawn": False,
-            "is_extract": False
+        "dam_main_substation": {
+            "name": "主变电站",
+            "description": "控制整座大坝电力分配的核心变电设施，戒备森严。",
+            "x": 18, "y": 7,
+            "danger_level": 4, "loot_tier": 4,
+            "connections": ["dam_admin_east", "dam_control_room"],
+            "is_spawn": False, "is_extract": False,
+            "requires_key": "substation_key"
         },
-        "research_lab": {
-            "name": "研究实验室",
-            "description": "神秘的研究设施，戒备森严。",
-            "x": 11, "y": 8,
-            "danger_level": 5,
-            "loot_tier": 5,
-            "connections": ["admin", "power_plant", "spawn_north"],
-            "is_spawn": False,
-            "is_extract": False,
-            "requires_key": "lab_keycard"
-        },
-        "water_tower": {
-            "name": "水塔",
-            "description": "高耸的水塔，可以俯瞰整个园区。",
-            "x": 9, "y": 2,
-            "danger_level": 3,
-            "loot_tier": 2,
-            "connections": ["forest", "garage", "extract_forest"],
-            "is_spawn": False,
-            "is_extract": False
-        },
-        "sewer_tunnel": {
-            "name": "下水道通道",
-            "description": "地下通道，黑暗潮湿。",
-            "x": 5, "y": 2,
-            "danger_level": 4,
-            "loot_tier": 3,
-            "connections": ["sewer_entrance", "gas_station"],
-            "is_spawn": False,
-            "is_extract": False
+        "dam_control_room": {
+            "name": "大坝控制室",
+            "description": "掌控整座大坝运作的神经中枢，布满监控屏幕与精密仪器。",
+            "x": 14, "y": 4,
+            "danger_level": 5, "loot_tier": 5,
+            "connections": ["dam_admin_district", "dam_hydroplant", "dam_main_substation", "dam_extract_elevator"],
+            "is_spawn": False, "is_extract": False,
+            "requires_key": "control_keycard"
         },
         # ============ 撤离点 ============
-        "extract_west": {
-            "name": "西侧撤离点",
-            "description": "一个开放的撤离点。",
-            "x": 0, "y": 7,
-            "danger_level": 1,
-            "loot_tier": 0,
-            "connections": ["parking", "medical_center"],
-            "is_spawn": False,
-            "is_extract": True,
-            "extract_condition": {"type": "open", "open_time": 0}
+        "dam_extract_elevator": {
+            "name": "工业电梯撤离",
+            "description": "大坝内部的工业货运电梯，需要支付通行费。",
+            "x": 16, "y": 3,
+            "danger_level": 1, "loot_tier": 0,
+            "connections": ["dam_control_room"],
+            "is_spawn": False, "is_extract": True,
+            "extract_condition": {"type": "paid", "cost": 8000}
         },
-        "extract_forest": {
-            "name": "森林撤离点",
-            "description": "隐蔽的森林小道撤离点，需要等待。",
-            "x": 9, "y": 0,
-            "danger_level": 1,
-            "loot_tier": 0,
-            "connections": ["forest", "water_tower"],
-            "is_spawn": False,
-            "is_extract": True,
+        "dam_extract_river": {
+            "name": "河滩限时撤离",
+            "description": "通过河滩快速撤离，需要等待接应船只。",
+            "x": 13, "y": 1,
+            "danger_level": 1, "loot_tier": 0,
+            "connections": ["dam_hydroplant"],
+            "is_spawn": False, "is_extract": True,
             "extract_condition": {"type": "wait", "wait_time": 30}
         },
-        "extract_bunker": {
-            "name": "地下掩体",
-            "description": "紧急撤离通道，需要丢弃背包。",
-            "x": 7, "y": 7,
-            "danger_level": 1,
-            "loot_tier": 0,
-            "connections": ["admin"],
-            "is_spawn": False,
-            "is_extract": True,
+        "dam_extract_pipe": {
+            "name": "维修管道撤离",
+            "description": "狭窄的维修管道出口，背包无法通过。",
+            "x": 2, "y": 9,
+            "danger_level": 1, "loot_tier": 0,
+            "connections": ["dam_backup_station"],
+            "is_spawn": False, "is_extract": True,
             "extract_condition": {"type": "drop_backpack", "drop_backpack": True}
         },
-        "extract_helipad": {
-            "name": "直升机坪",
-            "description": "园区内的直升机停机坪，需要支付费用。",
-            "x": 12, "y": 5,
-            "danger_level": 1,
-            "loot_tier": 0,
-            "connections": ["power_plant"],
-            "is_spawn": False,
-            "is_extract": True,
-            "extract_condition": {"type": "paid", "cost": 5000}
+        "dam_extract_village": {
+            "name": "村庄撤离",
+            "description": "军营附近的废弃村庄，开放的撤离通道。",
+            "x": 20, "y": 13,
+            "danger_level": 1, "loot_tier": 0,
+            "connections": ["dam_barracks"],
+            "is_spawn": False, "is_extract": True,
+            "extract_condition": {"type": "open", "open_time": 0}
         }
     }
 }
 
-# 所有可能的撤离点列表
-EXTRACTION_POINTS = ["extract_west", "extract_forest", "extract_bunker", "extract_helipad"]
+# ============== 长弓溪谷地图 ==============
+MAP_VALLEY = {
+    "name": "长弓溪谷",
+    "description": "一条被河流贯穿的深谷，上下两个半区地形高低错落，资源丰富但危机四伏...",
+    "width": 24,
+    "height": 18,
+    "zones": {
+        # ============ 出生点 ============
+        "valley_spawn_west": {
+            "name": "西侧山道",
+            "description": "蜿蜒的山间小道，通往溪谷西部。",
+            "x": 1, "y": 9,
+            "danger_level": 1, "loot_tier": 1,
+            "connections": ["valley_manor", "valley_pasture"],
+            "is_spawn": True, "is_extract": False
+        },
+        "valley_spawn_southeast": {
+            "name": "东南海岸",
+            "description": "溪谷东南方向的海岸线，渔船残骸随处可见。",
+            "x": 20, "y": 2,
+            "danger_level": 1, "loot_tier": 1,
+            "connections": ["valley_blue_harbor", "valley_small_station"],
+            "is_spawn": True, "is_extract": False
+        },
+        "valley_spawn_north": {
+            "name": "北部公路",
+            "description": "贯穿溪谷北部的主干公路，路面宽阔。",
+            "x": 12, "y": 16,
+            "danger_level": 1, "loot_tier": 1,
+            "connections": ["valley_checkpoint", "valley_storage"],
+            "is_spawn": True, "is_extract": False
+        },
+        # ============ 左侧区域 ============
+        "valley_manor": {
+            "name": "小型庄园",
+            "description": "依山而建的古老庄园，主楼与附属建筑保存尚好。",
+            "x": 3, "y": 12,
+            "danger_level": 2, "loot_tier": 2,
+            "connections": ["valley_spawn_west", "valley_garbi", "valley_pasture"],
+            "is_spawn": False, "is_extract": False
+        },
+        "valley_garbi": {
+            "name": "加尔比旧址",
+            "description": "曾经的村落遗址，战火已将其夷为平地，瓦砾中仍藏有物资。",
+            "x": 3, "y": 15,
+            "danger_level": 3, "loot_tier": 3,
+            "connections": ["valley_manor", "valley_extract_tunnel"],
+            "is_spawn": False, "is_extract": False
+        },
+        "valley_pasture": {
+            "name": "沙径牧场",
+            "description": "沿溪谷延伸的牧场，围栏和牲口棚提供天然掩体。",
+            "x": 6, "y": 11,
+            "danger_level": 2, "loot_tier": 2,
+            "connections": ["valley_spawn_west", "valley_manor", "valley_crash_site", "valley_fishing_port"],
+            "is_spawn": False, "is_extract": False
+        },
+        "valley_crash_site": {
+            "name": "坠机之地",
+            "description": "一架军用直升机的坠毁现场，残骸中可能有珍贵军用物资。",
+            "x": 6, "y": 8,
+            "danger_level": 3, "loot_tier": 3,
+            "connections": ["valley_pasture", "valley_fishing_port", "valley_substation"],
+            "is_spawn": False, "is_extract": False
+        },
+        "valley_fishing_port": {
+            "name": "渔港",
+            "description": "小型渔业码头，船坞和仓库内物资丰富。",
+            "x": 4, "y": 5,
+            "danger_level": 2, "loot_tier": 2,
+            "connections": ["valley_pasture", "valley_crash_site", "valley_substation"],
+            "is_spawn": False, "is_extract": False
+        },
+        # ============ 中央区域 ============
+        "valley_radar": {
+            "name": "哈夫克雷达站",
+            "description": "溪谷制高点上的军用雷达设施，信号覆盖整个区域，内藏高价值情报设备。",
+            "x": 11, "y": 13,
+            "danger_level": 5, "loot_tier": 5,
+            "connections": ["valley_substation", "valley_storage", "valley_extract_helipad"],
+            "is_spawn": False, "is_extract": False,
+            "requires_key": "radar_keycard"
+        },
+        "valley_substation": {
+            "name": "变电站",
+            "description": "为溪谷各设施供电的主变电站，电气设备密集。",
+            "x": 8, "y": 10,
+            "danger_level": 3, "loot_tier": 3,
+            "connections": ["valley_crash_site", "valley_fishing_port", "valley_radar", "valley_superstar"],
+            "is_spawn": False, "is_extract": False
+        },
+        "valley_storage": {
+            "name": "储藏站",
+            "description": "物资中转储藏设施，各类补给在此集散。",
+            "x": 13, "y": 14,
+            "danger_level": 3, "loot_tier": 3,
+            "connections": ["valley_spawn_north", "valley_radar", "valley_checkpoint", "valley_hotel"],
+            "is_spawn": False, "is_extract": False
+        },
+        "valley_superstar": {
+            "name": "超星车站",
+            "description": "废弃的公共交通换乘站，站台和候车室内掩体充足。",
+            "x": 10, "y": 7,
+            "danger_level": 2, "loot_tier": 2,
+            "connections": ["valley_substation", "valley_hotel", "valley_checkpoint"],
+            "is_spawn": False, "is_extract": False
+        },
+        "valley_hotel": {
+            "name": "钻石皇后酒店",
+            "description": "溪谷中最豪华的酒店建筑，曾是富商聚集之所，内有保险柜和贵重物品。",
+            "x": 14, "y": 10,
+            "danger_level": 4, "loot_tier": 4,
+            "connections": ["valley_storage", "valley_superstar", "valley_checkpoint", "valley_amiya"],
+            "is_spawn": False, "is_extract": False
+        },
+        "valley_checkpoint": {
+            "name": "检查站",
+            "description": "控制溪谷南北交通的重要关卡，武装人员巡逻频繁。",
+            "x": 15, "y": 12,
+            "danger_level": 3, "loot_tier": 2,
+            "connections": ["valley_spawn_north", "valley_storage", "valley_superstar", "valley_hotel"],
+            "is_spawn": False, "is_extract": False
+        },
+        # ============ 右侧区域 ============
+        "valley_amiya": {
+            "name": "阿米娅小镇",
+            "description": "溪谷东部的小型聚居点，民居与商铺交错分布。",
+            "x": 17, "y": 11,
+            "danger_level": 3, "loot_tier": 3,
+            "connections": ["valley_hotel", "valley_small_station", "valley_abandoned_village"],
+            "is_spawn": False, "is_extract": False
+        },
+        "valley_small_station": {
+            "name": "小火车站",
+            "description": "已停运的小型铁路车站，铁轨锈蚀，月台尚完整。",
+            "x": 19, "y": 8,
+            "danger_level": 2, "loot_tier": 2,
+            "connections": ["valley_spawn_southeast", "valley_amiya", "valley_blue_harbor"],
+            "is_spawn": False, "is_extract": False
+        },
+        "valley_abandoned_village": {
+            "name": "荒废村庄",
+            "description": "被战乱清空的村庄，房屋虽破败但仍有生活物资遗留。",
+            "x": 17, "y": 14,
+            "danger_level": 2, "loot_tier": 2,
+            "connections": ["valley_amiya", "valley_extract_road"],
+            "is_spawn": False, "is_extract": False
+        },
+        "valley_blue_harbor": {
+            "name": "蓝港码头",
+            "description": "曾经繁忙的货运码头，停靠着数艘废弃船只，仓库内物资可观。",
+            "x": 21, "y": 5,
+            "danger_level": 3, "loot_tier": 3,
+            "connections": ["valley_spawn_southeast", "valley_small_station", "valley_extract_speedboat"],
+            "is_spawn": False, "is_extract": False
+        },
+        # ============ 撤离点 ============
+        "valley_extract_helipad": {
+            "name": "雷达站直升机坪",
+            "description": "雷达站顶部的军用直升机停机坪，需支付高额撤离费。",
+            "x": 9, "y": 15,
+            "danger_level": 1, "loot_tier": 0,
+            "connections": ["valley_radar"],
+            "is_spawn": False, "is_extract": True,
+            "extract_condition": {"type": "paid", "cost": 10000}
+        },
+        "valley_extract_speedboat": {
+            "name": "码头快艇撤离",
+            "description": "蓝港码头停靠的快艇，需等待燃料补充后方可启动。",
+            "x": 22, "y": 3,
+            "danger_level": 1, "loot_tier": 0,
+            "connections": ["valley_blue_harbor"],
+            "is_spawn": False, "is_extract": True,
+            "extract_condition": {"type": "wait", "wait_time": 25}
+        },
+        "valley_extract_tunnel": {
+            "name": "溪谷隧道",
+            "description": "穿山而过的逃生隧道，背包过宽无法通行。",
+            "x": 1, "y": 16,
+            "danger_level": 1, "loot_tier": 0,
+            "connections": ["valley_garbi"],
+            "is_spawn": False, "is_extract": True,
+            "extract_condition": {"type": "drop_backpack", "drop_backpack": True}
+        },
+        "valley_extract_road": {
+            "name": "公路撤离点",
+            "description": "荒废村庄外的公路撤离区，全程开放。",
+            "x": 19, "y": 16,
+            "danger_level": 1, "loot_tier": 0,
+            "connections": ["valley_abandoned_village"],
+            "is_spawn": False, "is_extract": True,
+            "extract_condition": {"type": "open", "open_time": 0}
+        }
+    }
+}
+
+# ============== 航天基地地图 ==============
+MAP_SPACE = {
+    "name": "航天基地",
+    "description": "一座废弃的航天发射基地，巨大的火箭发射架耸立在荒漠之中，内部研究设施仍藏有大量机密...",
+    "width": 22,
+    "height": 16,
+    "zones": {
+        # ============ 出生点 ============
+        "space_spawn_south": {
+            "name": "南侧荒漠",
+            "description": "基地南方的无垠荒漠，沙尘暴频繁。",
+            "x": 10, "y": 1,
+            "danger_level": 1, "loot_tier": 1,
+            "connections": ["space_industrial", "space_assembly"],
+            "is_spawn": True, "is_extract": False
+        },
+        "space_spawn_east": {
+            "name": "东侧公路",
+            "description": "连接基地与外界的主干公路，路面留有车辙痕迹。",
+            "x": 20, "y": 8,
+            "danger_level": 1, "loot_tier": 1,
+            "connections": ["space_launch_zone", "space_hoist"],
+            "is_spawn": True, "is_extract": False
+        },
+        "space_spawn_northwest": {
+            "name": "西北隐蔽点",
+            "description": "基地西北角的岩石掩体群，适合隐蔽渗透。",
+            "x": 2, "y": 13,
+            "danger_level": 1, "loot_tier": 1,
+            "connections": ["space_dorm", "space_control_building"],
+            "is_spawn": True, "is_extract": False
+        },
+        # ============ 外围区域 ============
+        "space_industrial": {
+            "name": "工业区",
+            "description": "基地外围的工业生产区，存放大量工程材料与设备。",
+            "x": 7, "y": 3,
+            "danger_level": 2, "loot_tier": 2,
+            "connections": ["space_spawn_south", "space_assembly", "space_dorm", "space_extract_desert"],
+            "is_spawn": False, "is_extract": False
+        },
+        "space_dorm": {
+            "name": "宿舍区",
+            "description": "科研人员与技术工人的生活区，个人物品和生活用品仍有留存。",
+            "x": 4, "y": 10,
+            "danger_level": 2, "loot_tier": 2,
+            "connections": ["space_spawn_northwest", "space_industrial", "space_control_building", "space_extract_pipe"],
+            "is_spawn": False, "is_extract": False
+        },
+        "space_control_building": {
+            "name": "中控楼",
+            "description": "基地综合指挥大楼，通信与监控设备集中于此。",
+            "x": 6, "y": 13,
+            "danger_level": 3, "loot_tier": 3,
+            "connections": ["space_spawn_northwest", "space_dorm", "space_h2", "space_print_room"],
+            "is_spawn": False, "is_extract": False
+        },
+        "space_launch_zone": {
+            "name": "发射区",
+            "description": "巨型火箭发射架耸立的核心区域，辐射警告标志遍布四周。",
+            "x": 18, "y": 5,
+            "danger_level": 4, "loot_tier": 4,
+            "connections": ["space_spawn_east", "space_test_bay", "space_hoist"],
+            "is_spawn": False, "is_extract": False
+        },
+        "space_test_bay": {
+            "name": "水平试车间",
+            "description": "火箭发动机水平测试厂房，高温痕迹遍布墙壁。",
+            "x": 16, "y": 3,
+            "danger_level": 3, "loot_tier": 3,
+            "connections": ["space_launch_zone", "space_assembly", "space_extract_sidedoor"],
+            "is_spawn": False, "is_extract": False
+        },
+        "space_assembly": {
+            "name": "组装室",
+            "description": "火箭部件组装车间，大型机械臂悬挂于顶部。",
+            "x": 12, "y": 4,
+            "danger_level": 3, "loot_tier": 3,
+            "connections": ["space_spawn_south", "space_industrial", "space_test_bay", "space_h1"],
+            "is_spawn": False, "is_extract": False
+        },
+        "space_hoist": {
+            "name": "吊装室",
+            "description": "用于吊装大型设备的高大厂房，顶部天车轨道错综复杂。",
+            "x": 18, "y": 10,
+            "danger_level": 3, "loot_tier": 3,
+            "connections": ["space_spawn_east", "space_launch_zone", "space_h4"],
+            "is_spawn": False, "is_extract": False
+        },
+        "space_print_room": {
+            "name": "打印室",
+            "description": "精密零件3D打印车间，设备先进，存有珍贵的技术图纸。",
+            "x": 8, "y": 11,
+            "danger_level": 2, "loot_tier": 2,
+            "connections": ["space_control_building", "space_h2", "space_h3"],
+            "is_spawn": False, "is_extract": False
+        },
+        # ============ 核心研究设施 ============
+        "space_h4": {
+            "name": "黑室H4",
+            "description": "绝密研究区域H4，黑色涂装的墙壁令人不安，内藏高价值研究成果。",
+            "x": 16, "y": 11,
+            "danger_level": 4, "loot_tier": 4,
+            "connections": ["space_hoist", "space_h3", "space_director"],
+            "is_spawn": False, "is_extract": False
+        },
+        "space_h3": {
+            "name": "蓝室H3",
+            "description": "蓝色警示灯常亮的研究区域H3，存放着重要的实验数据。",
+            "x": 13, "y": 11,
+            "danger_level": 4, "loot_tier": 4,
+            "connections": ["space_h4", "space_print_room", "space_h2"],
+            "is_spawn": False, "is_extract": False
+        },
+        "space_h2": {
+            "name": "浮力室H2",
+            "description": "模拟失重环境的特殊研究舱室，内有大型悬浮装置。",
+            "x": 10, "y": 13,
+            "danger_level": 4, "loot_tier": 3,
+            "connections": ["space_control_building", "space_print_room", "space_h3", "space_h1"],
+            "is_spawn": False, "is_extract": False
+        },
+        "space_h1": {
+            "name": "离心机室H1",
+            "description": "装备超大型离心机的测试室，模拟宇航员承受的过载环境。",
+            "x": 13, "y": 7,
+            "danger_level": 4, "loot_tier": 3,
+            "connections": ["space_assembly", "space_h2", "space_director"],
+            "is_spawn": False, "is_extract": False
+        },
+        "space_director": {
+            "name": "总裁室",
+            "description": "基地最高指挥官的私人办公室，深藏基地最核心的机密文件与贵重物品。",
+            "x": 15, "y": 8,
+            "danger_level": 5, "loot_tier": 5,
+            "connections": ["space_h4", "space_h1", "space_extract_helipad"],
+            "is_spawn": False, "is_extract": False,
+            "requires_key": "director_keycard"
+        },
+        # ============ 撤离点 ============
+        "space_extract_helipad": {
+            "name": "发射台直升机",
+            "description": "发射台顶部的紧急直升机平台，撤离费用高昂。",
+            "x": 17, "y": 7,
+            "danger_level": 1, "loot_tier": 0,
+            "connections": ["space_director"],
+            "is_spawn": False, "is_extract": True,
+            "extract_condition": {"type": "paid", "cost": 12000}
+        },
+        "space_extract_desert": {
+            "name": "荒漠撤离点",
+            "description": "南侧荒漠中预设的开放撤离区域。",
+            "x": 8, "y": 1,
+            "danger_level": 1, "loot_tier": 0,
+            "connections": ["space_industrial"],
+            "is_spawn": False, "is_extract": True,
+            "extract_condition": {"type": "open", "open_time": 0}
+        },
+        "space_extract_pipe": {
+            "name": "地下管道",
+            "description": "基地地下排水管道出口，背包过大无法通行。",
+            "x": 3, "y": 15,
+            "danger_level": 1, "loot_tier": 0,
+            "connections": ["space_dorm"],
+            "is_spawn": False, "is_extract": True,
+            "extract_condition": {"type": "drop_backpack", "drop_backpack": True}
+        },
+        "space_extract_sidedoor": {
+            "name": "试车间侧门",
+            "description": "水平试车间的紧急侧门，需等待安保巡逻间隙。",
+            "x": 19, "y": 2,
+            "danger_level": 1, "loot_tier": 0,
+            "connections": ["space_test_bay"],
+            "is_spawn": False, "is_extract": True,
+            "extract_condition": {"type": "wait", "wait_time": 20}
+        }
+    }
+}
+
+# ============== 巴克什地图 ==============
+MAP_BAKSH = {
+    "name": "巴克什",
+    "description": "一座古老的中东城镇，巴别塔高耸于城市中心，各方势力为争夺塔内宝藏而激战不休...",
+    "width": 20,
+    "height": 16,
+    "zones": {
+        # ============ 出生点 ============
+        "baksh_spawn_south": {
+            "name": "城南入口",
+            "description": "巴克什城镇南侧的主要入口，残破的城门依然矗立。",
+            "x": 10, "y": 1,
+            "danger_level": 1, "loot_tier": 1,
+            "connections": ["baksh_bazaar", "baksh_cherry_town"],
+            "is_spawn": True, "is_extract": False
+        },
+        "baksh_spawn_east": {
+            "name": "东部废墟",
+            "description": "城镇东侧的战争废墟区，断壁残垣提供大量掩体。",
+            "x": 18, "y": 7,
+            "danger_level": 1, "loot_tier": 1,
+            "connections": ["baksh_rooftop", "baksh_bell_tower"],
+            "is_spawn": True, "is_extract": False
+        },
+        "baksh_spawn_west": {
+            "name": "西侧小巷",
+            "description": "城镇西侧蜿蜒的小巷网络，熟悉地形者可快速穿行。",
+            "x": 2, "y": 9,
+            "danger_level": 1, "loot_tier": 1,
+            "connections": ["baksh_bathhouse", "baksh_mosque"],
+            "is_spawn": True, "is_extract": False
+        },
+        # ============ 外围区域 ============
+        "baksh_cherry_town": {
+            "name": "樱桃小镇",
+            "description": "城南的居民区，彩色涂装的建筑与茂盛的樱桃树形成鲜明对比。",
+            "x": 7, "y": 3,
+            "danger_level": 2, "loot_tier": 2,
+            "connections": ["baksh_spawn_south", "baksh_bazaar", "baksh_inn"],
+            "is_spawn": False, "is_extract": False
+        },
+        "baksh_bazaar": {
+            "name": "集市广场",
+            "description": "城镇中心的传统集市，摊位林立，曾是商贸往来的热闹场所。",
+            "x": 10, "y": 4,
+            "danger_level": 2, "loot_tier": 2,
+            "connections": ["baksh_spawn_south", "baksh_cherry_town", "baksh_inn", "baksh_museum", "baksh_babel_base", "baksh_extract_south_gate"],
+            "is_spawn": False, "is_extract": False
+        },
+        "baksh_inn": {
+            "name": "蓝汀旅馆",
+            "description": "城中历史最悠久的旅馆，蓝色外墙已斑驳，客房内遗留大量旅客物品。",
+            "x": 7, "y": 6,
+            "danger_level": 3, "loot_tier": 3,
+            "connections": ["baksh_cherry_town", "baksh_bazaar", "baksh_bathhouse", "baksh_mosque"],
+            "is_spawn": False, "is_extract": False
+        },
+        "baksh_bathhouse": {
+            "name": "大浴场",
+            "description": "传统式公共浴室建筑，穹顶结构独特，地下有古老的供水管道。",
+            "x": 4, "y": 7,
+            "danger_level": 3, "loot_tier": 3,
+            "connections": ["baksh_spawn_west", "baksh_inn", "baksh_sewer", "baksh_extract_bathhouse"],
+            "is_spawn": False, "is_extract": False
+        },
+        "baksh_mosque": {
+            "name": "清真寺",
+            "description": "城镇的宗教中心，宣礼塔居高临下，内部装饰精美，藏有珍贵文物。",
+            "x": 3, "y": 12,
+            "danger_level": 3, "loot_tier": 3,
+            "connections": ["baksh_spawn_west", "baksh_inn", "baksh_sewer"],
+            "is_spawn": False, "is_extract": False
+        },
+        # ============ 核心区域 ============
+        "baksh_museum": {
+            "name": "皇家博物馆",
+            "description": "收藏着大量珍贵文物和历史典藏的博物馆，保险库深处据说存有无价之宝。",
+            "x": 13, "y": 5,
+            "danger_level": 4, "loot_tier": 4,
+            "connections": ["baksh_bazaar", "baksh_babel_base", "baksh_bell_tower"],
+            "is_spawn": False, "is_extract": False
+        },
+        "baksh_bell_tower": {
+            "name": "钟楼",
+            "description": "城镇东侧的古老钟楼，登顶可俯瞰全城，是狙击手的理想阵地。",
+            "x": 16, "y": 6,
+            "danger_level": 3, "loot_tier": 3,
+            "connections": ["baksh_spawn_east", "baksh_museum", "baksh_rooftop"],
+            "is_spawn": False, "is_extract": False
+        },
+        "baksh_rooftop": {
+            "name": "屋顶通道",
+            "description": "连接城镇各楼宇的屋顶跑道，视野开阔但暴露风险极高。",
+            "x": 16, "y": 10,
+            "danger_level": 3, "loot_tier": 2,
+            "connections": ["baksh_spawn_east", "baksh_bell_tower", "baksh_babel_top", "baksh_extract_harbor"],
+            "is_spawn": False, "is_extract": False
+        },
+        "baksh_sewer": {
+            "name": "地下水道",
+            "description": "延伸至城镇各处的古老地下水道系统，黑暗潮湿，危险重重。",
+            "x": 6, "y": 11,
+            "danger_level": 4, "loot_tier": 3,
+            "connections": ["baksh_bathhouse", "baksh_mosque", "baksh_babel_base"],
+            "is_spawn": False, "is_extract": False
+        },
+        "baksh_babel_base": {
+            "name": "巴别塔底层",
+            "description": "巴别塔的地面入口层，厚重的铁门和武装警卫阻挡着闯入者。",
+            "x": 11, "y": 9,
+            "danger_level": 4, "loot_tier": 4,
+            "connections": ["baksh_bazaar", "baksh_museum", "baksh_sewer", "baksh_babel_top"],
+            "is_spawn": False, "is_extract": False
+        },
+        # ============ 高价值区域 ============
+        "baksh_babel_top": {
+            "name": "巴别塔",
+            "description": "城镇中央的巨型古塔，层层设防，塔顶据说藏有传说中的无尽财富，是整座城市的战略核心。",
+            "x": 11, "y": 12,
+            "danger_level": 5, "loot_tier": 5,
+            "connections": ["baksh_babel_base", "baksh_rooftop", "baksh_extract_babel"],
+            "is_spawn": False, "is_extract": False,
+            "requires_key": "babel_key"
+        },
+        # ============ 撤离点 ============
+        "baksh_extract_babel": {
+            "name": "巴别塔顶撤离",
+            "description": "巴别塔顶部的撤离平台，俯瞰全城，需支付高额撤离费。",
+            "x": 13, "y": 14,
+            "danger_level": 1, "loot_tier": 0,
+            "connections": ["baksh_babel_top"],
+            "is_spawn": False, "is_extract": True,
+            "extract_condition": {"type": "paid", "cost": 15000}
+        },
+        "baksh_extract_bathhouse": {
+            "name": "浴场地道",
+            "description": "大浴场地下的古老逃生地道，空间狭窄无法携带背包。",
+            "x": 2, "y": 6,
+            "danger_level": 1, "loot_tier": 0,
+            "connections": ["baksh_bathhouse"],
+            "is_spawn": False, "is_extract": True,
+            "extract_condition": {"type": "drop_backpack", "drop_backpack": True}
+        },
+        "baksh_extract_south_gate": {
+            "name": "城南大门",
+            "description": "城镇南侧的主城门，需等待守卫换岗间隙方可通过。",
+            "x": 10, "y": 14,
+            "danger_level": 1, "loot_tier": 0,
+            "connections": ["baksh_bazaar"],
+            "is_spawn": False, "is_extract": True,
+            "extract_condition": {"type": "wait", "wait_time": 30}
+        },
+        "baksh_extract_harbor": {
+            "name": "码头撤离",
+            "description": "城镇东侧的小型码头，全时段开放的撤离通道。",
+            "x": 18, "y": 12,
+            "danger_level": 1, "loot_tier": 0,
+            "connections": ["baksh_rooftop"],
+            "is_spawn": False, "is_extract": True,
+            "extract_condition": {"type": "open", "open_time": 0}
+        }
+    }
+}
+
+# 所有地图列表
+ALL_MAPS = {
+    "dam": MAP_DAM,
+    "valley": MAP_VALLEY,
+    "space": MAP_SPACE,
+    "baksh": MAP_BAKSH
+}
+
+# 根据地图获取撤离点
+def get_extraction_points(map_data: dict) -> list:
+    return [zid for zid, z in map_data["zones"].items() if z.get("is_extract")]
+
+EXTRACTION_POINTS = get_extraction_points(MAP_DAM)
+
+# ============== 武器配件系统 ==============
+ATTACHMENTS = {
+    # 瞄准镜
+    "sight_red_dot": {
+        "name": "红点瞄准镜",
+        "slot": "sight",
+        "effects": {"accuracy": 0.05},
+        "value": 500,
+        "rarity": Rarity.COMMON,
+        "description": "基础红点瞄具，提升命中率"
+    },
+    "sight_holographic": {
+        "name": "全息瞄准镜",
+        "slot": "sight",
+        "effects": {"accuracy": 0.08},
+        "value": 1200,
+        "rarity": Rarity.UNCOMMON,
+        "description": "全息瞄具，明显提升命中率"
+    },
+    "sight_acog": {
+        "name": "ACOG 4倍镜",
+        "slot": "sight",
+        "effects": {"accuracy": 0.12, "fire_rate": -1},
+        "value": 3000,
+        "rarity": Rarity.RARE,
+        "description": "4倍放大瞄准镜，大幅提升精度但降低射速"
+    },
+    "sight_thermal": {
+        "name": "热成像瞄准镜",
+        "slot": "sight",
+        "effects": {"accuracy": 0.15},
+        "value": 15000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "热成像技术，极大提升命中率"
+    },
+    # 枪口
+    "muzzle_suppressor": {
+        "name": "消音器",
+        "slot": "muzzle",
+        "effects": {"accuracy": 0.03, "aggro_reduce": True},
+        "value": 2000,
+        "rarity": Rarity.UNCOMMON,
+        "description": "降低开火噪音，略微提升精度"
+    },
+    "muzzle_compensator": {
+        "name": "补偿器",
+        "slot": "muzzle",
+        "effects": {"accuracy": 0.05},
+        "value": 1500,
+        "rarity": Rarity.UNCOMMON,
+        "description": "减少后坐力，提升精度"
+    },
+    "muzzle_flash_hider": {
+        "name": "消焰器",
+        "slot": "muzzle",
+        "effects": {"accuracy": 0.02},
+        "value": 800,
+        "rarity": Rarity.COMMON,
+        "description": "隐藏枪口火焰"
+    },
+    # 握把
+    "grip_vertical": {
+        "name": "垂直握把",
+        "slot": "grip",
+        "effects": {"accuracy": 0.04},
+        "value": 600,
+        "rarity": Rarity.COMMON,
+        "description": "改善射击稳定性"
+    },
+    "grip_angled": {
+        "name": "角度握把",
+        "slot": "grip",
+        "effects": {"accuracy": 0.03, "fire_rate": 1},
+        "value": 900,
+        "rarity": Rarity.UNCOMMON,
+        "description": "更快切枪速度，略提精度和射速"
+    },
+    # 弹匣
+    "mag_extended": {
+        "name": "扩容弹匣",
+        "slot": "magazine",
+        "effects": {"mag_size": 10},
+        "value": 800,
+        "rarity": Rarity.UNCOMMON,
+        "description": "增加弹匣容量10发"
+    },
+    "mag_drum": {
+        "name": "弹鼓",
+        "slot": "magazine",
+        "effects": {"mag_size": 30, "accuracy": -0.03},
+        "value": 2500,
+        "rarity": Rarity.RARE,
+        "description": "大幅增加弹匣容量，略降精度"
+    },
+    # 枪托
+    "stock_tactical": {
+        "name": "战术枪托",
+        "slot": "stock",
+        "effects": {"accuracy": 0.04},
+        "value": 1000,
+        "rarity": Rarity.UNCOMMON,
+        "description": "可调节的战术枪托，提升精度"
+    },
+    "stock_skeleton": {
+        "name": "骨架枪托",
+        "slot": "stock",
+        "effects": {"accuracy": 0.02, "fire_rate": 1},
+        "value": 700,
+        "rarity": Rarity.COMMON,
+        "description": "轻量化枪托，提升机动性"
+    }
+}
 
 import math
 
@@ -682,8 +1749,9 @@ def get_zone_distance(zones: dict, zone1_id: str, zone2_id: str) -> float:
 
 def select_distant_extraction(zones: dict, spawn_zone: str) -> str:
     """选择一个距离玩家出生点较远的撤离点"""
+    extraction_points = [zid for zid, z in zones.items() if z.get("is_extract")]
     distances = []
-    for ep in EXTRACTION_POINTS:
+    for ep in extraction_points:
         if ep in zones:
             dist = get_zone_distance(zones, spawn_zone, ep)
             distances.append((ep, dist))
@@ -751,6 +1819,88 @@ ENEMY_TYPES = {
         "loot_table": "pmc_elite",
         "xp": 500
     },
+    # ===== 新增敌人 =====
+    "scav_sniper": {
+        "name": "游荡者狙击手",
+        "hp": 120,
+        "armor_class": 2,
+        "accuracy": 0.80,
+        "weapon": "sniper_mosin",
+        "aggro_range": 6,
+        "loot_table": "scav_veteran",
+        "xp": 250
+    },
+    "scav_shotgunner": {
+        "name": "游荡者散弹手",
+        "hp": 180,
+        "armor_class": 2,
+        "accuracy": 0.55,
+        "weapon": "shotgun_m870",
+        "aggro_range": 2,
+        "loot_table": "scav_normal",
+        "xp": 150
+    },
+    "raider_assault": {
+        "name": "突袭者突击兵",
+        "hp": 250,
+        "armor_class": 4,
+        "accuracy": 0.70,
+        "weapon": "ar_hk416",
+        "aggro_range": 5,
+        "loot_table": "pmc_normal",
+        "xp": 400
+    },
+    "raider_lmg": {
+        "name": "突袭者机枪手",
+        "hp": 350,
+        "armor_class": 4,
+        "accuracy": 0.50,
+        "weapon": "lmg_pkm",
+        "aggro_range": 5,
+        "loot_table": "pmc_elite",
+        "xp": 450
+    },
+    "raider_sniper": {
+        "name": "突袭者狙击手",
+        "hp": 200,
+        "armor_class": 3,
+        "accuracy": 0.90,
+        "weapon": "sniper_awm",
+        "aggro_range": 7,
+        "loot_table": "pmc_elite",
+        "xp": 500
+    },
+    "pmc_medic": {
+        "name": "佣兵医疗兵",
+        "hp": 180,
+        "armor_class": 3,
+        "accuracy": 0.55,
+        "weapon": "smg_vector",
+        "aggro_range": 3,
+        "loot_table": "pmc_normal",
+        "xp": 250
+    },
+    "pmc_heavy": {
+        "name": "佣兵重装兵",
+        "hp": 400,
+        "armor_class": 5,
+        "accuracy": 0.60,
+        "weapon": "lmg_m249",
+        "aggro_range": 4,
+        "loot_table": "pmc_elite",
+        "xp": 600
+    },
+    "boss_guardian": {
+        "name": "守卫者",
+        "hp": 600,
+        "armor_class": 5,
+        "accuracy": 0.80,
+        "weapon": "ar_scarh",
+        "aggro_range": 6,
+        "loot_table": "boss_killa",
+        "xp": 1500,
+        "is_boss": True
+    },
     "boss_killa": {
         "name": "杀手Killa",
         "hp": 800,
@@ -768,33 +1918,48 @@ LOOT_TABLES = {
     "scav_basic": [
         ("loot_bolts", 0.5),
         ("loot_tape", 0.3),
-        ("med_bandage", 0.2)
+        ("loot_wire", 0.3),
+        ("med_bandage", 0.2),
+        ("drink_water", 0.15)
     ],
     "scav_normal": [
         ("loot_electronics", 0.3),
+        ("loot_circuit_board", 0.2),
         ("med_ai2", 0.2),
         ("loot_tape", 0.3),
-        ("ammo_9mm", 0.2)
+        ("food_mre", 0.15),
+        ("grenade_flash", 0.05)
     ],
     "scav_veteran": [
         ("loot_cpu", 0.2),
         ("med_ifak", 0.2),
         ("loot_electronics", 0.3),
-        ("armor_2_police", 0.1)
+        ("loot_military_flash", 0.15),
+        ("armor_2_police", 0.1),
+        ("grenade_frag", 0.08),
+        ("key_safe", 0.03)
     ],
     "pmc_normal": [
         ("loot_cpu", 0.3),
         ("loot_document", 0.1),
+        ("loot_hdd", 0.2),
         ("med_ifak", 0.2),
-        ("ammo_556", 0.2),
-        ("armor_3_umka", 0.1)
+        ("loot_military_radio", 0.1),
+        ("armor_3_umka", 0.1),
+        ("stim_adrenaline", 0.05),
+        ("key_lab_keycard", 0.03)
     ],
     "pmc_elite": [
         ("loot_gpu", 0.15),
         ("loot_document", 0.2),
+        ("loot_intel_folder", 0.1),
         ("med_surgery", 0.1),
         ("armor_4_korund", 0.15),
-        ("loot_rolex", 0.05)
+        ("loot_rolex", 0.05),
+        ("loot_nv_goggles", 0.08),
+        ("stim_propital", 0.08),
+        ("key_armory", 0.03),
+        ("key_server", 0.02)
     ],
     "boss_killa": [
         ("loot_gpu", 0.3),
@@ -802,7 +1967,11 @@ LOOT_TABLES = {
         ("loot_bitcoin", 0.1),
         ("loot_usb_secret", 0.1),
         ("armor_5_killa", 0.4),
-        ("loot_goldbar", 0.05)
+        ("loot_goldbar", 0.05),
+        ("loot_thermal_scope", 0.15),
+        ("loot_diamond", 0.08),
+        ("loot_lion_statue", 0.05),
+        ("loot_tank_model", 0.03)
     ]
 }
 
@@ -829,9 +1998,58 @@ class Weapon(Item):
     ammo_type: str = ""
     mag_size: int = 30
     current_ammo: int = 30
+    attachments: Dict = field(default_factory=dict)  # slot -> attachment_id
 
     def get_item_type(self):
         return "weapon"
+
+    def get_effective_accuracy(self) -> float:
+        """计算包含配件加成的实际精度"""
+        acc = self.accuracy
+        for slot, att_id in self.attachments.items():
+            att = ATTACHMENTS.get(att_id)
+            if att:
+                acc += att["effects"].get("accuracy", 0)
+        return min(0.99, max(0.1, acc))
+
+    def get_effective_fire_rate(self) -> int:
+        """计算包含配件加成的实际射速"""
+        fr = self.fire_rate
+        for slot, att_id in self.attachments.items():
+            att = ATTACHMENTS.get(att_id)
+            if att:
+                fr += att["effects"].get("fire_rate", 0)
+        return max(1, fr)
+
+    def get_effective_mag_size(self) -> int:
+        """计算包含配件加成的实际弹匣"""
+        ms = self.mag_size
+        for slot, att_id in self.attachments.items():
+            att = ATTACHMENTS.get(att_id)
+            if att:
+                ms += att["effects"].get("mag_size", 0)
+        return max(1, ms)
+
+    def install_attachment(self, att_id: str) -> Tuple[bool, str]:
+        """安装配件"""
+        att = ATTACHMENTS.get(att_id)
+        if not att:
+            return False, "配件不存在"
+        slot = att["slot"]
+        old = self.attachments.get(slot)
+        self.attachments[slot] = att_id
+        msg = f"已安装{att['name']}到{self.name}"
+        if old:
+            msg += f"（替换了{ATTACHMENTS[old]['name']}）"
+        return True, msg
+
+    def remove_attachment(self, slot: str) -> Tuple[bool, str]:
+        """拆卸配件"""
+        if slot not in self.attachments:
+            return False, "该槽位没有配件"
+        att_id = self.attachments.pop(slot)
+        att = ATTACHMENTS.get(att_id, {})
+        return True, f"已拆卸{att.get('name', att_id)}"
 
 @dataclass
 class Armor(Item):
@@ -861,59 +2079,20 @@ class LootItem(Item):
         return "loot"
 
 @dataclass
-class BodyPartStatus:
-    """身体部位状态"""
-    hp: int = 100
-    max_hp: int = 100
-    is_broken: bool = False
-    is_bleeding: bool = False  # 流血状态
-    bleed_damage: int = 0      # 流血伤害（每回合）
-
-    def take_damage(self, damage: int, cause_bleed: bool = True) -> int:
-        actual_damage = min(damage, self.hp)
-        self.hp -= actual_damage
-        if self.hp <= 0:
-            self.is_broken = True
-        # 30%概率触发流血
-        if cause_bleed and not self.is_bleeding and random.random() < 0.3:
-            self.is_bleeding = True
-            self.bleed_damage = random.randint(3, 8)
-        return actual_damage
-
-    def heal(self, amount: int) -> int:
-        if self.is_broken:
-            return 0
-        healed = min(amount, self.max_hp - self.hp)
-        self.hp += healed
-        return healed
-
-    def repair(self):
-        """手术修复断裂部位"""
-        self.is_broken = False
-        self.hp = max(30, self.hp)  # 修复后恢复30%HP
-
-    def stop_bleeding(self):
-        """止血"""
-        self.is_bleeding = False
-        self.bleed_damage = 0
-
-    def tick(self) -> int:
-        """每回合处理流血伤害"""
-        damage = 0
-        if self.is_bleeding:
-            damage = self.bleed_damage
-            self.hp -= damage
-            if self.hp <= 0:
-                self.hp = 1  # 流血不会直接致死，但会到1HP
-        return damage
+class Debuff:
+    """状态异常"""
+    name: str           # 内部名称: bleeding, stunned, slowed
+    cn_name: str        # 中文名
+    remaining: int      # 剩余回合数
+    damage: int = 0     # 每回合伤害（流血用）
 
 @dataclass
 class ArmorStatus:
     """护甲状态"""
     armor_value: int = 0       # 护甲值
     max_armor: int = 0         # 最大护甲值
-    durability: int = 100      # 耐久度
-    max_durability: int = 100  # 最大耐久度
+    durability: int = 0        # 耐久度
+    max_durability: int = 0    # 最大耐久度
 
     def absorb_damage(self, damage: int) -> tuple:
         """吸收伤害，返回(实际伤害, 护甲消耗)"""
@@ -945,15 +2124,17 @@ class ArmorStatus:
 
 @dataclass
 class PlayerStats:
-    """玩家状态 - 简化为三部位"""
-    # 身体部位 (头/胸/腿)
-    head: BodyPartStatus = field(default_factory=BodyPartStatus)
-    chest: BodyPartStatus = field(default_factory=BodyPartStatus)
-    legs: BodyPartStatus = field(default_factory=BodyPartStatus)
+    """玩家状态 - 统一HP + 分部位护甲 + debuff"""
+    # 统一生命值
+    hp: int = 100
+    max_hp: int = 100
 
     # 护甲 (头部和胸部有护甲，腿部无护甲)
     head_armor: ArmorStatus = field(default_factory=ArmorStatus)
     chest_armor: ArmorStatus = field(default_factory=ArmorStatus)
+
+    # debuff列表
+    debuffs: List = field(default_factory=list)
 
     # 其他状态
     energy: int = 100
@@ -969,21 +2150,16 @@ class PlayerStats:
     level: int = 1
 
     def is_alive(self) -> bool:
-        return self.head.hp > 0 and self.chest.hp > 0
+        """HP大于0即存活"""
+        return self.hp > 0
 
     def get_total_hp(self) -> int:
-        return self.head.hp + self.chest.hp + self.legs.hp
+        """总HP"""
+        return self.hp
 
     def get_max_hp(self) -> int:
-        return 300  # 3个部位，每个100
-
-    def get_body_part(self, zone: DamageZone) -> BodyPartStatus:
-        part_map = {
-            DamageZone.HEAD: self.head,
-            DamageZone.CHEST: self.chest,
-            DamageZone.LEGS: self.legs
-        }
-        return part_map[zone]
+        """最大总HP"""
+        return self.max_hp
 
     def get_armor(self, zone: DamageZone) -> ArmorStatus:
         """获取对应部位的护甲"""
@@ -993,8 +2169,43 @@ class PlayerStats:
             return self.chest_armor
         return ArmorStatus()  # 腿部无护甲
 
+    def has_debuff(self, name: str) -> bool:
+        return any(d.name == name for d in self.debuffs)
+
+    def get_debuff(self, name: str) -> Optional[Debuff]:
+        return next((d for d in self.debuffs if d.name == name), None)
+
+    def add_debuff(self, name: str, cn_name: str, duration: int, damage: int = 0):
+        """添加或刷新debuff"""
+        existing = self.get_debuff(name)
+        if existing:
+            existing.remaining = max(existing.remaining, duration)
+            if damage > 0:
+                existing.damage = damage
+        else:
+            self.debuffs.append(Debuff(name=name, cn_name=cn_name, remaining=duration, damage=damage))
+
+    def remove_debuff(self, name: str):
+        self.debuffs = [d for d in self.debuffs if d.name != name]
+
+    def clear_debuffs(self):
+        self.debuffs.clear()
+
     def apply_pain_relief(self, duration: int):
         self.pain_relief_timer = duration
+
+    def heal(self, amount: int) -> int:
+        """治疗"""
+        need = self.max_hp - self.hp
+        healed = min(amount, need)
+        self.hp += healed
+        return healed
+
+    def take_damage(self, damage: int) -> int:
+        """扣除HP"""
+        actual = min(damage, self.hp)
+        self.hp -= actual
+        return actual
 
     def tick(self):
         """每回合更新状态"""
@@ -1003,8 +2214,25 @@ class PlayerStats:
         # 饥渴消耗
         self.energy = max(0, self.energy - 1)
         self.hydration = max(0, self.hydration - 1)
-        # 流血伤害
-        bleed_damage = self.head.tick() + self.chest.tick() + self.legs.tick()
+        # 处理debuff
+        bleed_damage = 0
+        expired = []
+        for debuff in self.debuffs:
+            if debuff.name == 'bleeding' and debuff.damage > 0:
+                bleed_damage += debuff.damage
+            debuff.remaining -= 1
+            if debuff.remaining <= 0:
+                expired.append(debuff.name)
+        # 流血扣HP（不致死，最低1）
+        if bleed_damage > 0:
+            self.hp = max(1, self.hp - bleed_damage)
+        # 再生恢复HP
+        regen = self.get_debuff('regen')
+        if regen and regen.damage < 0:
+            heal_amount = abs(regen.damage)
+            self.heal(heal_amount)
+        # 移除过期debuff
+        self.debuffs = [d for d in self.debuffs if d.remaining > 0]
         return bleed_damage
 
 @dataclass
@@ -1210,6 +2438,7 @@ class Player:
         self.equipment = EquipmentSlots()
         self.stash_weapons: List[Weapon] = []  # 武器仓库
         self.stash_armors: List[Armor] = []    # 护甲仓库
+        self.stash_helmets: List[Armor] = []   # 头盔仓库
         self.stash_items: List[Item] = []      # 物品仓库
         self.current_zone: str = ""
         self.action_points: int = 100
@@ -1218,44 +2447,49 @@ class Player:
         self.total_loot_value: int = 0
 
     def heal(self, amount: int, body_part: DamageZone = None):
-        """治疗"""
-        if body_part:
-            part = self.stats.get_body_part(body_part)
-            return part.heal(amount)
-        else:
-            # 治疗所有部位
-            healed = 0
-            for zone in DamageZone:
-                part = self.stats.get_body_part(zone)
-                healed += part.heal(amount)
-            return healed
+        """治疗统一HP"""
+        return self.stats.heal(amount)
 
     def take_damage(self, damage: int, zone: DamageZone, penetration: int = 0) -> Tuple[int, str]:
-        """受到伤害 - 使用简化的三部位系统"""
-        part = self.stats.get_body_part(zone)
-
-        # 计算护甲减伤 (头部和胸部有护甲，腿部无护甲)
-        armor_reduction = 0
+        """受到伤害 - 统一HP + 分部位护甲"""
         armor_msg = ""
-
         armor = self.stats.get_armor(zone)
+
+        # 护甲吸收伤害（头部和胸部有护甲）
         if armor and armor.armor_value > 0 and armor.durability > 0:
-            # 使用护甲吸收伤害
             actual_damage, durability_loss = armor.absorb_damage(damage)
             armor_reduction = damage - actual_damage
             if armor_reduction > 0:
                 armor_msg = f"护甲抵挡了{armor_reduction}点伤害！(耐久-{durability_loss})"
             damage = actual_damage
+        else:
+            # 无护甲或护甲已损坏
+            if zone != DamageZone.LEGS and armor and armor.max_durability > 0:
+                armor_msg = "护甲已损坏！"
 
         # 应用部位伤害倍率
         actual_damage = int(damage * zone.multiplier)
-        part.take_damage(actual_damage)
+        self.stats.take_damage(actual_damage)
 
-        msg = f"你的{zone.cn_name}受到{actual_damage}点伤害！"
+        msg = f"你的{zone.cn_name}受到{actual_damage}点伤害！(HP:{self.stats.hp}/{self.stats.max_hp})"
         if armor_msg:
             msg += f" {armor_msg}"
-        if zone.effect_msg:
-            msg += f" {zone.effect_msg}"
+
+        # 根据命中部位概率触发debuff
+        debuff_msg = ""
+        if zone == DamageZone.HEAD and random.random() < 0.4:
+            self.stats.add_debuff('stunned', '眩晕', 2)
+            debuff_msg = "头部受击，你陷入眩晕！"
+        elif zone == DamageZone.CHEST and random.random() < 0.3:
+            bleed_dmg = random.randint(5, 12)
+            self.stats.add_debuff('bleeding', '流血', 4, bleed_dmg)
+            debuff_msg = f"胸部受击，你开始流血！(-{bleed_dmg}/回合)"
+        elif zone == DamageZone.LEGS and random.random() < 0.5:
+            self.stats.add_debuff('slowed', '减速', 3)
+            debuff_msg = "腿部受击，移动速度下降！"
+
+        if debuff_msg:
+            msg += f" {debuff_msg}"
 
         return actual_damage, msg
 
@@ -1268,16 +2502,17 @@ class Player:
         if weapon.current_ammo <= 0:
             return 0, "弹药耗尽！需要换弹！"
 
-        # 消耗弹药
-        shots = min(weapon.fire_rate, weapon.current_ammo)
+        # 消耗弹药（使用配件加成后的射速）
+        effective_fire_rate = weapon.get_effective_fire_rate()
+        shots = min(effective_fire_rate, weapon.current_ammo)
         weapon.current_ammo -= shots
 
-        # 计算基础命中
-        base_accuracy = weapon.accuracy
+        # 计算基础命中（使用配件加成后的精度）
+        base_accuracy = weapon.get_effective_accuracy()
 
-        # 腿部受伤影响移动，但不影响射击精度
-        if self.stats.legs.hp < self.stats.legs.max_hp:
-            base_accuracy *= 0.9  # 腿部受伤略微影响稳定性
+        # 眩晕debuff降低命中率
+        if self.stats.has_debuff('stunned'):
+            base_accuracy *= 0.7
 
         # 瞄准部位映射和命中率修正
         aim_zone_map = {
@@ -1370,21 +2605,14 @@ class Player:
             msg += f"恢复了{healed}点生命值。"
 
         if "fix_bodypart" in effect and effect["fix_bodypart"]:
-            for zone in DamageZone:
-                part = self.stats.get_body_part(zone)
-                if part.is_broken:
-                    part.repair()
-            msg += "修复了所有受伤部位。"
+            if self.stats.debuffs:
+                self.stats.clear_debuffs()
+                msg += "清除了所有异常状态。"
 
         if "stop_bleed" in effect and effect["stop_bleed"]:
-            bleed_stopped = 0
-            for zone in DamageZone:
-                part = self.stats.get_body_part(zone)
-                if part.is_bleeding:
-                    part.stop_bleeding()
-                    bleed_stopped += 1
-            if bleed_stopped > 0:
-                msg += f"止住了{bleed_stopped}个部位的流血。"
+            if self.stats.has_debuff('bleeding'):
+                self.stats.remove_debuff('bleeding')
+                msg += "止住了流血。"
 
         if "pain_relief" in effect:
             self.stats.apply_pain_relief(effect["pain_relief"])
@@ -1394,15 +2622,43 @@ class Player:
             self.stats.energy = min(100, self.stats.energy + effect["energy"])
             msg += f"恢复了{effect['energy']}点能量。"
 
+        if "hydration" in effect:
+            self.stats.hydration = min(100, self.stats.hydration + effect["hydration"])
+            msg += f"恢复了{effect['hydration']}点水分。"
+
+        if "stamina_boost" in effect:
+            self.stats.stamina = min(100, self.stats.stamina + effect["stamina_boost"])
+            msg += f"恢复了{effect['stamina_boost']}点耐力。"
+
+        if "ap_boost" in effect:
+            self.action_points = min(self.max_action_points, self.action_points + effect["ap_boost"])
+            msg += f"恢复了{effect['ap_boost']}行动点。"
+
+        if "regen" in effect:
+            regen_amount = effect["regen"]
+            regen_dur = effect.get("regen_duration", 3)
+            self.stats.add_debuff('regen', '再生', regen_dur, -regen_amount)
+            msg += f"持续恢复生命值{regen_amount}/回合，持续{regen_dur}回合。"
+
+        if "reload_weapon" in effect:
+            weapon = self.equipment.primary_weapon
+            if weapon:
+                ammo_type = effect.get("ammo_type", "")
+                if not ammo_type or weapon.ammo_type == ammo_type:
+                    weapon.current_ammo = weapon.mag_size
+                    msg += f"{weapon.name}已补充弹药。"
+                else:
+                    msg += f"弹药类型不匹配！武器需要{weapon.ammo_type}。"
+            else:
+                msg += "没有装备武器。"
+
         if "repair_armor" in effect:
             repair_amount = effect["repair_armor"]
-            # 优先修理耐久度最低的护甲
             head_armor = self.stats.head_armor
             chest_armor = self.stats.chest_armor
 
             repaired = 0
-            # 选择耐久度最低的护甲修理
-            if head_armor.durability > 0 or chest_armor.durability > 0:
+            if head_armor.max_durability > 0 or chest_armor.max_durability > 0:
                 if head_armor.max_durability > 0 and (chest_armor.max_durability == 0 or head_armor.durability < chest_armor.durability):
                     repaired = head_armor.repair(repair_amount)
                     msg += f"头部护甲修复了{repaired}点耐久。"
@@ -1454,6 +2710,7 @@ class Raid:
         self.loot_generated: bool = False
         self.active_extraction: str = ""  # 当前激活的撤离点ID
         self.visited_zones: set = set()  # 玩家访问过的区域
+        self.pending_events: List[dict] = []  # 待通知的事件
 
     def set_active_extraction(self, spawn_zone: str):
         """设置激活的撤离点（距离出生点较远）"""
@@ -1465,16 +2722,20 @@ class Raid:
 
         for i in range(enemy_count):
             # 根据等级选择敌人类型
-            if player_level <= 3:
-                enemy_type = random.choice(["scav_weak", "scav_normal"])
+            if player_level <= 2:
+                enemy_type = random.choice(["scav_weak", "scav_weak", "scav_normal", "scav_shotgunner"])
+            elif player_level <= 4:
+                enemy_type = random.choice(["scav_normal", "scav_veteran", "scav_sniper", "scav_shotgunner", "pmc_medic"])
             elif player_level <= 6:
-                enemy_type = random.choice(["scav_normal", "scav_veteran", "pmc_grunt"])
+                enemy_type = random.choice(["scav_veteran", "pmc_grunt", "pmc_medic", "raider_assault", "scav_sniper"])
+            elif player_level <= 8:
+                enemy_type = random.choice(["pmc_grunt", "pmc_elite", "pmc_heavy", "raider_assault", "raider_lmg"])
             else:
-                enemy_type = random.choice(["pmc_grunt", "pmc_elite"])
+                enemy_type = random.choice(["pmc_elite", "pmc_heavy", "raider_assault", "raider_lmg", "raider_sniper"])
 
             # 小概率刷Boss
-            if random.random() < 0.05 and not any(e.is_boss for e in self.enemies):
-                enemy_type = "boss_killa"
+            if random.random() < 0.06 and not any(e.is_boss for e in self.enemies):
+                enemy_type = random.choice(["boss_killa", "boss_guardian"])
 
             enemy_data = ENEMY_TYPES[enemy_type]
             enemy = Enemy(
@@ -1543,6 +2804,19 @@ class Raid:
     def tick(self):
         """时间流逝"""
         self.time_elapsed += 1
+        self.pending_events = []
+
+        # 随机事件系统（每5回合检查一次）
+        if self.time_elapsed > 0 and self.time_elapsed % 5 == 0:
+            event_roll = random.random()
+            if event_roll < 0.25:
+                self._event_airdrop()
+            elif event_roll < 0.40:
+                self._event_reinforcements()
+            elif event_roll < 0.50:
+                self._event_supply_cache()
+            elif event_roll < 0.58:
+                self._event_gas_zone()
 
         # 敌人AI行动
         for enemy in self.enemies:
@@ -1558,6 +2832,234 @@ class Raid:
                         new_zone = random.choice(connections)
                         enemy.current_zone = new_zone
 
+    def _event_airdrop(self):
+        """空投事件 - 在随机区域生成高价值物品"""
+        zone_ids = [zid for zid, z in self.zones.items()
+                   if not z.get("is_spawn") and not z.get("is_extract")]
+        if not zone_ids:
+            return
+        target = random.choice(zone_ids)
+        zone = self.zones[target]
+        # 添加高价值空投物品
+        airdrop_items = [
+            ("loot_gpu", LOOT_ITEMS.get("loot_gpu", {})),
+            ("loot_thermal_scope", LOOT_ITEMS.get("loot_thermal_scope", {})),
+            ("loot_diamond", LOOT_ITEMS.get("loot_diamond", {})),
+        ]
+        chosen_id, chosen_data = random.choice(airdrop_items)
+        if chosen_data:
+            if "loot" not in zone:
+                zone["loot"] = []
+            zone["loot"].append({
+                "id": f"airdrop_{random.randint(1000, 9999)}",
+                "item_id": chosen_id,
+                "data": chosen_data
+            })
+        self.pending_events.append({
+            "type": "airdrop",
+            "zone": target,
+            "zone_name": zone["name"],
+            "message": f"📦 空投物资已投放到 {zone['name']}！"
+        })
+
+    def _event_reinforcements(self):
+        """敌人增援事件"""
+        zone_ids = [zid for zid, z in self.zones.items()
+                   if not z.get("is_spawn") and not z.get("is_extract")]
+        if not zone_ids:
+            return
+        target = random.choice(zone_ids)
+        # 添加2-3个增援敌人
+        reinforcement_types = ["scav_veteran", "pmc_grunt", "raider_assault"]
+        count = random.randint(2, 3)
+        for i in range(count):
+            etype = random.choice(reinforcement_types)
+            edata = ENEMY_TYPES[etype]
+            enemy = Enemy(
+                id=f"reinforce_{self.time_elapsed}_{i}",
+                name=edata["name"] + "(增援)",
+                hp=edata["hp"], max_hp=edata["hp"],
+                armor_class=edata["armor_class"],
+                accuracy=edata["accuracy"],
+                weapon_id=edata["weapon"],
+                aggro_range=edata["aggro_range"],
+                loot_table=edata["loot_table"],
+                xp=int(edata["xp"] * 1.5),
+                is_boss=False
+            )
+            enemy.current_zone = target
+            self.enemies.append(enemy)
+        self.pending_events.append({
+            "type": "reinforcements",
+            "zone": target,
+            "zone_name": self.zones[target]["name"],
+            "message": f"⚠️ 敌人增援部队已抵达 {self.zones[target]['name']}！({count}人)"
+        })
+
+    def _event_supply_cache(self):
+        """补给站发现事件 - 在随机区域添加医疗/弹药"""
+        zone_ids = [zid for zid, z in self.zones.items()
+                   if not z.get("is_spawn") and not z.get("is_extract")]
+        if not zone_ids:
+            return
+        target = random.choice(zone_ids)
+        zone = self.zones[target]
+        if "loot" not in zone:
+            zone["loot"] = []
+        supply_items = [
+            ("med_ifak", CONSUMABLES.get("med_ifak", {})),
+            ("med_salewa", CONSUMABLES.get("med_salewa", {})),
+            ("stim_adrenaline", CONSUMABLES.get("stim_adrenaline", {})),
+            ("ammo_box_556", CONSUMABLES.get("ammo_box_556", {})),
+        ]
+        for item_id, item_data in random.sample(supply_items, 2):
+            if item_data:
+                zone["loot"].append({
+                    "id": f"supply_{random.randint(1000, 9999)}",
+                    "item_id": item_id,
+                    "data": item_data
+                })
+        self.pending_events.append({
+            "type": "supply",
+            "zone": target,
+            "zone_name": zone["name"],
+            "message": f"🏥 补给物资已在 {zone['name']} 刷新！"
+        })
+
+    def _event_gas_zone(self):
+        """毒气区域事件 - 标记区域为危险"""
+        zone_ids = [zid for zid, z in self.zones.items()
+                   if not z.get("is_spawn") and not z.get("is_extract") and not z.get("gas_active")]
+        if not zone_ids:
+            return
+        target = random.choice(zone_ids)
+        self.zones[target]["gas_active"] = True
+        self.zones[target]["gas_duration"] = 10  # 持续10回合
+        self.pending_events.append({
+            "type": "gas",
+            "zone": target,
+            "zone_name": self.zones[target]["name"],
+            "message": f"☠️ 毒气扩散到 {self.zones[target]['name']}！进入该区域会持续受到伤害！"
+        })
+
+# ============== 任务系统 ==============
+MISSION_TEMPLATES = {
+    "kill_scavs": {
+        "name": "清剿游荡者",
+        "description": "击杀{target}名游荡者",
+        "type": "kill",
+        "target_type": "scav",
+        "target_count": [3, 5, 8],
+        "rewards": {"money": [2000, 4000, 8000], "xp": [100, 200, 400]},
+        "department": "战斗部门"
+    },
+    "kill_pmc": {
+        "name": "猎杀佣兵",
+        "description": "击杀{target}名佣兵或突袭者",
+        "type": "kill",
+        "target_type": "pmc",
+        "target_count": [2, 3, 5],
+        "rewards": {"money": [5000, 8000, 15000], "xp": [200, 400, 800]},
+        "department": "战斗部门"
+    },
+    "kill_boss": {
+        "name": "斩首行动",
+        "description": "击杀任意Boss",
+        "type": "kill",
+        "target_type": "boss",
+        "target_count": [1],
+        "rewards": {"money": [20000], "xp": [1000]},
+        "department": "战斗部门"
+    },
+    "extract_loot": {
+        "name": "物资回收",
+        "description": "成功撤离并携带价值{target}以上的物资",
+        "type": "extract_value",
+        "target_count": [5000, 15000, 30000],
+        "rewards": {"money": [3000, 8000, 15000], "xp": [150, 300, 600]},
+        "department": "后勤部门"
+    },
+    "extract_survive": {
+        "name": "安全撤离",
+        "description": "成功撤离{target}次",
+        "type": "extract_count",
+        "target_count": [1, 3, 5],
+        "rewards": {"money": [1000, 5000, 12000], "xp": [100, 300, 600]},
+        "department": "后勤部门"
+    },
+    "visit_zones": {
+        "name": "区域侦察",
+        "description": "在一次行动中访问{target}个不同区域",
+        "type": "visit",
+        "target_count": [5, 8, 12],
+        "rewards": {"money": [2000, 5000, 10000], "xp": [100, 250, 500]},
+        "department": "战术部门"
+    },
+    "headshot_kills": {
+        "name": "精准射手",
+        "description": "瞄准头部击杀{target}名敌人",
+        "type": "headshot",
+        "target_count": [2, 4],
+        "rewards": {"money": [4000, 10000], "xp": [200, 500]},
+        "department": "战斗部门"
+    },
+    "use_medkits": {
+        "name": "战地医疗",
+        "description": "在行动中使用{target}个医疗物品",
+        "type": "use_medical",
+        "target_count": [3, 5],
+        "rewards": {"money": [1500, 4000], "xp": [100, 250]},
+        "department": "医疗部门"
+    }
+}
+
+@dataclass
+class Mission:
+    """任务实例"""
+    id: str
+    template_id: str
+    name: str
+    description: str
+    mission_type: str
+    department: str
+    target: int
+    progress: int = 0
+    completed: bool = False
+    reward_money: int = 0
+    reward_xp: int = 0
+
+    def update_progress(self, amount: int = 1) -> bool:
+        """更新任务进度，返回是否刚完成"""
+        if self.completed:
+            return False
+        self.progress = min(self.progress + amount, self.target)
+        if self.progress >= self.target:
+            self.completed = True
+            return True
+        return False
+
+def generate_missions(count: int = 3) -> List[Mission]:
+    """生成随机任务"""
+    templates = list(MISSION_TEMPLATES.items())
+    selected = random.sample(templates, min(count, len(templates)))
+    missions = []
+    for i, (tid, tmpl) in enumerate(selected):
+        diff = random.randint(0, len(tmpl["target_count"]) - 1)
+        target = tmpl["target_count"][diff]
+        rewards = tmpl["rewards"]
+        missions.append(Mission(
+            id=f"mission_{i}_{random.randint(100,999)}",
+            template_id=tid,
+            name=tmpl["name"],
+            description=tmpl["description"].format(target=target),
+            mission_type=tmpl["type"],
+            department=tmpl["department"],
+            target=target,
+            reward_money=rewards["money"][diff],
+            reward_xp=rewards["xp"][diff]
+        ))
+    return missions
+
 # ============== 主游戏类 ==============
 class Game:
     """主游戏类"""
@@ -1568,6 +3070,12 @@ class Game:
         self.current_enemy: Optional[Enemy] = None
         self.messages: List[str] = []
         self.game_log: List[str] = []
+        self.missions: List[Mission] = generate_missions(3)
+        self.completed_missions: int = 0
+        self.raid_kills_this_run: int = 0
+        self.raid_headshots: int = 0
+        self.raid_medical_used: int = 0
+        self.total_extractions: int = 0
 
         # 初始装备
         self._give_starting_gear()
@@ -1621,6 +3129,49 @@ class Game:
             )
             self.player.equipment.backpack.add_item(bandage)
 
+    def track_mission(self, event_type: str, amount: int = 1, value: int = 0):
+        """追踪任务进度"""
+        for mission in self.missions:
+            if mission.completed:
+                continue
+            triggered = False
+            if event_type == "kill_scav" and mission.mission_type == "kill" and mission.template_id == "kill_scavs":
+                triggered = mission.update_progress(amount)
+            elif event_type == "kill_pmc" and mission.mission_type == "kill" and mission.template_id == "kill_pmc":
+                triggered = mission.update_progress(amount)
+            elif event_type == "kill_boss" and mission.mission_type == "kill" and mission.template_id == "kill_boss":
+                triggered = mission.update_progress(amount)
+            elif event_type == "headshot" and mission.mission_type == "headshot":
+                triggered = mission.update_progress(amount)
+            elif event_type == "extract" and mission.mission_type == "extract_count":
+                triggered = mission.update_progress(amount)
+            elif event_type == "extract_value" and mission.mission_type == "extract_value":
+                if value >= mission.target:
+                    triggered = mission.update_progress(mission.target)
+            elif event_type == "visit" and mission.mission_type == "visit":
+                if self.current_raid:
+                    mission.progress = len(self.current_raid.visited_zones)
+                    if mission.progress >= mission.target and not mission.completed:
+                        mission.completed = True
+                        triggered = True
+            elif event_type == "use_medical" and mission.mission_type == "use_medical":
+                triggered = mission.update_progress(amount)
+            if triggered:
+                self.add_message(f"🎯 任务完成: {mission.name}！奖励: ${mission.reward_money} + {mission.reward_xp}XP")
+                self.player.stats.money += mission.reward_money
+                self.player.add_xp(mission.reward_xp)
+                self.completed_missions += 1
+
+    def refresh_missions(self):
+        """刷新任务（完成的任务替换为新的）"""
+        new_missions = []
+        for m in self.missions:
+            if m.completed:
+                new_missions.extend(generate_missions(1))
+            else:
+                new_missions.append(m)
+        self.missions = new_missions
+
     def add_message(self, msg: str):
         """添加消息"""
         self.messages.append(msg)
@@ -1673,8 +3224,37 @@ class Game:
         if not target_zone:
             return False, "该区域不存在！"
 
-        # 消耗行动点
+        # 检查是否需要钥匙
+        required_key = target_zone.get("requires_key")
+        if required_key:
+            key_mapping = {
+                "lab_keycard": "key_lab_keycard",
+                "armory_key": "key_armory",
+                "server_keycard": "key_server",
+            }
+            key_item_id = key_mapping.get(required_key, required_key)
+            has_key = False
+            for item in self.player.equipment.backpack.get_all_items():
+                if isinstance(item, LootItem) and item.id.startswith("loot_") and key_item_id in item.id:
+                    has_key = True
+                    break
+                if item.name and key_item_id.replace("key_", "") in item.id:
+                    has_key = True
+                    break
+            # 检查仓库中的钥匙
+            for item in self.player.stash_items:
+                if hasattr(item, 'item_type') and item.item_type == '钥匙':
+                    if required_key in item.id or key_item_id in item.id:
+                        has_key = True
+                        break
+            if not has_key:
+                zone_name = target_zone.get('name', zone_id)
+                return False, f"{zone_name}已锁定！需要对应钥匙才能进入。"
+
+        # 消耗行动点（减速debuff增加50%消耗）
         ap_cost = 10 + int(target_zone.get("danger_level", 1) * 2)
+        if self.player.stats.has_debuff('slowed'):
+            ap_cost = int(ap_cost * 1.5)
         if self.player.action_points < ap_cost:
             return False, f"行动点不足！需要 {ap_cost} 点"
 
@@ -1686,6 +3266,16 @@ class Game:
 
         msg = f"你移动到了 {target_zone['name']}。"
         self.add_message(msg)
+
+        # 毒气区域伤害
+        if target_zone.get("gas_active"):
+            gas_dmg = random.randint(15, 30)
+            self.player.stats.take_damage(gas_dmg)
+            self.add_message(f"☠️ 毒气区域！你受到{gas_dmg}点毒气伤害！")
+            if not self.player.stats.is_alive():
+                self.state = GameState.DEAD
+                self.add_message("你被毒气夺去了生命...")
+                return True, msg
 
         # 检查是否到达撤离点
         if zone_id == self.current_raid.active_extraction:
@@ -1781,6 +3371,16 @@ class Game:
                 self.player.add_xp(self.current_enemy.xp)
                 self.player.kills += 1
                 msg += f"\n获得 {self.current_enemy.xp} 经验值！"
+                # 任务追踪
+                enemy_name = self.current_enemy.name.lower()
+                if self.current_enemy.is_boss:
+                    self.track_mission("kill_boss")
+                elif "佣兵" in enemy_name or "突袭" in enemy_name:
+                    self.track_mission("kill_pmc")
+                else:
+                    self.track_mission("kill_scav")
+                if target == "head":
+                    self.track_mission("headshot")
 
                 # 掉落物品
                 loot_table = LOOT_TABLES.get(self.current_enemy.loot_table, [])
@@ -1821,9 +3421,49 @@ class Game:
                 msg = "没有可用的医疗物品！"
                 success = False
 
+        elif action == "grenade":
+            # 使用手雷/闪光弹/烟雾弹
+            grenade = None
+            for item in self.player.equipment.backpack.get_all_items():
+                if isinstance(item, Consumable) and "grenade_type" in item.effect:
+                    if target and item.effect.get("grenade_type") != target:
+                        continue
+                    grenade = item
+                    break
+            if grenade:
+                eff = grenade.effect
+                g_type = eff.get("grenade_type", "frag")
+                self.player.equipment.backpack.remove_item(grenade.id)
+                if g_type == "frag":
+                    g_dmg = eff.get("grenade_damage", 120)
+                    actual = self.current_enemy.take_damage(g_dmg, 0)
+                    msg = f"你投出{grenade.name}！爆炸造成{actual}点伤害！"
+                    if not self.current_enemy.is_alive():
+                        self.player.add_xp(self.current_enemy.xp)
+                        self.player.kills += 1
+                        msg += f"\n{self.current_enemy.name}被炸死！获得{self.current_enemy.xp}经验！"
+                        self.current_enemy = None
+                        self.state = GameState.RAID
+                elif g_type == "flash":
+                    stun_dur = eff.get("stun_duration", 2)
+                    msg = f"你投出{grenade.name}！敌人被致盲{stun_dur}回合！"
+                    self.current_enemy.accuracy *= 0.3
+                elif g_type == "smoke":
+                    msg = f"你释放{grenade.name}，烟雾弥漫！趁机撤退！"
+                    self.current_enemy = None
+                    self.state = GameState.RAID
+            else:
+                msg = "没有可用的投掷物！"
+                success = False
+
         elif action == "flee":
-            # 撤退
-            if random.random() < 0.5:
+            # 撤退（烟雾弹提高成功率）
+            flee_chance = 0.5
+            for item in self.player.equipment.backpack.get_all_items():
+                if isinstance(item, Consumable) and item.effect.get("grenade_type") == "smoke":
+                    flee_chance += item.effect.get("flee_bonus", 0.3)
+                    break
+            if random.random() < flee_chance:
                 msg = "你成功脱离了战斗！"
                 self.current_enemy = None
                 self.state = GameState.RAID
@@ -1949,6 +3589,14 @@ class Game:
         msg += f"当前余额: {self.player.stats.money}"
         self.add_message(msg)
 
+        # 任务追踪
+        self.total_extractions += 1
+        self.track_mission("extract", 1)
+        self.track_mission("extract_value", value=loot_value)
+        self.track_mission("visit")
+        # 完成的任务自动刷新
+        self.refresh_missions()
+
         return True, msg
 
     def handle_death(self):
@@ -2048,6 +3696,76 @@ class Game:
                 return True, f"装备了 {armor.name}"
         return False, "找不到该护甲"
 
+    def unequip_weapon(self) -> Tuple[bool, str]:
+        """卸下当前武器"""
+        if self.player.equipment.primary_weapon:
+            weapon = self.player.equipment.primary_weapon
+            self.player.stash_weapons.append(weapon)
+            self.player.equipment.primary_weapon = None
+            return True, f"卸下了 {weapon.name}"
+        return False, "没有装备武器"
+
+    def unequip_armor(self) -> Tuple[bool, str]:
+        """卸下当前护甲"""
+        if self.player.equipment.armor:
+            armor = self.player.equipment.armor
+            self.player.stash_armors.append(armor)
+            self.player.equipment.armor = None
+            # 清除护甲状态
+            self.player.stats.chest_armor = ArmorStatus()
+            return True, f"卸下了 {armor.name}"
+        return False, "没有装备护甲"
+
+    def unequip_helmet(self) -> Tuple[bool, str]:
+        """卸下当前头盔"""
+        if self.player.equipment.helmet:
+            helmet = self.player.equipment.helmet
+            self.player.stash_helmets.append(helmet)
+            self.player.equipment.helmet = None
+            # 清除头盔护甲状态
+            self.player.stats.head_armor = ArmorStatus()
+            return True, f"卸下了 {helmet.name}"
+        return False, "没有装备头盔"
+
+    def unequip_all(self) -> str:
+        """卸下所有装备"""
+        msgs = []
+        success, msg = self.unequip_weapon()
+        if success:
+            msgs.append(msg)
+        success, msg = self.unequip_armor()
+        if success:
+            msgs.append(msg)
+        success, msg = self.unequip_helmet()
+        if success:
+            msgs.append(msg)
+        return "\n".join(msgs) if msgs else "没有可卸下的装备"
+
+    def drop_backpack_item(self, item_id: str) -> Tuple[bool, str]:
+        """丢弃背包中的物品"""
+        item = self.player.equipment.backpack.remove_item(item_id)
+        if item:
+            return True, f"丢弃了 {item.name}"
+        return False, "找不到该物品"
+
+    def move_to_stash(self, item_id: str) -> Tuple[bool, str]:
+        """将背包物品移到仓库"""
+        item = self.player.equipment.backpack.remove_item(item_id)
+        if item:
+            self.player.stash_items.append(item)
+            return True, f"{item.name} 已移至仓库"
+        return False, "找不到该物品"
+
+    def clear_backpack(self) -> str:
+        """清空背包所有物品"""
+        items = self.player.equipment.backpack.get_all_items()
+        if not items:
+            return "背包是空的"
+        count = len(items)
+        for item in items:
+            self.player.equipment.backpack.remove_item(item.id)
+        return f"已清空背包，丢弃了{count}件物品"
+
     def sell_stash_weapon(self, weapon_id: str) -> Tuple[bool, str]:
         """出售仓库武器"""
         for weapon in self.player.stash_weapons:
@@ -2128,7 +3846,8 @@ def serialize_weapon(weapon: Weapon) -> dict:
         'damage': weapon.damage, 'accuracy': weapon.accuracy,
         'fire_rate': weapon.fire_rate, 'penetration': weapon.penetration,
         'ammo_type': weapon.ammo_type, 'mag_size': weapon.mag_size,
-        'current_ammo': weapon.current_ammo
+        'current_ammo': weapon.current_ammo,
+        'attachments': weapon.attachments
     }
 
 def deserialize_weapon(data: dict) -> Weapon:
@@ -2139,7 +3858,8 @@ def deserialize_weapon(data: dict) -> Weapon:
         damage=data['damage'], accuracy=data['accuracy'],
         fire_rate=data['fire_rate'], penetration=data['penetration'],
         ammo_type=data.get('ammo_type', ''), mag_size=data['mag_size'],
-        current_ammo=data.get('current_ammo', data['mag_size'])
+        current_ammo=data.get('current_ammo', data['mag_size']),
+        attachments=data.get('attachments', {})
     )
 
 def serialize_armor(armor: Armor) -> dict:
@@ -2405,17 +4125,19 @@ class GameUI:
         print(f"累计物资价值: {self.game.player.total_loot_value}")
         print("-" * 50)
 
-        print("身体状态:")
+        print(f"生命值: {stats.hp}/{stats.max_hp}")
+        print("护甲:")
         for zone in DamageZone:
-            part = stats.get_body_part(zone)
-            status = "正常"
-            if part.is_broken:
-                status = "已损坏"
-            elif part.hp < part.max_hp * 0.3:
-                status = "严重受伤"
-            elif part.hp < part.max_hp:
-                status = "轻伤"
-            print(f"  {zone.cn_name}: {part.hp}/{part.max_hp} [{status}]")
+            armor = stats.get_armor(zone)
+            if armor.armor_value > 0:
+                print(f"  {zone.cn_name}: 🛡️{armor.armor_value} (耐久: {armor.durability}/{armor.max_durability})")
+            else:
+                print(f"  {zone.cn_name}: 无护甲")
+        if stats.debuffs:
+            print("异常状态:")
+            for d in stats.debuffs:
+                dmg = f" -{d.damage}/回合" if d.damage > 0 else ""
+                print(f"  {d.cn_name}{dmg} ({d.remaining}回合)")
 
         print("-" * 50)
         print("装备:")
@@ -2528,7 +4250,7 @@ class GameUI:
                 choice = input("请选择: ").strip()
 
                 if choice == "1":
-                    self.game.start_raid(MAP_INDUSTRIAL)
+                    self.game.start_raid(MAP_DAM)
                 elif choice == "2":
                     self.display_backpack()
                     input("按回车继续...")

@@ -11,69 +11,81 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
         body {
             font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
             background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0f0f1a 100%);
-            min-height: 100vh;
             color: #e0e0e0;
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 15px;
+            padding: 8px 12px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         header {
             text-align: center;
-            padding: 15px 0;
+            padding: 8px 0;
             border-bottom: 2px solid #e94560;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
+            flex-shrink: 0;
         }
 
         header h1 {
-            font-size: 2em;
+            font-size: 1.5em;
             color: #e94560;
             text-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
         }
 
         header p {
             color: #666;
-            margin-top: 5px;
-            font-size: 0.9em;
+            font-size: 0.75em;
         }
 
         .game-container {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            flex: 1;
+            gap: 8px;
+            min-height: 0;
         }
 
         .main-row {
             display: grid;
-            grid-template-columns: 1fr 280px;
-            gap: 15px;
+            grid-template-columns: 1fr 260px;
+            gap: 8px;
+            flex: 1;
+            min-height: 0;
         }
 
         .left-column {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 8px;
+            min-height: 0;
         }
 
         .panel {
             background: rgba(0, 0, 0, 0.6);
             border: 1px solid #333;
-            border-radius: 8px;
-            padding: 12px;
+            border-radius: 6px;
+            padding: 8px;
         }
 
         .panel h2 {
-            font-size: 1em;
+            font-size: 0.9em;
             color: #e94560;
             border-bottom: 1px solid #444;
-            padding-bottom: 8px;
-            margin-bottom: 10px;
+            padding-bottom: 5px;
+            margin-bottom: 6px;
         }
 
         /* 地图容器 */
@@ -81,29 +93,31 @@
             position: relative;
             background: #0a0a0a;
             border: 2px solid #2a2a3a;
-            border-radius: 8px;
+            border-radius: 6px;
             overflow: hidden;
+            flex: 1;
+            min-height: 0;
         }
 
         .map-controls {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 8px;
+            right: 8px;
             z-index: 100;
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 4px;
         }
 
         .map-controls button {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             background: rgba(0, 0, 0, 0.7);
             border: 1px solid #444;
             border-radius: 4px;
             color: #fff;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
         }
 
         .map-controls button:hover {
@@ -113,7 +127,7 @@
         #map-area {
             position: relative;
             width: 100%;
-            height: 500px;
+            height: 100%;
             background-image:
                 radial-gradient(circle, #1a1a2a 1px, transparent 1px);
             background-size: 40px 40px;
@@ -195,16 +209,17 @@
         }
 
         .zone-node.unvisited {
-            opacity: 0.35;
-            background: rgba(15, 15, 25, 0.9);
+            opacity: 0.55;
+            background: rgba(25, 30, 45, 0.9);
+            border-color: #3a4a5a;
         }
 
         .zone-node.unvisited .zone-name {
-            color: #444;
+            color: #7a8fa0;
         }
 
         .zone-node.unvisited .zone-danger {
-            color: #333;
+            color: #5a6a7a;
         }
 
         /* 撤离点始终可见，不受迷雾影响 */
@@ -253,22 +268,29 @@
             stroke-dasharray: 5, 3;
         }
 
+        /* 玩家状态面板紧凑版 */
+        #player-panel {
+            flex-shrink: 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
         /* 状态栏 */
         .stat-bar {
-            margin: 8px 0;
+            margin: 4px 0;
         }
 
         .stat-bar label {
             display: flex;
             justify-content: space-between;
-            font-size: 0.85em;
-            margin-bottom: 3px;
+            font-size: 0.75em;
+            margin-bottom: 2px;
         }
 
         .bar-container {
             background: #1a1a2a;
-            border-radius: 4px;
-            height: 16px;
+            border-radius: 3px;
+            height: 12px;
             overflow: hidden;
         }
 
@@ -281,19 +303,20 @@
         .bar-ap { background: linear-gradient(90deg, #4ecdc4, #44a08d); }
         .bar-xp { background: linear-gradient(90deg, #f9d423, #ff4e50); }
 
-        /* 身体部位 */
+        /* 身体部位 - 紧凑横排 */
         .body-parts {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
             gap: 4px;
-            margin-top: 8px;
+            margin-top: 4px;
         }
 
         .body-part {
             background: #1a1a2e;
-            padding: 5px;
-            border-radius: 4px;
-            font-size: 0.75em;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 0.65em;
+            flex: 1;
+            text-align: center;
         }
 
         .body-part.damaged { border: 1px solid #e94560; }
@@ -302,18 +325,18 @@
         /* 消息日志 */
         .message-log {
             background: #0a0a0a;
-            border-radius: 5px;
-            padding: 10px;
-            height: 150px;
+            border-radius: 4px;
+            padding: 6px;
+            max-height: 100px;
             overflow-y: auto;
             font-family: 'Courier New', monospace;
-            font-size: 0.85em;
-            margin-bottom: 15px;
+            font-size: 0.75em;
+            margin-bottom: 8px;
         }
 
         .message-log p {
-            margin: 4px 0;
-            padding: 3px;
+            margin: 2px 0;
+            padding: 2px;
             border-bottom: 1px solid #1a1a1a;
         }
 
@@ -326,12 +349,12 @@
             background: linear-gradient(135deg, #e94560, #c23a51);
             border: none;
             color: white;
-            padding: 10px 16px;
-            border-radius: 5px;
+            padding: 6px 12px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 0.9em;
+            font-size: 0.8em;
             transition: all 0.2s ease;
-            margin: 3px;
+            margin: 2px;
         }
 
         .btn:hover {
@@ -389,23 +412,30 @@
         }
 
         /* 行动面板 */
+        #action-panel {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
         .action-panel {
-            margin-top: 10px;
-            padding: 10px;
+            padding: 6px;
             background: rgba(30, 30, 40, 0.5);
-            border-radius: 5px;
+            border-radius: 4px;
         }
 
         .action-panel h3 {
-            font-size: 0.9em;
+            font-size: 0.8em;
             color: #4ecdc4;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
 
         /* 背包 */
         .inventory {
-            max-height: 200px;
+            flex: 1;
             overflow-y: auto;
+            min-height: 0;
         }
 
         .inventory-item {
@@ -413,11 +443,11 @@
             justify-content: space-between;
             align-items: center;
             background: #1a1a2e;
-            padding: 6px;
-            margin: 3px 0;
-            border-radius: 4px;
+            padding: 4px 6px;
+            margin: 2px 0;
+            border-radius: 3px;
             border-left: 3px solid;
-            font-size: 0.8em;
+            font-size: 0.7em;
         }
 
         .inventory-item.common { border-color: #666; }
@@ -447,31 +477,35 @@
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
-            z-index: 50;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 40px;
-            border-radius: 15px;
+            z-index: 150;
+            background: rgba(0, 0, 0, 0.95);
+            padding: 25px;
+            border-radius: 12px;
             border: 2px solid #e94560;
+            min-width: 280px;
         }
 
         .main-menu h2 {
-            font-size: 1.8em;
-            margin-bottom: 20px;
+            font-size: 1.3em;
+            margin-bottom: 12px;
         }
 
         .main-menu .btn {
             display: block;
-            width: 200px;
-            margin: 10px auto;
-            padding: 12px;
+            width: 160px;
+            margin: 6px auto;
+            padding: 10px;
+            font-size: 0.9em;
+            cursor: pointer;
         }
 
         /* 基地菜单 */
         .base-menu .btn {
             display: block;
-            width: 100%;
-            margin: 8px 0;
-            padding: 12px;
+            width: auto;
+            margin: 2px;
+            padding: 6px 10px;
+            font-size: 0.75em;
         }
 
         /* 商店/仓库独立页面 */
@@ -521,6 +555,21 @@
             color: #e94560;
             margin-bottom: 15px;
             font-size: 1.1em;
+        }
+
+        .stash-equipped-panel {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: linear-gradient(180deg, #0f0f1a 0%, #0f0f1a 95%, transparent 100%);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+
+        .stash-equipped-panel h4 {
+            color: #4CAF50;
+            margin: 0 0 10px 0;
         }
 
         .item-grid {
@@ -587,9 +636,163 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* 登录面板样式 */
+        .auth-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .auth-box {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 2px solid #e94560;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 0 30px rgba(233, 69, 96, 0.3);
+        }
+
+        .auth-box h2 {
+            color: #e94560;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #444;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            color: #888;
+            transition: all 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .auth-tab.active {
+            color: #e94560;
+            border-bottom-color: #e94560;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .auth-form input {
+            padding: 12px;
+            border: 1px solid #444;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.4);
+            color: #e0e0e0;
+            font-size: 1em;
+        }
+
+        .auth-form input:focus {
+            outline: none;
+            border-color: #e94560;
+        }
+
+        .auth-form input::placeholder {
+            color: #666;
+        }
+
+        .auth-error {
+            color: #e94560;
+            font-size: 0.9em;
+            text-align: center;
+            min-height: 20px;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .auth-buttons .btn {
+            flex: 1;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: rgba(233, 69, 96, 0.1);
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .user-info .username {
+            color: #e94560;
+            font-weight: bold;
+        }
+
+        .user-info .logout-btn {
+            margin-left: auto;
+            padding: 4px 12px;
+            font-size: 0.85em;
+            background: transparent;
+            border: 1px solid #e94560;
+            color: #e94560;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .user-info .logout-btn:hover {
+            background: #e94560;
+            color: white;
+        }
+
+        .guest-warning {
+            color: #ffa726;
+            font-size: 0.85em;
+            padding: 10px;
+            background: rgba(255, 167, 38, 0.1);
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
+    <!-- 登录/注册面板 -->
+    <div id="auth-panel" class="auth-panel" style="display: none;">
+        <div class="auth-box">
+            <h2>🎮 暗区文字</h2>
+            <div class="auth-tabs">
+                <div class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">登录</div>
+                <div class="auth-tab" data-tab="register" onclick="switchAuthTab('register')">注册</div>
+            </div>
+            <form class="auth-form" id="auth-form" onsubmit="handleAuthSubmit(event)">
+                <input type="text" id="auth-username" placeholder="用户名" required minlength="2" maxlength="20">
+                <input type="password" id="auth-password" placeholder="密码" required minlength="4">
+                <div class="auth-error" id="auth-error"></div>
+                <div class="auth-buttons">
+                    <button type="submit" class="btn" id="auth-submit-btn">登录</button>
+                    <button type="button" class="btn btn-secondary" onclick="playAsGuest()">游客模式</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="container">
         <header>
             <h1>暗区文字</h1>
@@ -628,14 +831,14 @@
                 <!-- 右侧面板 - 行动与背包 -->
                 <div class="panel" id="action-panel">
                     <h2>行动</h2>
-                <div id="action-content">
-                    <p>加载中...</p>
+                    <div id="action-content">
+                        <p>加载中...</p>
+                    </div>
+                    <h2 style="margin-top: 8px;">背包 <span id="backpack-value"></span></h2>
+                    <div class="inventory" id="inventory-content">
+                        <p>加载中...</p>
+                    </div>
                 </div>
-                <h2 style="margin-top: 15px;">背包 <span id="backpack-value"></span></h2>
-                <div class="inventory" id="inventory-content">
-                    <p>加载中...</p>
-                </div>
-            </div>
             </div>
         </div>
     </div>
@@ -682,6 +885,7 @@
                 <button class="btn btn-secondary" onclick="closeStash()">返回基地</button>
             </div>
         </div>
+        <div id="stash-equipped-panel" class="stash-equipped-panel"></div>
         <div class="stash-page-content">
             <div class="stash-section">
                 <h3>🔫 武器仓库</h3>
@@ -695,12 +899,113 @@
                 <h3>⛑️ 头盔仓库</h3>
                 <div class="item-grid" id="stash-helmets"></div>
             </div>
+            <div class="stash-section">
+                <h3>💊 医疗仓库</h3>
+                <div class="item-grid" id="stash-medical"></div>
+            </div>
+            <div class="stash-section">
+                <h3>🔧 护甲修理</h3>
+                <div class="item-grid" id="stash-repair"></div>
+            </div>
+            <div class="stash-section">
+                <h3>📦 子弹仓库</h3>
+                <div class="item-grid" id="stash-ammo"></div>
+            </div>
+            <div class="stash-section">
+                <h3>📋 其他物品</h3>
+                <div class="item-grid" id="stash-other"></div>
+            </div>
         </div>
     </div>
 
     <script>
         // 游戏状态
         let gameState = null;
+        let authState = { logged_in: false, username: null, has_save: false };
+        let currentAuthTab = 'login';
+
+        // 检查登录状态
+        async function checkAuthStatus() {
+            try {
+                const response = await fetch('/api/auth/status');
+                authState = await response.json();
+                return authState;
+            } catch (error) {
+                console.error('检查登录状态失败:', error);
+                return { logged_in: false, username: null, has_save: false };
+            }
+        }
+
+        // 切换登录/注册标签
+        function switchAuthTab(tab) {
+            currentAuthTab = tab;
+            document.querySelectorAll('.auth-tab').forEach(t => {
+                t.classList.toggle('active', t.dataset.tab === tab);
+            });
+            document.getElementById('auth-submit-btn').textContent = tab === 'login' ? '登录' : '注册';
+            document.getElementById('auth-error').textContent = '';
+        }
+
+        // 处理登录/注册提交
+        async function handleAuthSubmit(event) {
+            event.preventDefault();
+            const username = document.getElementById('auth-username').value.trim();
+            const password = document.getElementById('auth-password').value;
+            const errorEl = document.getElementById('auth-error');
+
+            if (!username || !password) {
+                errorEl.textContent = '请填写用户名和密码';
+                return;
+            }
+
+            const endpoint = currentAuthTab === 'login' ? '/api/auth/login' : '/api/auth/register';
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    authState = { logged_in: true, username: result.username, has_save: false };
+                    document.getElementById('auth-panel').style.display = 'none';
+                    await updateState();
+                } else {
+                    errorEl.textContent = result.message;
+                }
+            } catch (error) {
+                errorEl.textContent = '请求失败，请重试';
+            }
+        }
+
+        // 游客模式
+        function playAsGuest() {
+            authState = { logged_in: false, username: null, has_save: false };
+            document.getElementById('auth-panel').style.display = 'none';
+            updateState();
+        }
+
+        // 登出
+        async function logout() {
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+                authState = { logged_in: false, username: null, has_save: false };
+                location.reload();
+            } catch (error) {
+                console.error('登出失败:', error);
+            }
+        }
+
+        // 显示登录面板
+        function showAuthPanel(tab = 'login') {
+            document.getElementById('auth-panel').style.display = 'flex';
+            switchAuthTab(tab);
+            document.getElementById('auth-username').value = '';
+            document.getElementById('auth-password').value = '';
+            document.getElementById('auth-error').textContent = '';
+        }
 
         // 更新游戏状态
         async function updateState() {
@@ -754,49 +1059,44 @@
             const p = gameState.player;
             const eq = gameState.equipment;
 
+            // 获取部位护甲信息
+            const head = p.body_parts.head || {};
+            const chest = p.body_parts.chest || {};
+
+            // 紧凑的状态栏
             let html = `
-                <div class="stat-bar">
-                    <label><span>等级 ${p.level}</span><span>${p.xp}/${p.xp_needed} XP</span></label>
-                    <div class="bar-container">
-                        <div class="bar-fill bar-xp" style="width: ${(p.xp / p.xp_needed) * 100}%"></div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; align-items: center;">
+                    <span style="color: #e94560; font-size: 0.85em;">❤️ ${p.total_hp}/${p.max_hp}</span>
+                    <span style="font-size: 0.75em; color: #4CAF50;">⏱️ ${p.action_points}/${p.max_action_points}</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin: 4px 0;">
+                    <!-- 头部护甲 -->
+                    <div style="background: #1a1a2e; padding: 4px; border-radius: 4px; text-align: center;">
+                        <div style="font-size: 0.65em; color: #e94560;">头部护甲</div>
+                        <div style="font-size: 0.6em; color: ${head.has_armor ? '#64b5f6' : '#666'};">${head.has_armor ? 'LV' + head.armor_value + ' ' + head.armor_durability + '/' + head.armor_max_durability : '无'}</div>
+                    </div>
+                    <!-- 胸部护甲 -->
+                    <div style="background: #1a1a2e; padding: 4px; border-radius: 4px; text-align: center;">
+                        <div style="font-size: 0.65em; color: #4CAF50;">胸部护甲</div>
+                        <div style="font-size: 0.6em; color: ${chest.has_armor ? '#64b5f6' : '#666'};">${chest.has_armor ? 'LV' + chest.armor_value + ' ' + chest.armor_durability + '/' + chest.armor_max_durability : '无'}</div>
                     </div>
                 </div>
-                <div class="stat-bar">
-                    <label><span>生命值</span><span>${p.total_hp}/${p.max_hp}</span></label>
-                    <div class="bar-container">
-                        <div class="bar-fill bar-hp" style="width: ${(p.total_hp / p.max_hp) * 100}%"></div>
-                    </div>
+                <div style="font-size: 0.7em; color: #aaa; margin: 4px 0;">
+                    🔫 ${eq.weapon || '无'} ${eq.weapon_ammo_type ? '[' + eq.weapon_ammo_type + ']' : ''} (${eq.weapon_ammo}/${eq.weapon_mag})
                 </div>
-                <div class="stat-bar">
-                    <label><span>行动点</span><span>${p.action_points}/${p.max_action_points}</span></label>
-                    <div class="bar-container">
-                        <div class="bar-fill bar-ap" style="width: ${(p.action_points / p.max_action_points) * 100}%"></div>
-                    </div>
-                </div>
-                <p style="margin: 10px 0;"><span style="color: #ffd700;">💰 ${p.money}</span></p>
-                <p style="font-size: 0.85em;">🔫 ${eq.weapon || '无'} (${eq.weapon_ammo}/${eq.weapon_mag})</p>
-                <p style="font-size: 0.85em;">🛡️ ${eq.armor || '无'}</p>
-                <p style="font-size: 0.85em;">⛑️ ${eq.helmet || '无'}</p>
-                <h3 style="margin-top: 10px; color: #e94560; font-size: 0.9em;">身体部位</h3>
-                <div class="body-parts">
             `;
 
-            for (const [key, part] of Object.entries(p.body_parts)) {
-                const statusClass = part.is_broken ? 'broken' : (part.hp < part.max_hp ? 'damaged' : '');
-                const hpPercent = (part.hp / part.max_hp) * 100;
-                const armorText = part.has_armor ? `<span style="color: #64b5f6;">🛡️${part.armor_value}(${part.armor_durability}%)</span>` : '';
-                const bleedText = part.is_bleeding ? `<span style="color: #f44336;">🩸-${part.bleed_damage}/回合</span>` : '';
-                html += `
-                    <div class="body-part ${statusClass}">
-                        <div>${part.name} ${armorText} ${bleedText}</div>
-                        <div style="color: ${hpPercent > 50 ? '#4caf50' : hpPercent > 25 ? '#ff9800' : '#f44336'}">
-                            ${part.hp}/${part.max_hp}
-                        </div>
-                    </div>
-                `;
+            // Debuff状态 - 更紧凑
+            if (p.debuffs && p.debuffs.length > 0) {
+                html += '<div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;">';
+                for (const debuff of p.debuffs) {
+                    const icon = debuff.type === 'bleeding' ? '🩸' : debuff.type === 'stunned' ? '💫' : '🦿';
+                    html += `<span style="background: rgba(244,67,54,0.2); padding: 2px 5px; border-radius: 3px; font-size: 0.65em;">
+                        ${icon}${debuff.name}(${debuff.remaining})
+                    </span>`;
+                }
+                html += '</div>';
             }
-
-            html += '</div>';
             document.getElementById('player-info').innerHTML = html;
         }
 
@@ -937,7 +1237,7 @@
 
             let html = '';
 
-            // 消息日志
+            // 消息日志 - 更紧凑
             if (gameState.messages && gameState.messages.length > 0) {
                 html += '<div class="message-log">';
                 for (const msg of gameState.messages) {
@@ -946,29 +1246,28 @@
                 html += '</div>';
             }
 
-            // 撤离信息
+            // 撤离信息 - 紧凑版
             if (raid && raid.active_extraction) {
                 html += `
-                    <div class="extract-info">
-                        <h3>🚁 撤离点: ${raid.active_extraction_name}</h3>
-                        <p style="font-size: 0.8em;">找到并到达撤离点撤离</p>
+                    <div class="extract-info" style="padding: 6px; margin-bottom: 6px;">
+                        <h3 style="font-size: 0.8em;">🚁 ${raid.active_extraction_name}</h3>
                     </div>
                 `;
             }
 
             // 行动按钮
             if (state === 'raid' && raid) {
-                html += '<div class="action-panel">';
+                html += '<div class="action-panel" style="display: flex; flex-wrap: wrap; gap: 4px;">';
 
                 // 搜索按钮
-                html += '<button class="btn" onclick="doAction(\'search\')">🔍 搜索区域</button>';
+                html += '<button class="btn" onclick="doAction(\'search\')">🔍 搜索</button>';
 
                 // 撤离按钮（在激活撤离点时显示）
                 if (raid.current_zone === raid.active_extraction) {
                     html += '<button class="btn btn-success" onclick="doAction(\'extract\')">🚁 撤离</button>';
                 } else if (raid.is_extract) {
                     // 在撤离点但不是激活的撤离点
-                    html += `<p style="color: #e94560; font-size: 0.85em; margin: 5px 0;">⚠️ 此撤离点不可用，请前往 ${raid.active_extraction_name || '激活的撤离点'}</p>`;
+                    html += `<span style="color: #e94560; font-size: 0.7em; padding: 4px;">⚠️ 去${raid.active_extraction_name || '撤离点'}</span>`;
                 }
 
                 // 紧急撤离
@@ -979,17 +1278,26 @@
 
             // 基地
             if (state === 'base') {
-                html += `
-                    <div class="base-menu">
-                        <button class="btn" onclick="doAction('start_raid')">🏭 开始行动</button>
+                html += `<div class="base-menu">
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">`;
+                if (gameState.available_maps) {
+                    for (const map of gameState.available_maps) {
+                        html += `<button class="btn" onclick="doAction('start_raid', '${map.id}')" style="flex:1; min-width: 100px; padding: 8px;">
+                            <div style="font-size:0.85em;">${map.name}</div>
+                            <div style="font-size:0.65em; opacity:0.6;">${map.zone_count}区</div>
+                        </button>`;
+                    }
+                }
+                html += `</div>
+                    <div style="display: flex; gap: 4px; flex-wrap: wrap;">
                         <button class="btn btn-secondary" onclick="openShop()">🏪 商店</button>
                         <button class="btn btn-secondary" onclick="openStash()">📦 仓库</button>
-                        <button class="btn btn-secondary" onclick="doAction('rest')">💤 休息恢复</button>
-                        <button class="btn btn-success" onclick="doAction('save_game')">💾 保存游戏</button>
-                        <button class="btn btn-secondary" onclick="doAction('load_game')">📂 读取存档</button>
-                        <button class="btn btn-danger" onclick="doAction('new_game')">🔄 重新开始</button>
+                        <button class="btn btn-secondary" onclick="doAction('rest')">💤 休息</button>
+                        <button class="btn btn-success" onclick="doAction('save_game')">💾 保存</button>
+                        <button class="btn btn-secondary" onclick="doAction('load_game')">📂 读取</button>
+                        <button class="btn btn-danger" onclick="doAction('new_game')">🔄 重来</button>
                     </div>
-                `;
+                </div>`;
             }
 
             document.getElementById('action-content').innerHTML = html;
@@ -1189,6 +1497,58 @@
 
             const equippedWeaponId = gameState.equipment.weapon_id;
             const equippedArmorId = gameState.equipment.armor_id;
+            const equippedHelmetId = gameState.equipment.helmet_id;
+
+            // 悬浮装备面板 - 渲染到独立容器
+            let equippedHtml = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="margin: 0;">当前装备</h4>
+                    <button class="btn btn-secondary" style="font-size: 0.7em; padding: 4px 8px;" onclick="doAction('unequip_all')">全部卸下</button>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                    <div style="background: #1a1a2e; padding: 8px; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 0.7em; color: #aaa;">🔫 武器</div>
+                        <div style="color: #fff; font-size: 0.85em; margin: 4px 0;">${gameState.equipment.weapon || '无'}</div>
+                        ${gameState.equipment.weapon_ammo_type ? `<div style="color: #64b5f6; font-size: 0.65em;">[${gameState.equipment.weapon_ammo_type}]</div>` : ''}
+                        ${gameState.equipment.weapon ? `<button class="btn btn-secondary" style="font-size: 0.6em; padding: 2px 6px; margin-top: 4px;" onclick="doAction('unequip_weapon')">卸下</button>` : ''}
+                    </div>
+                    <div style="background: #1a1a2e; padding: 8px; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 0.7em; color: #aaa;">🛡️ 护甲</div>
+                        <div style="color: #fff; font-size: 0.85em; margin: 4px 0;">${gameState.equipment.armor || '无'}</div>
+                        ${gameState.equipment.armor ? `<div style="color: #4CAF50; font-size: 0.65em;">${gameState.equipment.armor_durability}/${gameState.equipment.armor_max_durability}</div>` : ''}
+                        ${gameState.equipment.armor ? `<button class="btn btn-secondary" style="font-size: 0.6em; padding: 2px 6px; margin-top: 4px;" onclick="doAction('unequip_armor')">卸下</button>` : ''}
+                    </div>
+                    <div style="background: #1a1a2e; padding: 8px; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 0.7em; color: #aaa;">⛑️ 头盔</div>
+                        <div style="color: #fff; font-size: 0.85em; margin: 4px 0;">${gameState.equipment.helmet || '无'}</div>
+                        ${gameState.equipment.helmet ? `<button class="btn btn-secondary" style="font-size: 0.6em; padding: 2px 6px; margin-top: 4px;" onclick="doAction('unequip_helmet')">卸下</button>` : ''}
+                    </div>
+                    <div style="background: #1a1a2e; padding: 8px; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 0.7em; color: #aaa;">🎒 背包</div>
+                        <div style="color: #fff; font-size: 0.85em; margin: 4px 0;">${gameState.equipment.backpack_name || '无'}</div>
+                        <div style="color: #ffd700; font-size: 0.65em;">${gameState.backpack ? gameState.backpack.length : 0}/${gameState.equipment.backpack_capacity || 0}</div>
+                    </div>
+                </div>
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #333;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span style="font-size: 0.75em; color: #aaa;">📦 背包物品</span>
+                        ${gameState.backpack && gameState.backpack.length > 0 ? `<button class="btn btn-secondary" style="font-size: 0.6em; padding: 2px 6px;" onclick="if(confirm('确定清空背包？')) doAction('clear_backpack')">一键清空</button>` : ''}
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 4px; max-height: 100px; overflow-y: auto;">
+                        ${gameState.backpack && gameState.backpack.length > 0 ?
+                            gameState.backpack.map(item => `
+                                <div style="background: #2a2a3e; padding: 4px 8px; border-radius: 4px; display: flex; align-items: center; gap: 6px;">
+                                    <span style="font-size: 0.65em; color: #ccc;">${item.name}</span>
+                                    <button class="btn btn-secondary" style="font-size: 0.55em; padding: 1px 4px;" onclick="doAction('drop_backpack_item', {item_id: '${item.id}'})">丢弃</button>
+                                    <button class="btn btn-secondary" style="font-size: 0.55em; padding: 1px 4px;" onclick="doAction('move_to_stash', {item_id: '${item.id}'})">存仓</button>
+                                </div>
+                            `).join('') :
+                            '<span style="color: #666; font-size: 0.65em;">(空)</span>'
+                        }
+                    </div>
+                </div>
+            `;
+            document.getElementById('stash-equipped-panel').innerHTML = equippedHtml;
 
             let weaponHtml = '';
             if (gameState.stash_weapons.length === 0) {
@@ -1200,7 +1560,7 @@
                         <div class="item-card">
                             <div class="item-info">
                                 <div class="item-name">${weapon.name}${isEquipped ? '<span class="equipped-badge">装备中</span>' : ''}</div>
-                                <div class="item-details">伤害:${weapon.damage} 命中:${Math.round(weapon.accuracy*100)}%</div>
+                                <div class="item-details">伤害:${weapon.damage} 命中:${Math.round(weapon.accuracy*100)}% [${weapon.ammo_type}]</div>
                             </div>
                             ${!isEquipped ? `<div class="item-price">$${Math.floor(weapon.value/2)}</div>` : ''}
                             ${!isEquipped ? `<button class="btn item-btn" onclick="doAction('equip_weapon', {weapon_id: '${weapon.id}'})">装备</button>` : ''}
@@ -1230,11 +1590,7 @@
                 }
             }
 
-            document.getElementById('stash-weapons').innerHTML = weaponHtml;
-            document.getElementById('stash-armors').innerHTML = armorHtml;
-
             // 头盔仓库
-            const equippedHelmetId = gameState.equipment.helmet_id;
             let helmetHtml = '';
             if (!gameState.stash_helmets || gameState.stash_helmets.length === 0) {
                 helmetHtml = '<p style="color:#666">仓库为空</p>';
@@ -1254,7 +1610,79 @@
                     `;
                 }
             }
+
+            // 物品分类仓库（医疗、护甲修理、子弹、其他）
+            let medicalHtml = '<p style="color:#666">仓库为空</p>';
+            let repairHtml = '<p style="color:#666">仓库为空</p>';
+            let ammoHtml = '<p style="color:#666">仓库为空</p>';
+            let otherHtml = '<p style="color:#666">仓库为空</p>';
+
+            if (gameState.stash_items && gameState.stash_items.length > 0) {
+                const medicalItems = gameState.stash_items.filter(i => i.type === '医疗');
+                const repairItems = gameState.stash_items.filter(i => i.type === '护甲修理');
+                const ammoItems = gameState.stash_items.filter(i => i.type === '子弹');
+                const otherItems = gameState.stash_items.filter(i => i.type === '其他' || i.type === '消耗品');
+
+                if (medicalItems.length > 0) {
+                    medicalHtml = medicalItems.map(item => `
+                        <div class="item-card">
+                            <div class="item-info">
+                                <div class="item-name">${item.name}</div>
+                                <div class="item-details">${item.description || ''}</div>
+                            </div>
+                            <div class="item-price">$${Math.floor(item.value/2)}</div>
+                            <button class="btn item-btn btn-secondary" onclick="doAction('sell_item', {item_id: '${item.id}'})">出售</button>
+                        </div>
+                    `).join('');
+                }
+
+                if (repairItems.length > 0) {
+                    repairHtml = repairItems.map(item => `
+                        <div class="item-card">
+                            <div class="item-info">
+                                <div class="item-name">${item.name}</div>
+                                <div class="item-details">${item.description || ''}</div>
+                            </div>
+                            <div class="item-price">$${Math.floor(item.value/2)}</div>
+                            <button class="btn item-btn btn-secondary" onclick="doAction('sell_item', {item_id: '${item.id}'})">出售</button>
+                        </div>
+                    `).join('');
+                }
+
+                if (ammoItems.length > 0) {
+                    ammoHtml = ammoItems.map(item => `
+                        <div class="item-card">
+                            <div class="item-info">
+                                <div class="item-name">${item.name}</div>
+                            </div>
+                            <div class="item-price">$${Math.floor(item.value/2)}</div>
+                            <button class="btn item-btn btn-secondary" onclick="doAction('sell_item', {item_id: '${item.id}'})">出售</button>
+                        </div>
+                    `).join('');
+                }
+
+                if (otherItems.length > 0) {
+                    otherHtml = otherItems.map(item => `
+                        <div class="item-card">
+                            <div class="item-info">
+                                <div class="item-name">${item.name}</div>
+                                <div class="item-details">${item.description || ''}</div>
+                            </div>
+                            <div class="item-price">$${Math.floor(item.value/2)}</div>
+                            <button class="btn item-btn btn-secondary" onclick="doAction('sell_item', {item_id: '${item.id}'})">出售</button>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // 武器仓库
+            document.getElementById('stash-weapons').innerHTML = weaponHtml;
+            document.getElementById('stash-armors').innerHTML = armorHtml;
             document.getElementById('stash-helmets').innerHTML = helmetHtml;
+            document.getElementById('stash-medical').innerHTML = medicalHtml;
+            document.getElementById('stash-repair').innerHTML = repairHtml;
+            document.getElementById('stash-ammo').innerHTML = ammoHtml;
+            document.getElementById('stash-other').innerHTML = otherHtml;
         }
 
         // 渲染商店内容（旧版，用于兼容）
@@ -1274,19 +1702,52 @@
 
             if (state === 'main_menu') {
                 menu.style.display = 'block';
-                menu.innerHTML = `
+
+                let html = '';
+
+                // 用户信息栏
+                if (authState.logged_in) {
+                    html += `
+                        <div class="user-info">
+                            <span>👤 <span class="username">${authState.username}</span></span>
+                            <button class="logout-btn" onclick="logout()">登出</button>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="guest-warning" style="font-size: 0.75em; padding: 8px;">
+                            ⚠️ 游客模式：建议登录账号保存进度
+                        </div>
+                    `;
+                }
+
+                html += `
                     <h2>欢迎来到暗区</h2>
-                    <p style="margin-bottom: 20px; color: #888; font-size: 0.9em;">
-                        进入危险区域，搜集物资，找到撤离点撤离！<br>
-                        死亡将丢失背包中所有物品。
+                    <p style="margin-bottom: 12px; color: #888; font-size: 0.8em;">
+                        搜集物资，找到撤离点撤离！
                     </p>
-                    <button class="btn" onclick="doAction('new_game')">开始游戏</button>
                 `;
+
+                // 根据登录状态显示不同按钮
+                if (authState.logged_in) {
+                    if (authState.has_save) {
+                        html += `<button class="btn" onclick="doAction('load_game')" style="margin-bottom: 6px;">继续游戏</button>`;
+                    }
+                    html += `<button class="btn" onclick="doAction('new_game')">新游戏</button>`;
+                } else {
+                    html += `
+                        <button class="btn" onclick="showAuthPanel('login')">登录</button>
+                        <button class="btn" onclick="showAuthPanel('register')">注册</button>
+                        <button class="btn btn-secondary" onclick="doAction('new_game')">游客模式开始</button>
+                    `;
+                }
+
+                menu.innerHTML = html;
             } else if (state === 'dead') {
                 menu.style.display = 'block';
                 menu.innerHTML = `
                     <h2 style="color: #e94560;">💀 你阵亡了</h2>
-                    <p style="margin-bottom: 20px; color: #888;">
+                    <p style="margin-bottom: 12px; color: #888; font-size: 0.8em;">
                         丢失了背包中的所有物品...
                     </p>
                     <button class="btn" onclick="doAction('return_base')">返回基地</button>
@@ -1328,7 +1789,17 @@
         }
 
         // 初始化
-        updateState();
+        async function init() {
+            await checkAuthStatus();
+            await updateState();
+
+            // 如果游戏在主菜单且未登录，显示登录面板
+            if (gameState && gameState.game_state === 'main_menu' && !authState.logged_in) {
+                // 不自动显示登录面板，让用户选择
+                // showAuthPanel('login');
+            }
+        }
+        init();
         setInterval(updateState, 3000);
 
         // 窗口大小变化时重新渲染地图
