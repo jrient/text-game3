@@ -679,7 +679,6 @@
             <h2>📦 仓库</h2>
             <div>
                 <span style="color: #ffd700; margin-right: 20px;">💰 $<span id="stash-money">0</span></span>
-                <button class="btn btn-warning" onclick="doAction('auto_equip')" style="margin-right: 10px;">⚡ 自动装备</button>
                 <button class="btn btn-secondary" onclick="closeStash()">返回基地</button>
             </div>
         </div>
@@ -740,6 +739,14 @@
             renderInventory();
             renderCombat();
             renderMainMenu();
+
+            // 如果商店/仓库页面打开中，同步刷新
+            if (document.getElementById('shop-page').style.display !== 'none') {
+                renderShopPage();
+            }
+            if (document.getElementById('stash-page').style.display !== 'none') {
+                renderStashPage();
+            }
         }
 
         // 渲染玩家信息
@@ -977,7 +984,6 @@
                         <button class="btn" onclick="doAction('start_raid')">🏭 开始行动</button>
                         <button class="btn btn-secondary" onclick="openShop()">🏪 商店</button>
                         <button class="btn btn-secondary" onclick="openStash()">📦 仓库</button>
-                        <button class="btn btn-warning" onclick="doAction('auto_equip')">⚡ 自动装备</button>
                         <button class="btn btn-secondary" onclick="doAction('rest')">💤 休息恢复</button>
                         <button class="btn btn-success" onclick="doAction('save_game')">💾 保存游戏</button>
                         <button class="btn btn-secondary" onclick="doAction('load_game')">📂 读取存档</button>
