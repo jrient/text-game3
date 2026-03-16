@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+venv/
+.omc/
+saves/
+*.egg-info/
+.env

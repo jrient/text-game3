@@ -29,19 +29,16 @@ class Rarity(Enum):
         self.value_mult = value_mult
 
 class DamageZone(Enum):
-    """身体部位"""
-    HEAD = ("头部", 2.5, "致命伤害！")
-    THORAX = ("胸部", 1.0, "")
-    STOMACH = ("腹部", 0.9, "你感到剧烈腹痛。")
-    LEFT_ARM = ("左臂", 0.7, "左臂受伤，精准度下降。")
-    RIGHT_ARM = ("右臂", 0.7, "右臂受伤，换弹速度下降。")
-    LEFT_LEG = ("左腿", 0.7, "左腿受伤，移动速度下降。")
-    RIGHT_LEG = ("右腿", 0.7, "右腿受伤，移动速度下降。")
+    """身体部位 - 简化为头/胸/腿"""
+    HEAD = ("头部", 2.0, "致命伤害！", 0.15)      # 高伤害倍率，低命中率
+    CHEST = ("胸部", 1.0, "", 0.55)                # 标准伤害，高命中率
+    LEGS = ("腿部", 0.7, "移动速度下降。", 0.30)   # 低伤害，低命中率，无护甲
 
-    def __init__(self, cn_name, multiplier, effect_msg):
+    def __init__(self, cn_name, multiplier, effect_msg, base_hit_chance):
         self.cn_name = cn_name
         self.multiplier = multiplier
         self.effect_msg = effect_msg
+        self.base_hit_chance = base_hit_chance  # 基础命中率
 
 # ============== 游戏数据 ==============
 WEAPONS = {
@@ -221,46 +218,95 @@ HELMETS = {
     }
 }
 
+# 背包类型 - 不同大小和价格
+BACKPACKS = {
+    "bag_small": {
+        "name": "小型背包",
+        "rows": 4,
+        "cols": 3,
+        "weight": 0.5,
+        "value": 500,
+        "rarity": Rarity.COMMON,
+        "description": "12格背包，基础存储空间"
+    },
+    "bag_medium": {
+        "name": "中型背包",
+        "rows": 5,
+        "cols": 4,
+        "weight": 1.0,
+        "value": 2000,
+        "rarity": Rarity.UNCOMMON,
+        "description": "20格背包，标准存储空间"
+    },
+    "bag_large": {
+        "name": "大型背包",
+        "rows": 6,
+        "cols": 5,
+        "weight": 1.5,
+        "value": 5000,
+        "rarity": Rarity.RARE,
+        "description": "30格背包，扩展存储空间"
+    },
+    "bag_tactical": {
+        "name": "战术背包",
+        "rows": 7,
+        "cols": 5,
+        "weight": 2.0,
+        "value": 10000,
+        "rarity": Rarity.EPIC,
+        "description": "35格背包，专业战术存储"
+    },
+    "bag_military": {
+        "name": "军用背包",
+        "rows": 8,
+        "cols": 6,
+        "weight": 2.5,
+        "value": 20000,
+        "rarity": Rarity.LEGENDARY,
+        "description": "48格背包，最大存储容量"
+    }
+}
+
 CONSUMABLES = {
     "med_bandage": {
         "name": "绷带",
         "type": "医疗",
-        "effect": {"heal": 15},
+        "effect": {"heal": 15, "stop_bleed": True},
         "use_time": 2,
         "weight": 0.1,
         "value": 100,
         "rarity": Rarity.COMMON,
-        "description": "快速止血，恢复少量生命值"
+        "description": "止血并恢复少量生命值"
     },
     "med_ai2": {
         "name": "AI-2急救包",
         "type": "医疗",
-        "effect": {"heal": 50},
+        "effect": {"heal": 50, "stop_bleed": True},
         "use_time": 4,
         "weight": 0.3,
         "value": 300,
         "rarity": Rarity.UNCOMMON,
-        "description": "恢复中等生命值"
+        "description": "恢复中等生命值，可止血"
     },
     "med_ifak": {
         "name": "IFAK医疗包",
         "type": "医疗",
-        "effect": {"heal": 100},
+        "effect": {"heal": 100, "stop_bleed": True},
         "use_time": 6,
         "weight": 0.5,
         "value": 800,
         "rarity": Rarity.RARE,
-        "description": "恢复大量生命值"
+        "description": "恢复大量生命值，可止血"
     },
     "med_surgery": {
         "name": "手术包",
         "type": "医疗",
-        "effect": {"heal": 0, "fix_bodypart": True},
+        "effect": {"heal": 30, "fix_bodypart": True, "stop_bleed": True},
         "use_time": 15,
         "weight": 1.0,
         "value": 2000,
         "rarity": Rarity.EPIC,
-        "description": "修复受伤的身体部位"
+        "description": "修复断裂的身体部位并止血"
     },
     "med_painkiller": {
         "name": "止痛药",
@@ -281,6 +327,26 @@ CONSUMABLES = {
         "value": 150,
         "rarity": Rarity.COMMON,
         "description": "恢复能量和耐力"
+    },
+    "repair_armor_small": {
+        "name": "护甲修理包(小)",
+        "type": "工具",
+        "effect": {"repair_armor": 15},
+        "use_time": 5,
+        "weight": 0.2,
+        "value": 200,
+        "rarity": Rarity.COMMON,
+        "description": "修复护甲耐久度15点"
+    },
+    "repair_armor_large": {
+        "name": "护甲修理包(大)",
+        "type": "工具",
+        "effect": {"repair_armor": 40},
+        "use_time": 8,
+        "weight": 0.5,
+        "value": 500,
+        "rarity": Rarity.UNCOMMON,
+        "description": "修复护甲耐久度40点"
     }
 }
 
@@ -369,13 +435,18 @@ LOOT_ITEMS = {
 }
 
 # ============== 地图数据 ==============
+# 地图坐标系统 - 用于计算距离和可视化
 MAP_INDUSTRIAL = {
     "name": "工业区",
     "description": "一座废弃的工业园区，传闻有大量高价值物资...",
+    "width": 14,  # 地图宽度
+    "height": 10,  # 地图高度
     "zones": {
+        # ============ 出生点 ============
         "spawn_west": {
             "name": "西侧入口",
             "description": "工业区的西侧入口，杂草丛生。",
+            "x": 0, "y": 5,
             "danger_level": 1,
             "loot_tier": 1,
             "connections": ["parking", "warehouse"],
@@ -385,36 +456,82 @@ MAP_INDUSTRIAL = {
         "spawn_south": {
             "name": "南侧小径",
             "description": "一条隐蔽的小径，可以绕过主路。",
+            "x": 5, "y": 0,
             "danger_level": 1,
             "loot_tier": 1,
-            "connections": ["gas_station", "forest"],
+            "connections": ["gas_station", "forest", "sewer_entrance"],
             "is_spawn": True,
             "is_extract": False
         },
+        "spawn_north": {
+            "name": "北侧小道",
+            "description": "一条通往工业园区北侧的隐蔽小道。",
+            "x": 10, "y": 9,
+            "danger_level": 1,
+            "loot_tier": 1,
+            "connections": ["power_plant", "research_lab"],
+            "is_spawn": True,
+            "is_extract": False
+        },
+        # ============ 外围区域 ============
         "parking": {
             "name": "停车场",
             "description": "废弃的停车场，有几辆锈迹斑斑的卡车。",
+            "x": 3, "y": 5,
             "danger_level": 2,
             "loot_tier": 2,
-            "connections": ["spawn_west", "warehouse", "admin"],
+            "connections": ["spawn_west", "warehouse", "admin", "extract_west", "guard_post"],
             "is_spawn": False,
             "is_extract": False
         },
         "gas_station": {
             "name": "加油站",
             "description": "老旧的加油站，便利店或许还有存货。",
+            "x": 4, "y": 3,
             "danger_level": 2,
             "loot_tier": 2,
-            "connections": ["spawn_south", "warehouse", "forest"],
+            "connections": ["spawn_south", "warehouse", "forest", "garage"],
             "is_spawn": False,
             "is_extract": False
         },
+        "guard_post": {
+            "name": "岗哨站",
+            "description": "废弃的保安岗哨，可能有遗留物资。",
+            "x": 1, "y": 3,
+            "danger_level": 2,
+            "loot_tier": 2,
+            "connections": ["parking", "sewer_entrance", "medical_center"],
+            "is_spawn": False,
+            "is_extract": False
+        },
+        "sewer_entrance": {
+            "name": "下水道入口",
+            "description": "潮湿阴暗的下水道入口，散发着恶臭。",
+            "x": 3, "y": 1,
+            "danger_level": 3,
+            "loot_tier": 2,
+            "connections": ["spawn_south", "guard_post", "sewer_tunnel"],
+            "is_spawn": False,
+            "is_extract": False
+        },
+        "forest": {
+            "name": "森林边缘",
+            "description": "茂密的树林，适合潜伏。",
+            "x": 7, "y": 1,
+            "danger_level": 2,
+            "loot_tier": 1,
+            "connections": ["spawn_south", "gas_station", "extract_forest", "water_tower"],
+            "is_spawn": False,
+            "is_extract": False
+        },
+        # ============ 核心区域 ============
         "warehouse": {
             "name": "物资仓库",
             "description": "大型仓库，堆满了各种物资箱。",
+            "x": 5, "y": 5,
             "danger_level": 3,
             "loot_tier": 3,
-            "connections": ["spawn_west", "parking", "admin", "gas_station"],
+            "connections": ["spawn_west", "parking", "admin", "gas_station", "factory_floor"],
             "is_spawn": False,
             "is_extract": False,
             "requires_key": None
@@ -422,28 +539,94 @@ MAP_INDUSTRIAL = {
         "admin": {
             "name": "行政大楼",
             "description": "园区行政大楼，据传有高价值物品。",
+            "x": 6, "y": 7,
             "danger_level": 4,
             "loot_tier": 4,
-            "connections": ["parking", "warehouse"],
+            "connections": ["parking", "warehouse", "extract_bunker", "factory_floor", "research_lab"],
             "is_spawn": False,
             "is_extract": False,
             "requires_key": None
         },
-        "forest": {
-            "name": "森林边缘",
-            "description": "茂密的树林，适合潜伏。",
-            "danger_level": 2,
-            "loot_tier": 1,
-            "connections": ["spawn_south", "gas_station", "extract_forest"],
+        "garage": {
+            "name": "修车厂",
+            "description": "废弃的汽车修理厂，工具散落一地。",
+            "x": 6, "y": 3,
+            "danger_level": 3,
+            "loot_tier": 3,
+            "connections": ["gas_station", "factory_floor", "water_tower"],
             "is_spawn": False,
             "is_extract": False
         },
+        "factory_floor": {
+            "name": "生产车间",
+            "description": "巨大的生产车间，机器已经锈蚀。",
+            "x": 8, "y": 5,
+            "danger_level": 4,
+            "loot_tier": 4,
+            "connections": ["warehouse", "admin", "garage", "power_plant"],
+            "is_spawn": False,
+            "is_extract": False
+        },
+        "power_plant": {
+            "name": "发电站",
+            "description": "园区的发电设施，仍有微弱电力。",
+            "x": 10, "y": 6,
+            "danger_level": 4,
+            "loot_tier": 3,
+            "connections": ["factory_floor", "research_lab", "spawn_north", "extract_helipad"],
+            "is_spawn": False,
+            "is_extract": False
+        },
+        # ============ 高价值区域 ============
+        "medical_center": {
+            "name": "医疗中心",
+            "description": "园区医疗中心，可能有珍贵的医疗物资。",
+            "x": 2, "y": 6,
+            "danger_level": 3,
+            "loot_tier": 3,
+            "connections": ["guard_post", "extract_west"],
+            "is_spawn": False,
+            "is_extract": False
+        },
+        "research_lab": {
+            "name": "研究实验室",
+            "description": "神秘的研究设施，戒备森严。",
+            "x": 11, "y": 8,
+            "danger_level": 5,
+            "loot_tier": 5,
+            "connections": ["admin", "power_plant", "spawn_north"],
+            "is_spawn": False,
+            "is_extract": False,
+            "requires_key": "lab_keycard"
+        },
+        "water_tower": {
+            "name": "水塔",
+            "description": "高耸的水塔，可以俯瞰整个园区。",
+            "x": 9, "y": 2,
+            "danger_level": 3,
+            "loot_tier": 2,
+            "connections": ["forest", "garage", "extract_forest"],
+            "is_spawn": False,
+            "is_extract": False
+        },
+        "sewer_tunnel": {
+            "name": "下水道通道",
+            "description": "地下通道，黑暗潮湿。",
+            "x": 5, "y": 2,
+            "danger_level": 4,
+            "loot_tier": 3,
+            "connections": ["sewer_entrance", "gas_station"],
+            "is_spawn": False,
+            "is_extract": False
+        },
+        # ============ 撤离点 ============
         "extract_west": {
             "name": "西侧撤离点",
             "description": "一个开放的撤离点。",
+            "x": 0, "y": 7,
             "danger_level": 1,
             "loot_tier": 0,
-            "connections": ["parking"],
+            "connections": ["parking", "medical_center"],
             "is_spawn": False,
             "is_extract": True,
             "extract_condition": {"type": "open", "open_time": 0}
@@ -451,9 +634,10 @@ MAP_INDUSTRIAL = {
         "extract_forest": {
             "name": "森林撤离点",
             "description": "隐蔽的森林小道撤离点，需要等待。",
+            "x": 9, "y": 0,
             "danger_level": 1,
             "loot_tier": 0,
-            "connections": ["forest"],
+            "connections": ["forest", "water_tower"],
             "is_spawn": False,
             "is_extract": True,
             "extract_condition": {"type": "wait", "wait_time": 30}
@@ -461,15 +645,59 @@ MAP_INDUSTRIAL = {
         "extract_bunker": {
             "name": "地下掩体",
             "description": "紧急撤离通道，需要丢弃背包。",
+            "x": 7, "y": 7,
             "danger_level": 1,
             "loot_tier": 0,
             "connections": ["admin"],
             "is_spawn": False,
             "is_extract": True,
             "extract_condition": {"type": "drop_backpack", "drop_backpack": True}
+        },
+        "extract_helipad": {
+            "name": "直升机坪",
+            "description": "园区内的直升机停机坪，需要支付费用。",
+            "x": 12, "y": 5,
+            "danger_level": 1,
+            "loot_tier": 0,
+            "connections": ["power_plant"],
+            "is_spawn": False,
+            "is_extract": True,
+            "extract_condition": {"type": "paid", "cost": 5000}
         }
     }
 }
+
+# 所有可能的撤离点列表
+EXTRACTION_POINTS = ["extract_west", "extract_forest", "extract_bunker", "extract_helipad"]
+
+import math
+
+def get_zone_distance(zones: dict, zone1_id: str, zone2_id: str) -> float:
+    """计算两个区域之间的距离"""
+    z1 = zones.get(zone1_id, {})
+    z2 = zones.get(zone2_id, {})
+    x1, y1 = z1.get("x", 0), z1.get("y", 0)
+    x2, y2 = z2.get("x", 0), z2.get("y", 0)
+    return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+
+def select_distant_extraction(zones: dict, spawn_zone: str) -> str:
+    """选择一个距离玩家出生点较远的撤离点"""
+    distances = []
+    for ep in EXTRACTION_POINTS:
+        if ep in zones:
+            dist = get_zone_distance(zones, spawn_zone, ep)
+            distances.append((ep, dist))
+
+    # 按距离排序，选择最远的
+    distances.sort(key=lambda x: x[1], reverse=True)
+
+    # 从最远的两个中随机选择一个，增加变化性
+    if len(distances) >= 2:
+        candidates = distances[:2]
+        return random.choice(candidates)[0]
+    elif distances:
+        return distances[0][0]
+    return EXTRACTION_POINTS[0]
 
 # ============== 敌人数据 ==============
 ENEMY_TYPES = {
@@ -638,12 +866,18 @@ class BodyPartStatus:
     hp: int = 100
     max_hp: int = 100
     is_broken: bool = False
+    is_bleeding: bool = False  # 流血状态
+    bleed_damage: int = 0      # 流血伤害（每回合）
 
-    def take_damage(self, damage: int) -> int:
+    def take_damage(self, damage: int, cause_bleed: bool = True) -> int:
         actual_damage = min(damage, self.hp)
         self.hp -= actual_damage
         if self.hp <= 0:
             self.is_broken = True
+        # 30%概率触发流血
+        if cause_bleed and not self.is_bleeding and random.random() < 0.3:
+            self.is_bleeding = True
+            self.bleed_damage = random.randint(3, 8)
         return actual_damage
 
     def heal(self, amount: int) -> int:
@@ -654,20 +888,72 @@ class BodyPartStatus:
         return healed
 
     def repair(self):
+        """手术修复断裂部位"""
         self.is_broken = False
-        self.hp = max(1, self.hp)
+        self.hp = max(30, self.hp)  # 修复后恢复30%HP
+
+    def stop_bleeding(self):
+        """止血"""
+        self.is_bleeding = False
+        self.bleed_damage = 0
+
+    def tick(self) -> int:
+        """每回合处理流血伤害"""
+        damage = 0
+        if self.is_bleeding:
+            damage = self.bleed_damage
+            self.hp -= damage
+            if self.hp <= 0:
+                self.hp = 1  # 流血不会直接致死，但会到1HP
+        return damage
+
+@dataclass
+class ArmorStatus:
+    """护甲状态"""
+    armor_value: int = 0       # 护甲值
+    max_armor: int = 0         # 最大护甲值
+    durability: int = 100      # 耐久度
+    max_durability: int = 100  # 最大耐久度
+
+    def absorb_damage(self, damage: int) -> tuple:
+        """吸收伤害，返回(实际伤害, 护甲消耗)"""
+        if self.armor_value <= 0 or self.durability <= 0:
+            return damage, 0
+
+        # 护甲吸收比例（基于耐久度）
+        absorb_ratio = min(0.7, self.durability / self.max_durability * 0.7)
+        absorbed = int(damage * absorb_ratio)
+        actual_damage = damage - absorbed
+
+        # 护甲耐久消耗
+        durability_loss = int(absorbed * 0.5)
+        self.durability = max(0, self.durability - durability_loss)
+
+        # 耐久度降低后护甲值也降低
+        if self.durability < 30:
+            self.armor_value = int(self.max_armor * self.durability / self.max_durability)
+
+        return actual_damage, durability_loss
+
+    def repair(self, amount: int) -> int:
+        """修理护甲"""
+        repaired = min(amount, self.max_durability - self.durability)
+        self.durability += repaired
+        # 修理后恢复护甲值
+        self.armor_value = int(self.max_armor * self.durability / self.max_durability)
+        return repaired
 
 @dataclass
 class PlayerStats:
-    """玩家状态"""
-    # 身体部位
+    """玩家状态 - 简化为三部位"""
+    # 身体部位 (头/胸/腿)
     head: BodyPartStatus = field(default_factory=BodyPartStatus)
-    thorax: BodyPartStatus = field(default_factory=BodyPartStatus)
-    stomach: BodyPartStatus = field(default_factory=BodyPartStatus)
-    left_arm: BodyPartStatus = field(default_factory=BodyPartStatus)
-    right_arm: BodyPartStatus = field(default_factory=BodyPartStatus)
-    left_leg: BodyPartStatus = field(default_factory=BodyPartStatus)
-    right_leg: BodyPartStatus = field(default_factory=BodyPartStatus)
+    chest: BodyPartStatus = field(default_factory=BodyPartStatus)
+    legs: BodyPartStatus = field(default_factory=BodyPartStatus)
+
+    # 护甲 (头部和胸部有护甲，腿部无护甲)
+    head_armor: ArmorStatus = field(default_factory=ArmorStatus)
+    chest_armor: ArmorStatus = field(default_factory=ArmorStatus)
 
     # 其他状态
     energy: int = 100
@@ -683,27 +969,29 @@ class PlayerStats:
     level: int = 1
 
     def is_alive(self) -> bool:
-        return self.head.hp > 0 and self.thorax.hp > 0
+        return self.head.hp > 0 and self.chest.hp > 0
 
     def get_total_hp(self) -> int:
-        parts = [self.head, self.thorax, self.stomach,
-                 self.left_arm, self.right_arm, self.left_leg, self.right_leg]
-        return sum(p.hp for p in parts)
+        return self.head.hp + self.chest.hp + self.legs.hp
 
     def get_max_hp(self) -> int:
-        return 700  # 7个部位，每个100
+        return 300  # 3个部位，每个100
 
     def get_body_part(self, zone: DamageZone) -> BodyPartStatus:
         part_map = {
             DamageZone.HEAD: self.head,
-            DamageZone.THORAX: self.thorax,
-            DamageZone.STOMACH: self.stomach,
-            DamageZone.LEFT_ARM: self.left_arm,
-            DamageZone.RIGHT_ARM: self.right_arm,
-            DamageZone.LEFT_LEG: self.left_leg,
-            DamageZone.RIGHT_LEG: self.right_leg
+            DamageZone.CHEST: self.chest,
+            DamageZone.LEGS: self.legs
         }
         return part_map[zone]
+
+    def get_armor(self, zone: DamageZone) -> ArmorStatus:
+        """获取对应部位的护甲"""
+        if zone == DamageZone.HEAD:
+            return self.head_armor
+        elif zone == DamageZone.CHEST:
+            return self.chest_armor
+        return ArmorStatus()  # 腿部无护甲
 
     def apply_pain_relief(self, duration: int):
         self.pain_relief_timer = duration
@@ -715,6 +1003,9 @@ class PlayerStats:
         # 饥渴消耗
         self.energy = max(0, self.energy - 1)
         self.hydration = max(0, self.hydration - 1)
+        # 流血伤害
+        bleed_damage = self.head.tick() + self.chest.tick() + self.legs.tick()
+        return bleed_damage
 
 @dataclass
 class Enemy:
@@ -732,6 +1023,31 @@ class Enemy:
     is_boss: bool = False
     current_zone: str = ""
     state: str = "patrol"  # patrol, alert, combat
+    backpack: Optional['Backpack'] = None  # 敌人背包，可被搜索
+
+    def __post_init__(self):
+        """初始化敌人背包，随机放入一些物品"""
+        if self.backpack is None:
+            self.backpack = Backpack(rows=3, cols=3)  # 敌人背包较小
+            # 随机放入一些物品
+            if random.random() < 0.5:  # 50%概率有物品
+                possible_items = [
+                    ("bandage", "绷带", 0.3),
+                    ("medkit", "急救包", 0.15),
+                    ("ammo_9mm", "9mm弹药", 0.4),
+                    ("repair_kit", "修理工具", 0.1)
+                ]
+                for item_id, item_name, chance in possible_items:
+                    if random.random() < chance:
+                        item = Consumable(
+                            id=f"enemy_{item_id}_{random.randint(100,999)}",
+                            name=item_name,
+                            weight=0.1,
+                            value=random.randint(50, 200),
+                            rarity=Rarity.COMMON,
+                            effect={"heal": 30} if "med" in item_id or "bandage" in item_id else {}
+                        )
+                        self.backpack.add_item(item)
 
     def take_damage(self, damage: int, penetration: int) -> int:
         """计算实际伤害"""
@@ -852,11 +1168,25 @@ class EquipmentSlots:
         else:
             self.secondary_weapon = weapon
 
-    def equip_armor(self, armor: Armor):
+    def equip_armor(self, armor: Armor, player_stats: 'PlayerStats' = None):
         self.armor = armor
+        if player_stats and armor:
+            player_stats.chest_armor = ArmorStatus(
+                armor_value=armor.armor_class,
+                max_armor=armor.armor_class,
+                durability=armor.durability,
+                max_durability=armor.max_durability
+            )
 
-    def equip_helmet(self, helmet: Armor):
+    def equip_helmet(self, helmet: Armor, player_stats: 'PlayerStats' = None):
         self.helmet = helmet
+        if player_stats and helmet:
+            player_stats.head_armor = ArmorStatus(
+                armor_value=helmet.armor_class,
+                max_armor=helmet.armor_class,
+                durability=helmet.durability,
+                max_durability=helmet.max_durability
+            )
 
     def get_total_weight(self) -> float:
         weight = 0
@@ -878,7 +1208,9 @@ class Player:
         self.name = name
         self.stats = PlayerStats()
         self.equipment = EquipmentSlots()
-        self.inventory: List[Item] = []  # 仓库
+        self.stash_weapons: List[Weapon] = []  # 武器仓库
+        self.stash_armors: List[Armor] = []    # 护甲仓库
+        self.stash_items: List[Item] = []      # 物品仓库
         self.current_zone: str = ""
         self.action_points: int = 100
         self.max_action_points: int = 100
@@ -899,31 +1231,24 @@ class Player:
             return healed
 
     def take_damage(self, damage: int, zone: DamageZone, penetration: int = 0) -> Tuple[int, str]:
-        """受到伤害"""
+        """受到伤害 - 使用简化的三部位系统"""
         part = self.stats.get_body_part(zone)
 
-        # 计算护甲减伤
+        # 计算护甲减伤 (头部和胸部有护甲，腿部无护甲)
         armor_reduction = 0
         armor_msg = ""
 
-        if zone in [DamageZone.HEAD, DamageZone.THORAX] and self.equipment.armor:
-            armor = self.equipment.armor
-            if armor.durability > 0:
-                armor_reduction = max(0, (armor.armor_class - penetration) * 0.2 + 0.1)
-                armor_reduction = min(0.85, armor_reduction)
-                armor.durability -= int(damage * 0.1)
-                if armor_reduction > 0:
-                    armor_msg = f"护甲抵挡了{int(armor_reduction*100)}%伤害！"
-        elif zone == DamageZone.HEAD and self.equipment.helmet:
-            helmet = self.equipment.helmet
-            if helmet.durability > 0 and helmet.armor_class > 0:
-                armor_reduction = max(0, (helmet.armor_class - penetration) * 0.2 + 0.1)
-                armor_reduction = min(0.85, armor_reduction)
-                helmet.durability -= int(damage * 0.1)
-                if armor_reduction > 0:
-                    armor_msg = f"头盔抵挡了{int(armor_reduction*100)}%伤害！"
+        armor = self.stats.get_armor(zone)
+        if armor and armor.armor_value > 0 and armor.durability > 0:
+            # 使用护甲吸收伤害
+            actual_damage, durability_loss = armor.absorb_damage(damage)
+            armor_reduction = damage - actual_damage
+            if armor_reduction > 0:
+                armor_msg = f"护甲抵挡了{armor_reduction}点伤害！(耐久-{durability_loss})"
+            damage = actual_damage
 
-        actual_damage = int(damage * (1 - armor_reduction) * zone.multiplier)
+        # 应用部位伤害倍率
+        actual_damage = int(damage * zone.multiplier)
         part.take_damage(actual_damage)
 
         msg = f"你的{zone.cn_name}受到{actual_damage}点伤害！"
@@ -934,8 +1259,8 @@ class Player:
 
         return actual_damage, msg
 
-    def attack(self, target: Enemy, aim: str = "body") -> Tuple[int, str]:
-        """攻击敌人"""
+    def attack(self, target: Enemy, aim: str = "chest") -> Tuple[int, str]:
+        """攻击敌人 - 使用简化的三部位瞄准系统"""
         weapon = self.equipment.primary_weapon
         if not weapon:
             return 0, "你没有装备武器！"
@@ -947,30 +1272,67 @@ class Player:
         shots = min(weapon.fire_rate, weapon.current_ammo)
         weapon.current_ammo -= shots
 
-        # 计算命中
+        # 计算基础命中
         base_accuracy = weapon.accuracy
 
-        # 身体部位影响
-        if self.stats.right_arm.is_broken:
-            base_accuracy *= 0.5
-        if self.stats.left_arm.is_broken:
-            base_accuracy *= 0.8
+        # 腿部受伤影响移动，但不影响射击精度
+        if self.stats.legs.hp < self.stats.legs.max_hp:
+            base_accuracy *= 0.9  # 腿部受伤略微影响稳定性
 
-        # 瞄准修正
-        aim_modifier = {"head": 0.5, "body": 1.0, "legs": 0.9}.get(aim, 1.0)
+        # 瞄准部位映射和命中率修正
+        aim_zone_map = {
+            "head": DamageZone.HEAD,
+            "chest": DamageZone.CHEST,
+            "legs": DamageZone.LEGS
+        }
+        target_zone = aim_zone_map.get(aim, DamageZone.CHEST)
+
+        # 瞄准修正：瞄准特定部位降低整体命中，但提高该部位的命中权重
+        # 基础命中率 = 武器精度 * 部位基础命中率 * 瞄准修正
+        aim_accuracy_modifier = {
+            "head": 0.6,   # 瞄准头部降低整体命中率
+            "chest": 1.0,  # 瞄准胸部正常
+            "legs": 0.85   # 瞄准腿部略微降低
+        }
 
         total_damage = 0
         hits = 0
-        messages = []
+        hit_zones = {}
 
         for _ in range(shots):
-            if random.random() < base_accuracy * aim_modifier:
+            # 计算这一发是否命中
+            shot_accuracy = base_accuracy * aim_accuracy_modifier.get(aim, 1.0)
+
+            if random.random() < shot_accuracy:
+                # 命中后决定打中哪个部位
+                # 如果瞄准特定部位，有更高概率打中该部位
+                if aim == "head":
+                    zone_weights = {DamageZone.HEAD: 0.5, DamageZone.CHEST: 0.35, DamageZone.LEGS: 0.15}
+                elif aim == "legs":
+                    zone_weights = {DamageZone.HEAD: 0.1, DamageZone.CHEST: 0.3, DamageZone.LEGS: 0.6}
+                else:  # chest
+                    zone_weights = {DamageZone.HEAD: 0.1, DamageZone.CHEST: 0.7, DamageZone.LEGS: 0.2}
+
+                # 根据权重随机选择部位
+                r = random.random()
+                cumulative = 0
+                hit_zone = DamageZone.CHEST
+                for zone, weight in zone_weights.items():
+                    cumulative += weight
+                    if r < cumulative:
+                        hit_zone = zone
+                        break
+
+                # 造成伤害（部位倍率）
+                zone_damage = int(weapon.damage * hit_zone.multiplier)
+                actual_damage = target.take_damage(zone_damage, weapon.penetration)
+                total_damage += actual_damage
                 hits += 1
-                damage = target.take_damage(weapon.damage, weapon.penetration)
-                total_damage += damage
+                hit_zones[hit_zone.cn_name] = hit_zones.get(hit_zone.cn_name, 0) + 1
 
         if hits > 0:
-            msg = f"你使用{weapon.name}射击，命中{hits}发，造成{total_damage}点伤害！"
+            zone_str = "、".join([f"{k}×{v}" for k, v in hit_zones.items()])
+            msg = f"你使用{weapon.name}射击，命中{hits}发（{zone_str}），造成{total_damage}点伤害！"
             if not target.is_alive():
                 msg += f"\n{target.name}被击杀！"
         else:
@@ -1014,6 +1376,16 @@ class Player:
                     part.repair()
             msg += "修复了所有受伤部位。"
 
+        if "stop_bleed" in effect and effect["stop_bleed"]:
+            bleed_stopped = 0
+            for zone in DamageZone:
+                part = self.stats.get_body_part(zone)
+                if part.is_bleeding:
+                    part.stop_bleeding()
+                    bleed_stopped += 1
+            if bleed_stopped > 0:
+                msg += f"止住了{bleed_stopped}个部位的流血。"
+
         if "pain_relief" in effect:
             self.stats.apply_pain_relief(effect["pain_relief"])
             msg += f"止痛效果持续{effect['pain_relief']}秒。"
@@ -1021,6 +1393,26 @@ class Player:
         if "energy" in effect:
             self.stats.energy = min(100, self.stats.energy + effect["energy"])
             msg += f"恢复了{effect['energy']}点能量。"
+
+        if "repair_armor" in effect:
+            repair_amount = effect["repair_armor"]
+            # 优先修理耐久度最低的护甲
+            head_armor = self.stats.head_armor
+            chest_armor = self.stats.chest_armor
+
+            repaired = 0
+            # 选择耐久度最低的护甲修理
+            if head_armor.durability > 0 or chest_armor.durability > 0:
+                if head_armor.max_durability > 0 and (chest_armor.max_durability == 0 or head_armor.durability < chest_armor.durability):
+                    repaired = head_armor.repair(repair_amount)
+                    msg += f"头部护甲修复了{repaired}点耐久。"
+                elif chest_armor.max_durability > 0:
+                    repaired = chest_armor.repair(repair_amount)
+                    msg += f"胸部护甲修复了{repaired}点耐久。"
+                else:
+                    msg += "没有可修理的护甲。"
+            else:
+                msg += "没有可修理的护甲。"
 
         # 移除物品
         self.equipment.backpack.remove_item(item_id)
@@ -1046,6 +1438,7 @@ class GameState(Enum):
     BASE = "base"  # 基地/仓库
     RAID = "raid"  # 行动中
     COMBAT = "combat"  # 战斗中
+    SEARCH = "search"  # 搜索敌人背包
     DEAD = "dead"  # 死亡
     EXTRACTED = "extracted"  # 成功撤离
 
@@ -1059,6 +1452,12 @@ class Raid:
         self.time_elapsed: int = 0
         self.max_time: int = 60  # 最大行动时间（回合）
         self.loot_generated: bool = False
+        self.active_extraction: str = ""  # 当前激活的撤离点ID
+        self.visited_zones: set = set()  # 玩家访问过的区域
+
+    def set_active_extraction(self, spawn_zone: str):
+        """设置激活的撤离点（距离出生点较远）"""
+        self.active_extraction = select_distant_extraction(self.zones, spawn_zone)
 
     def spawn_enemies(self, player_level: int):
         """根据玩家等级生成敌人"""
@@ -1205,7 +1604,7 @@ class Game:
             durability=armor_data["durability"],
             max_durability=armor_data["max_durability"]
         )
-        self.player.equipment.equip_armor(armor)
+        self.player.equipment.equip_armor(armor, self.player.stats)
 
         # 初始消耗品
         for _ in range(2):
@@ -1239,13 +1638,27 @@ class Game:
 
         # 随机选择出生点
         spawn_zones = [zid for zid, z in self.current_raid.zones.items() if z.get("is_spawn")]
-        self.player.current_zone = random.choice(spawn_zones)
+        spawn_zone = random.choice(spawn_zones)
+        self.player.current_zone = spawn_zone
+
+        # 设置撤离点并标记已访问区域
+        self.current_raid.set_active_extraction(spawn_zone)
+        self.current_raid.visited_zones.add(spawn_zone)
 
         self.state = GameState.RAID
         self.add_message(f"=== 行动开始 ===")
         self.add_message(f"你已部署到 {map_data['name']}")
         self.add_message(f"当前位置: {self.current_raid.zones[self.player.current_zone]['name']}")
-        self.add_message(f"时间限制: {self.current_raid.max_time} 回合")
+        self.add_message(f"撤离点: {self.current_raid.zones[self.current_raid.active_extraction]['name']}")
+
+        # 显示撤离点距离提示
+        distance = get_zone_distance(self.current_raid.zones, spawn_zone, self.current_raid.active_extraction)
+        if distance > 7:
+            self.add_message("撤离点非常远，你需要穿越大半个地图！")
+        elif distance > 5:
+            self.add_message("撤离点较远，小心行事。")
+        else:
+            self.add_message("撤离点不算太远。")
 
     def move_to_zone(self, zone_id: str) -> Tuple[bool, str]:
         """移动到区域"""
@@ -1268,8 +1681,15 @@ class Game:
         self.player.action_points -= ap_cost
         self.player.current_zone = zone_id
 
+        # 标记已访问区域
+        self.current_raid.visited_zones.add(zone_id)
+
         msg = f"你移动到了 {target_zone['name']}。"
         self.add_message(msg)
+
+        # 检查是否到达撤离点
+        if zone_id == self.current_raid.active_extraction:
+            self.add_message("★ 你到达了撤离点！可以尝试撤离。")
 
         # 检查是否有敌人
         enemies = self.current_raid.get_enemies_in_zone(zone_id)
@@ -1378,8 +1798,13 @@ class Game:
                             if self.player.equipment.backpack.add_item(item):
                                 msg += f"\n获得: {item.name}"
 
-                self.current_enemy = None
-                self.state = GameState.RAID
+                # 检查敌人背包是否有物品可搜索
+                if self.current_enemy.backpack and self.current_enemy.backpack.get_all_items():
+                    self.state = GameState.SEARCH
+                    msg += f"\n\n📦 {self.current_enemy.name}的背包可以搜索！"
+                else:
+                    self.current_enemy = None
+                    self.state = GameState.RAID
 
         elif action == "reload":
             success, reload_msg = self.player.reload()
@@ -1428,22 +1853,85 @@ class Game:
         self.add_message(msg)
         return success, msg
 
+    def search_enemy_backpack(self, action: str, item_id: str = None) -> Tuple[bool, str]:
+        """搜索敌人背包"""
+        if self.state != GameState.SEARCH:
+            return False, "当前不在搜索状态！"
+
+        if not self.current_enemy or not self.current_enemy.backpack:
+            self.state = GameState.RAID
+            return False, "没有可搜索的背包！"
+
+        msg = ""
+
+        if action == "take_all":
+            # 拿走所有物品
+            items = self.current_enemy.backpack.get_all_items()
+            taken = 0
+            for item in items[:]:
+                if self.player.equipment.backpack.add_item(item):
+                    self.current_enemy.backpack.remove_item(item.id)
+                    taken += 1
+                    msg += f"\n获得: {item.name}"
+            if taken == 0:
+                msg = "背包已满，无法拿取更多物品！"
+            else:
+                msg = f"拿走了{taken}件物品！" + msg
+
+        elif action == "take_one" and item_id:
+            # 拿走指定物品
+            item = self.current_enemy.backpack.get_item(item_id)
+            if item:
+                if self.player.equipment.backpack.add_item(item):
+                    self.current_enemy.backpack.remove_item(item_id)
+                    msg = f"获得: {item.name}"
+                else:
+                    msg = "背包已满！"
+            else:
+                msg = "找不到该物品！"
+
+        elif action == "leave":
+            # 离开搜索
+            self.current_enemy = None
+            self.state = GameState.RAID
+            msg = "你离开了敌人的背包。"
+
+        # 检查是否还有物品
+        if self.current_enemy and (not self.current_enemy.backpack or not self.current_enemy.backpack.get_all_items()):
+            self.current_enemy = None
+            self.state = GameState.RAID
+            if action != "leave":
+                msg += "\n\n背包已空。"
+
+        self.add_message(msg)
+        return True, msg
+
     def try_extract(self) -> Tuple[bool, str]:
         """尝试撤离"""
         if self.state != GameState.RAID:
             return False, "当前不在行动中！"
 
         zone = self.current_raid.get_zone(self.player.current_zone)
-        if not zone.get("is_extract"):
+
+        # 检查是否在激活的撤离点
+        if self.player.current_zone != self.current_raid.active_extraction:
+            # 检查是否是其他撤离点
+            if zone.get("is_extract"):
+                return False, f"这个撤离点不可用！你需要前往 {self.current_raid.zones[self.current_raid.active_extraction]['name']}。"
             return False, "当前区域没有撤离点！"
 
         condition = zone.get("extract_condition", {})
         extract_type = condition.get("type", "open")
 
-        if extract_type == "wait":
+        if extract_type == "paid":
+            cost = condition.get("cost", 5000)
+            if self.player.stats.money < cost:
+                return False, f"撤离费用不足！需要 ${cost}，你只有 ${self.player.stats.money}"
+            self.player.stats.money -= cost
+            self.add_message(f"支付了 ${cost} 撤离费用。")
+        elif extract_type == "wait":
             wait_time = condition.get("wait_time", 30)
-            msg = f"撤离点需要等待 {wait_time} 秒..."
-            self.add_message(msg)
+            self.add_message(f"撤离点需要等待 {wait_time} 秒...")
             # 简化：直接成功
         elif extract_type == "drop_backpack":
             if self.player.equipment.backpack.get_all_items():
@@ -1484,6 +1972,123 @@ class Game:
 
         self.add_message(msg)
 
+    def buy_weapon(self, weapon_id: str) -> Tuple[bool, str]:
+        """购买武器"""
+        if weapon_id not in WEAPONS:
+            return False, "武器不存在！"
+
+        weapon_data = WEAPONS[weapon_id]
+        price = weapon_data["value"]
+
+        if self.player.stats.money < price:
+            return False, f"金钱不足！需要 {price} 金币"
+
+        self.player.stats.money -= price
+        weapon = Weapon(
+            id=f"{weapon_id}_{len(self.player.stash_weapons)}",
+            name=weapon_data["name"],
+            damage=weapon_data["damage"],
+            accuracy=weapon_data["accuracy"],
+            fire_rate=weapon_data["fire_rate"],
+            penetration=weapon_data["penetration"],
+            mag_size=weapon_data["mag_size"],
+            weight=weapon_data["weight"],
+            value=price,
+            rarity=weapon_data["rarity"]
+        )
+        self.player.stash_weapons.append(weapon)
+        return True, f"购买了 {weapon.name}，花费 {price} 金币"
+
+    def buy_armor(self, armor_id: str) -> Tuple[bool, str]:
+        """购买护甲"""
+        if armor_id not in ARMORS:
+            return False, "护甲不存在！"
+
+        armor_data = ARMORS[armor_id]
+        price = armor_data["value"]
+
+        if self.player.stats.money < price:
+            return False, f"金钱不足！需要 {price} 金币"
+
+        self.player.stats.money -= price
+        armor = Armor(
+            id=f"{armor_id}_{len(self.player.stash_armors)}",
+            name=armor_data["name"],
+            durability=armor_data["durability"],
+            max_durability=armor_data["max_durability"],
+            armor_class=armor_data["class"],
+            weight=armor_data["weight"],
+            value=price,
+            rarity=armor_data["rarity"]
+        )
+        self.player.stash_armors.append(armor)
+        return True, f"购买了 {armor.name}，花费 {price} 金币"
+
+    def equip_weapon(self, weapon_id: str) -> Tuple[bool, str]:
+        """从仓库装备武器"""
+        for weapon in self.player.stash_weapons:
+            if weapon.id == weapon_id:
+                # 将当前武器放回仓库
+                if self.player.equipment.primary_weapon:
+                    self.player.stash_weapons.append(self.player.equipment.primary_weapon)
+                self.player.equipment.primary_weapon = weapon
+                self.player.stash_weapons.remove(weapon)
+                return True, f"装备了 {weapon.name}"
+        return False, "找不到该武器"
+
+    def equip_armor(self, armor_id: str) -> Tuple[bool, str]:
+        """从仓库装备护甲"""
+        for armor in self.player.stash_armors:
+            if armor.id == armor_id:
+                # 将当前护甲放回仓库
+                if self.player.equipment.armor:
+                    self.player.stash_armors.append(self.player.equipment.armor)
+                self.player.equipment.equip_armor(armor, self.player.stats)
+                self.player.stash_armors.remove(armor)
+                return True, f"装备了 {armor.name}"
+        return False, "找不到该护甲"
+
+    def sell_stash_weapon(self, weapon_id: str) -> Tuple[bool, str]:
+        """出售仓库武器"""
+        for weapon in self.player.stash_weapons:
+            if weapon.id == weapon_id:
+                price = weapon.value // 2
+                self.player.stats.money += price
+                self.player.stash_weapons.remove(weapon)
+                return True, f"出售了 {weapon.name}，获得 {price} 金币"
+        return False, "找不到该武器"
+
+    def sell_stash_armor(self, armor_id: str) -> Tuple[bool, str]:
+        """出售仓库护甲"""
+        for armor in self.player.stash_armors:
+            if armor.id == armor_id:
+                price = armor.value // 2
+                self.player.stats.money += price
+                self.player.stash_armors.remove(armor)
+                return True, f"出售了 {armor.name}，获得 {price} 金币"
+        return False, "找不到该护甲"
+
+    def auto_equip_best(self) -> str:
+        """自动装备最好的武器和护甲"""
+        msgs = []
+        # 装备最好的武器
+        if self.player.stash_weapons and (not self.player.equipment.primary_weapon or
+            self.player.equipment.primary_weapon.value < max(w.value for w in self.player.stash_weapons)):
+            best_weapon = max(self.player.stash_weapons, key=lambda w: w.value)
+            success, msg = self.equip_weapon(best_weapon.id)
+            if success:
+                msgs.append(msg)
+
+        # 装备最好的护甲
+        if self.player.stash_armors and (not self.player.equipment.armor or
+            self.player.equipment.armor.value < max(a.value for a in self.player.stash_armors)):
+            best_armor = max(self.player.stash_armors, key=lambda a: a.value)
+            success, msg = self.equip_armor(best_armor.id)
+            if success:
+                msgs.append(msg)
+
+        return "\n".join(msgs) if msgs else "无需更换装备"
+
     def return_to_base(self):
         """返回基地"""
         self.state = GameState.BASE
@@ -1497,6 +2102,184 @@ class Game:
             xp=self.player.stats.xp,
             level=self.player.stats.level
         )
+
+        # 重新同步护甲状态
+        if self.player.equipment.armor:
+            self.player.stats.chest_armor = ArmorStatus(
+                armor_value=self.player.equipment.armor.armor_class,
+                max_armor=self.player.equipment.armor.armor_class,
+                durability=self.player.equipment.armor.durability,
+                max_durability=self.player.equipment.armor.max_durability
+            )
+        if self.player.equipment.helmet:
+            self.player.stats.head_armor = ArmorStatus(
+                armor_value=self.player.equipment.helmet.armor_class,
+                max_armor=self.player.equipment.helmet.armor_class,
+                durability=self.player.equipment.helmet.durability,
+                max_durability=self.player.equipment.helmet.max_durability
+            )
+
+# ============== 存档系统 ==============
+def serialize_weapon(weapon: Weapon) -> dict:
+    """序列化武器"""
+    return {
+        'id': weapon.id, 'name': weapon.name, 'weight': weapon.weight,
+        'value': weapon.value, 'rarity': weapon.rarity.name,
+        'damage': weapon.damage, 'accuracy': weapon.accuracy,
+        'fire_rate': weapon.fire_rate, 'penetration': weapon.penetration,
+        'ammo_type': weapon.ammo_type, 'mag_size': weapon.mag_size,
+        'current_ammo': weapon.current_ammo
+    }
+
+def deserialize_weapon(data: dict) -> Weapon:
+    """反序列化武器"""
+    return Weapon(
+        id=data['id'], name=data['name'], weight=data['weight'],
+        value=data['value'], rarity=Rarity[data['rarity']],
+        damage=data['damage'], accuracy=data['accuracy'],
+        fire_rate=data['fire_rate'], penetration=data['penetration'],
+        ammo_type=data.get('ammo_type', ''), mag_size=data['mag_size'],
+        current_ammo=data.get('current_ammo', data['mag_size'])
+    )
+
+def serialize_armor(armor: Armor) -> dict:
+    """序列化护甲"""
+    return {
+        'id': armor.id, 'name': armor.name, 'weight': armor.weight,
+        'value': armor.value, 'rarity': armor.rarity.name,
+        'armor_class': armor.armor_class, 'durability': armor.durability,
+        'max_durability': armor.max_durability
+    }
+
+def deserialize_armor(data: dict) -> Armor:
+    """反序列化护甲"""
+    return Armor(
+        id=data['id'], name=data['name'], weight=data['weight'],
+        value=data['value'], rarity=Rarity[data['rarity']],
+        armor_class=data['armor_class'], durability=data['durability'],
+        max_durability=data['max_durability']
+    )
+
+def serialize_item(item: Item) -> dict:
+    """序列化物品"""
+    data = {
+        'id': item.id, 'name': item.name, 'weight': item.weight,
+        'value': item.value, 'rarity': item.rarity.name,
+        'type': type(item).__name__
+    }
+    if isinstance(item, Consumable):
+        data['effect'] = item.effect
+        data['use_time'] = item.use_time
+    elif isinstance(item, LootItem):
+        data['item_type'] = item.item_type
+    return data
+
+def deserialize_item(data: dict) -> Item:
+    """反序列化物品"""
+    rarity = Rarity[data['rarity']]
+    item_type = data.get('type', 'Item')
+    if item_type == 'Consumable':
+        return Consumable(
+            id=data['id'], name=data['name'], weight=data['weight'],
+            value=data['value'], rarity=rarity,
+            effect=data.get('effect', {}), use_time=data.get('use_time', 2)
+        )
+    elif item_type == 'LootItem':
+        return LootItem(
+            id=data['id'], name=data['name'], weight=data['weight'],
+            value=data['value'], rarity=rarity,
+            item_type=data.get('item_type', '物资')
+        )
+    elif item_type == 'Armor':
+        return deserialize_armor(data)
+    return Item(
+        id=data['id'], name=data['name'], weight=data['weight'],
+        value=data['value'], rarity=rarity
+    )
+
+def save_game(game: 'Game') -> dict:
+    """将游戏状态序列化为字典"""
+    p = game.player
+    save_data = {
+        'version': '0.3.0',
+        'state': game.state.value,
+        'player': {
+            'name': p.name,
+            'money': p.stats.money,
+            'xp': p.stats.xp,
+            'level': p.stats.level,
+            'kills': p.kills,
+            'total_loot_value': p.total_loot_value,
+        },
+        'equipment': {
+            'primary_weapon': serialize_weapon(p.equipment.primary_weapon) if p.equipment.primary_weapon else None,
+            'armor': serialize_armor(p.equipment.armor) if p.equipment.armor else None,
+            'helmet': serialize_armor(p.equipment.helmet) if p.equipment.helmet else None,
+            'backpack_rows': p.equipment.backpack.rows,
+            'backpack_cols': p.equipment.backpack.cols,
+        },
+        'backpack_items': [serialize_item(i) for i in p.equipment.backpack.get_all_items()],
+        'secure_items': [serialize_item(i) for i in p.equipment.secure_container.get_all_items()],
+        'stash_weapons': [serialize_weapon(w) for w in p.stash_weapons],
+        'stash_armors': [serialize_armor(a) for a in p.stash_armors],
+        'stash_items': [serialize_item(i) for i in p.stash_items],
+    }
+    return save_data
+
+def load_game(save_data: dict) -> 'Game':
+    """从字典恢复游戏状态"""
+    game = Game()
+    game.state = GameState.BASE  # 读档总是回到基地
+
+    p = game.player
+    pd = save_data['player']
+    p.name = pd.get('name', '玩家')
+    p.stats.money = pd['money']
+    p.stats.xp = pd['xp']
+    p.stats.level = pd['level']
+    p.kills = pd.get('kills', 0)
+    p.total_loot_value = pd.get('total_loot_value', 0)
+
+    # 装备
+    eq = save_data['equipment']
+    if eq.get('primary_weapon'):
+        weapon = deserialize_weapon(eq['primary_weapon'])
+        p.equipment.equip_weapon(weapon, 'primary')
+    else:
+        p.equipment.primary_weapon = None
+
+    if eq.get('armor'):
+        armor = deserialize_armor(eq['armor'])
+        p.equipment.equip_armor(armor, p.stats)
+    else:
+        p.equipment.armor = None
+
+    if eq.get('helmet'):
+        helmet = deserialize_armor(eq['helmet'])
+        p.equipment.equip_helmet(helmet, p.stats)
+    else:
+        p.equipment.helmet = None
+
+    # 背包
+    p.equipment.backpack = Backpack(
+        rows=eq.get('backpack_rows', 5),
+        cols=eq.get('backpack_cols', 4)
+    )
+    for item_data in save_data.get('backpack_items', []):
+        item = deserialize_item(item_data)
+        p.equipment.backpack.add_item(item)
+
+    # 保险箱
+    for item_data in save_data.get('secure_items', []):
+        item = deserialize_item(item_data)
+        p.equipment.secure_container.add_item(item)
+
+    # 仓库
+    p.stash_weapons = [deserialize_weapon(w) for w in save_data.get('stash_weapons', [])]
+    p.stash_armors = [deserialize_armor(a) for a in save_data.get('stash_armors', [])]
+    p.stash_items = [deserialize_item(i) for i in save_data.get('stash_items', [])]
+
+    return game
 
 # ============== 游戏界面 ==============
 class GameUI:

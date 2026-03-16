@@ -13,72 +13,262 @@
 
         body {
             font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0f0f1a 100%);
             min-height: 100vh;
             color: #e0e0e0;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 15px;
         }
 
         header {
             text-align: center;
-            padding: 20px 0;
+            padding: 15px 0;
             border-bottom: 2px solid #e94560;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         header h1 {
-            font-size: 2.5em;
+            font-size: 2em;
             color: #e94560;
             text-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
         }
 
         header p {
-            color: #888;
-            margin-top: 10px;
+            color: #666;
+            margin-top: 5px;
+            font-size: 0.9em;
         }
 
         .game-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .main-row {
             display: grid;
-            grid-template-columns: 300px 1fr 300px;
-            gap: 20px;
+            grid-template-columns: 1fr 280px;
+            gap: 15px;
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
 
         .panel {
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.6);
             border: 1px solid #333;
-            border-radius: 10px;
-            padding: 15px;
+            border-radius: 8px;
+            padding: 12px;
         }
 
         .panel h2 {
-            font-size: 1.2em;
+            font-size: 1em;
             color: #e94560;
             border-bottom: 1px solid #444;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        /* 地图容器 */
+        .map-container {
+            position: relative;
+            background: #0a0a0a;
+            border: 2px solid #2a2a3a;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .map-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .map-controls button {
+            width: 32px;
+            height: 32px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .map-controls button:hover {
+            background: rgba(233, 69, 96, 0.5);
+        }
+
+        #map-area {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background-image:
+                radial-gradient(circle, #1a1a2a 1px, transparent 1px);
+            background-size: 40px 40px;
+            cursor: grab;
+            overflow: hidden;
+        }
+
+        #map-area:active {
+            cursor: grabbing;
+        }
+
+        #map-zones, #map-svg {
+            transform-origin: 0 0;
+        }
+
+        /* 区域节点 */
+        .zone-node {
+            position: absolute;
+            width: 80px;
+            height: 60px;
+            background: rgba(30, 30, 40, 0.9);
+            border: 2px solid #444;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-size: 0.75em;
+        }
+
+        .zone-node:hover {
+            border-color: #e94560;
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.4);
+            z-index: 10;
+        }
+
+        .zone-node.current {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.2);
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
+            z-index: 20;
+        }
+
+        .zone-node.current::after {
+            content: '📍';
+            position: absolute;
+            top: -20px;
+            font-size: 1.2em;
+        }
+
+        .zone-node.extract {
+            border-color: #44a08d;
+        }
+
+        .zone-node.active-extract {
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.15);
+            animation: pulse 1.5s infinite;
+        }
+
+        .zone-node.active-extract::before {
+            content: '🚁';
+            position: absolute;
+            top: -18px;
+            font-size: 1em;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.6); }
+        }
+
+        .zone-node.visited {
+            opacity: 1;
+        }
+
+        .zone-node.unvisited {
+            opacity: 0.35;
+            background: rgba(15, 15, 25, 0.9);
+        }
+
+        .zone-node.unvisited .zone-name {
+            color: #444;
+        }
+
+        .zone-node.unvisited .zone-danger {
+            color: #333;
+        }
+
+        /* 撤离点始终可见，不受迷雾影响 */
+        .zone-node.extract {
+            opacity: 1 !important;
+            border-color: #44a08d;
+            background: rgba(68, 160, 141, 0.2) !important;
+        }
+
+        .zone-node.extract .zone-name {
+            color: #44a08d !important;
+        }
+
+        .zone-node.extract .zone-danger {
+            color: #6a6 !important;
+        }
+
+        .zone-node .zone-name {
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .zone-node .zone-danger {
+            font-size: 0.9em;
+            color: #ffa;
+        }
+
+        /* 连接线 */
+        .map-connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .connection-line {
+            stroke: #333;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .connection-line.reachable {
+            stroke: #4a4a6a;
+            stroke-dasharray: 5, 3;
         }
 
         /* 状态栏 */
         .stat-bar {
-            margin: 10px 0;
+            margin: 8px 0;
         }
 
         .stat-bar label {
             display: flex;
             justify-content: space-between;
-            font-size: 0.9em;
-            margin-bottom: 5px;
+            font-size: 0.85em;
+            margin-bottom: 3px;
         }
 
         .bar-container {
-            background: #222;
-            border-radius: 5px;
-            height: 20px;
+            background: #1a1a2a;
+            border-radius: 4px;
+            height: 16px;
             overflow: hidden;
         }
 
@@ -95,63 +285,40 @@
         .body-parts {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 5px;
-            margin-top: 10px;
+            gap: 4px;
+            margin-top: 8px;
         }
 
         .body-part {
             background: #1a1a2e;
-            padding: 8px;
-            border-radius: 5px;
-            font-size: 0.8em;
+            padding: 5px;
+            border-radius: 4px;
+            font-size: 0.75em;
         }
 
-        .body-part.damaged {
-            border: 1px solid #e94560;
-        }
-
-        .body-part.broken {
-            border: 1px solid #ff0000;
-            background: rgba(255, 0, 0, 0.2);
-        }
-
-        /* 主游戏区域 */
-        .main-area {
-            min-height: 500px;
-        }
-
-        .zone-info {
-            background: rgba(233, 69, 96, 0.1);
-            border-left: 4px solid #e94560;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .zone-info h3 {
-            color: #e94560;
-            margin-bottom: 10px;
-        }
-
-        .danger-level {
-            color: #ffd700;
-        }
+        .body-part.damaged { border: 1px solid #e94560; }
+        .body-part.broken { border: 1px solid #ff0000; background: rgba(255, 0, 0, 0.2); }
 
         /* 消息日志 */
         .message-log {
             background: #0a0a0a;
             border-radius: 5px;
-            padding: 15px;
-            height: 200px;
+            padding: 10px;
+            height: 150px;
             overflow-y: auto;
             font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-            margin-bottom: 20px;
+            font-size: 0.85em;
+            margin-bottom: 15px;
         }
 
         .message-log p {
-            margin: 5px 0;
-            padding: 5px;
-            border-bottom: 1px solid #222;
+            margin: 4px 0;
+            padding: 3px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .message-log p:last-child {
+            border-bottom: none;
         }
 
         /* 按钮 */
@@ -159,74 +326,44 @@
             background: linear-gradient(135deg, #e94560, #c23a51);
             border: none;
             color: white;
-            padding: 12px 24px;
+            padding: 10px 16px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1em;
-            transition: all 0.3s ease;
-            margin: 5px;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+            margin: 3px;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(233, 69, 96, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
         }
 
         .btn:disabled {
-            background: #555;
+            background: #444;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
 
-        .btn-secondary {
-            background: linear-gradient(135deg, #4a4a6a, #3a3a5a);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #44a08d, #0f3460);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ff4e50, #fc4a1a);
-        }
-
-        /* 连接区域 */
-        .connections {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .connection-btn {
-            background: #1a1a2e;
-            border: 2px solid #444;
-            color: #e0e0e0;
-            padding: 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .connection-btn:hover {
-            border-color: #e94560;
-            background: rgba(233, 69, 96, 0.2);
-        }
-
-        .connection-btn.extract {
-            border-color: #44a08d;
-            background: rgba(68, 160, 141, 0.1);
-        }
-
-        .connection-btn.extract:hover {
-            border-color: #44a08d;
-            background: rgba(68, 160, 141, 0.3);
-        }
+        .btn-secondary { background: linear-gradient(135deg, #3a3a5a, #2a2a4a); }
+        .btn-success { background: linear-gradient(135deg, #44a08d, #2a6a5a); }
+        .btn-danger { background: linear-gradient(135deg, #ff4e50, #c23a51); }
+        .btn-warning { background: linear-gradient(135deg, #f9a825, #f57f17); }
 
         /* 战斗界面 */
-        .combat-area {
-            text-align: center;
+        .combat-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
         }
 
         .enemy-info {
@@ -234,34 +371,40 @@
             border: 2px solid #e94560;
             border-radius: 10px;
             padding: 20px;
-            margin: 20px 0;
-        }
-
-        .enemy-info h3 {
-            color: #e94560;
-            font-size: 1.5em;
+            text-align: center;
+            min-width: 200px;
+            margin-bottom: 20px;
         }
 
         .enemy-info.boss {
-            background: rgba(255, 215, 0, 0.1);
             border-color: #ffd700;
-        }
-
-        .enemy-info.boss h3 {
-            color: #ffd700;
+            background: rgba(255, 215, 0, 0.1);
         }
 
         .combat-actions {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 8px;
+        }
+
+        /* 行动面板 */
+        .action-panel {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(30, 30, 40, 0.5);
+            border-radius: 5px;
+        }
+
+        .action-panel h3 {
+            font-size: 0.9em;
+            color: #4ecdc4;
+            margin-bottom: 8px;
         }
 
         /* 背包 */
         .inventory {
-            max-height: 300px;
+            max-height: 200px;
             overflow-y: auto;
         }
 
@@ -270,74 +413,179 @@
             justify-content: space-between;
             align-items: center;
             background: #1a1a2e;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 5px;
+            padding: 6px;
+            margin: 3px 0;
+            border-radius: 4px;
             border-left: 3px solid;
+            font-size: 0.8em;
         }
 
-        .inventory-item.common { border-color: #888; }
+        .inventory-item.common { border-color: #666; }
         .inventory-item.uncommon { border-color: #4caf50; }
         .inventory-item.rare { border-color: #2196f3; }
         .inventory-item.epic { border-color: #9c27b0; }
         .inventory-item.legendary { border-color: #ffd700; }
 
-        .inventory-item .item-name {
-            font-weight: bold;
+        /* 撤离信息 */
+        .extract-info {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid #ffd700;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
         }
 
-        .inventory-item .item-value {
+        .extract-info h3 {
             color: #ffd700;
+            font-size: 0.9em;
         }
 
         /* 主菜单 */
         .main-menu {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             text-align: center;
-            padding: 50px;
+            z-index: 50;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 40px;
+            border-radius: 15px;
+            border: 2px solid #e94560;
         }
 
         .main-menu h2 {
-            font-size: 2em;
-            margin-bottom: 30px;
+            font-size: 1.8em;
+            margin-bottom: 20px;
         }
 
         .main-menu .btn {
             display: block;
-            width: 250px;
-            margin: 15px auto;
-            padding: 15px;
-            font-size: 1.2em;
+            width: 200px;
+            margin: 10px auto;
+            padding: 12px;
         }
 
-        /* 基地 */
+        /* 基地菜单 */
         .base-menu .btn {
             display: block;
             width: 100%;
-            margin: 10px 0;
+            margin: 8px 0;
+            padding: 12px;
         }
 
-        /* 响应式 */
-        @media (max-width: 1024px) {
-            .game-container {
+        /* 商店/仓库独立页面 */
+        .shop-page, .stash-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 10, 15, 0.98);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .shop-page-header, .stash-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e94560;
+        }
+
+        .shop-page-header h2, .stash-page-header h2 {
+            color: #e94560;
+            font-size: 1.5em;
+        }
+
+        .shop-page-content, .stash-page-content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .shop-section, .stash-section {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .shop-section h3, .stash-section h3 {
+            color: #e94560;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .item-grid {
+            display: grid;
+            gap: 10px;
+            max-height: calc(100vh - 250px);
+            overflow-y: auto;
+        }
+
+        .item-card {
+            background: rgba(30, 30, 40, 0.8);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .item-card:hover {
+            border-color: #e94560;
+            background: rgba(50, 30, 40, 0.8);
+        }
+
+        .item-card .item-info {
+            flex: 1;
+        }
+
+        .item-card .item-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .item-card .item-details {
+            color: #888;
+            font-size: 0.85em;
+        }
+
+        .item-card .item-price {
+            color: #ffd700;
+            font-weight: bold;
+            margin: 0 15px;
+        }
+
+        .item-card .equipped-badge {
+            background: #4CAF50;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7em;
+            margin-left: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .shop-page-content, .stash-page-content {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* 加载动画 */
-        .loading {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .loading::after {
-            content: '...';
-            animation: dots 1.5s infinite;
-        }
-
-        @keyframes dots {
-            0%, 20% { content: '.'; }
-            40% { content: '..'; }
-            60%, 100% { content: '...'; }
+        /* 响应式 */
+        @media (max-width: 1100px) {
+            .game-container {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -345,31 +593,108 @@
     <div class="container">
         <header>
             <h1>暗区文字</h1>
-            <p>Dark Zone: Text - 一款撤离射击文字游戏</p>
+            <p>Dark Zone: Text - 撤离射击文字游戏</p>
         </header>
 
         <div class="game-container">
-            <!-- 左侧面板 - 玩家状态 -->
-            <div class="panel" id="player-panel">
-                <h2>玩家状态</h2>
-                <div id="player-info">
+            <div class="main-row">
+                <div class="left-column">
+                    <!-- 地图区域 -->
+                    <div class="map-container panel">
+                        <div class="map-controls">
+                            <button onclick="zoomMap(1.2)" title="放大">+</button>
+                            <button onclick="zoomMap(0.8)" title="缩小">-</button>
+                            <button onclick="resetMap()" title="重置">⟲</button>
+                        </div>
+                        <div id="map-area">
+                            <svg class="map-connections" id="map-svg"></svg>
+                            <div id="map-zones"></div>
+                        </div>
+                        <!-- 战斗覆盖层 -->
+                        <div id="combat-overlay" class="combat-overlay" style="display: none;"></div>
+                        <!-- 主菜单 -->
+                        <div id="main-menu" class="main-menu" style="display: none;"></div>
+                    </div>
+
+                    <!-- 玩家状态面板 -->
+                    <div class="panel" id="player-panel">
+                        <h2>玩家状态</h2>
+                        <div id="player-info">
+                            <p>加载中...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧面板 - 行动与背包 -->
+                <div class="panel" id="action-panel">
+                    <h2>行动</h2>
+                <div id="action-content">
                     <p>加载中...</p>
                 </div>
-            </div>
-
-            <!-- 中间 - 主游戏区域 -->
-            <div class="panel main-area" id="main-panel">
-                <div id="game-content">
-                    <p>加载中...</p>
-                </div>
-            </div>
-
-            <!-- 右侧面板 - 背包 -->
-            <div class="panel" id="inventory-panel">
-                <h2>背包 <span id="backpack-value"></span></h2>
+                <h2 style="margin-top: 15px;">背包 <span id="backpack-value"></span></h2>
                 <div class="inventory" id="inventory-content">
                     <p>加载中...</p>
                 </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 商店页面 -->
+    <div id="shop-page" class="shop-page" style="display: none;">
+        <div class="shop-page-header">
+            <h2>🏪 商店</h2>
+            <div>
+                <span style="color: #ffd700; margin-right: 20px;">💰 $<span id="shop-money">0</span></span>
+                <button class="btn btn-secondary" onclick="closeShop()">返回基地</button>
+            </div>
+        </div>
+        <div class="shop-page-content">
+            <div class="shop-section">
+                <h3>🔫 武器</h3>
+                <div class="item-grid" id="shop-weapons"></div>
+            </div>
+            <div class="shop-section">
+                <h3>🛡️ 护甲</h3>
+                <div class="item-grid" id="shop-armors"></div>
+            </div>
+            <div class="shop-section">
+                <h3>⛑️ 头盔</h3>
+                <div class="item-grid" id="shop-helmets"></div>
+            </div>
+            <div class="shop-section">
+                <h3>🎒 背包</h3>
+                <div class="item-grid" id="shop-backpacks"></div>
+            </div>
+            <div class="shop-section">
+                <h3>💊 物品</h3>
+                <div class="item-grid" id="shop-consumables"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 仓库页面 -->
+    <div id="stash-page" class="stash-page" style="display: none;">
+        <div class="stash-page-header">
+            <h2>📦 仓库</h2>
+            <div>
+                <span style="color: #ffd700; margin-right: 20px;">💰 $<span id="stash-money">0</span></span>
+                <button class="btn btn-warning" onclick="doAction('auto_equip')" style="margin-right: 10px;">⚡ 自动装备</button>
+                <button class="btn btn-secondary" onclick="closeStash()">返回基地</button>
+            </div>
+        </div>
+        <div class="stash-page-content">
+            <div class="stash-section">
+                <h3>🔫 武器仓库</h3>
+                <div class="item-grid" id="stash-weapons"></div>
+            </div>
+            <div class="stash-section">
+                <h3>🛡️ 护甲仓库</h3>
+                <div class="item-grid" id="stash-armors"></div>
+            </div>
+            <div class="stash-section">
+                <h3>⛑️ 头盔仓库</h3>
+                <div class="item-grid" id="stash-helmets"></div>
             </div>
         </div>
     </div>
@@ -394,9 +719,7 @@
             try {
                 const response = await fetch('/api/action', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ action, params })
                 });
                 const result = await response.json();
@@ -412,8 +735,11 @@
             if (!gameState) return;
 
             renderPlayerInfo();
-            renderGameContent();
+            renderMap();
+            renderActions();
             renderInventory();
+            renderCombat();
+            renderMainMenu();
         }
 
         // 渲染玩家信息
@@ -423,7 +749,7 @@
 
             let html = `
                 <div class="stat-bar">
-                    <label><span>等级</span><span>${p.level}</span></label>
+                    <label><span>等级 ${p.level}</span><span>${p.xp}/${p.xp_needed} XP</span></label>
                     <div class="bar-container">
                         <div class="bar-fill bar-xp" style="width: ${(p.xp / p.xp_needed) * 100}%"></div>
                     </div>
@@ -440,23 +766,22 @@
                         <div class="bar-fill bar-ap" style="width: ${(p.action_points / p.max_action_points) * 100}%"></div>
                     </div>
                 </div>
-                <p style="margin: 15px 0;">
-                    <span style="color: #ffd700;">💰 ${p.money} 哈夫币</span>
-                </p>
-                <p>经验: ${p.xp}/${p.xp_needed} | 击杀: ${p.kills}</p>
-                <h3 style="margin-top: 15px; color: #e94560;">装备</h3>
-                <p>🔫 ${eq.weapon || '无武器'} (${eq.weapon_ammo}/${eq.weapon_mag})</p>
-                <p>🛡️ ${eq.armor || '无护甲'} (${eq.armor_durability}/${eq.armor_max_durability})</p>
-                <h3 style="margin-top: 15px; color: #e94560;">身体部位</h3>
+                <p style="margin: 10px 0;"><span style="color: #ffd700;">💰 ${p.money}</span></p>
+                <p style="font-size: 0.85em;">🔫 ${eq.weapon || '无'} (${eq.weapon_ammo}/${eq.weapon_mag})</p>
+                <p style="font-size: 0.85em;">🛡️ ${eq.armor || '无'}</p>
+                <p style="font-size: 0.85em;">⛑️ ${eq.helmet || '无'}</p>
+                <h3 style="margin-top: 10px; color: #e94560; font-size: 0.9em;">身体部位</h3>
                 <div class="body-parts">
             `;
 
             for (const [key, part] of Object.entries(p.body_parts)) {
                 const statusClass = part.is_broken ? 'broken' : (part.hp < part.max_hp ? 'damaged' : '');
                 const hpPercent = (part.hp / part.max_hp) * 100;
+                const armorText = part.has_armor ? `<span style="color: #64b5f6;">🛡️${part.armor_value}(${part.armor_durability}%)</span>` : '';
+                const bleedText = part.is_bleeding ? `<span style="color: #f44336;">🩸-${part.bleed_damage}/回合</span>` : '';
                 html += `
                     <div class="body-part ${statusClass}">
-                        <div>${part.name}</div>
+                        <div>${part.name} ${armorText} ${bleedText}</div>
                         <div style="color: ${hpPercent > 50 ? '#4caf50' : hpPercent > 25 ? '#ff9800' : '#f44336'}">
                             ${part.hp}/${part.max_hp}
                         </div>
@@ -468,9 +793,141 @@
             document.getElementById('player-info').innerHTML = html;
         }
 
-        // 渲染游戏内容
-        function renderGameContent() {
+        // 地图缩放和拖动
+        let mapScale = 1;
+        let mapPos = { x: 0, y: 0 };
+        let isDragging = false;
+        let lastMousePos = { x: 0, y: 0 };
+
+        function zoomMap(factor) {
+            mapScale = Math.min(Math.max(0.5, mapScale * factor), 3);
+            applyMapTransform();
+        }
+
+        function resetMap() {
+            mapScale = 1;
+            mapPos = { x: 0, y: 0 };
+            applyMapTransform();
+        }
+
+        function applyMapTransform() {
+            const mapZones = document.getElementById('map-zones');
+            const mapSvg = document.getElementById('map-svg');
+            const transform = `translate(${mapPos.x}px, ${mapPos.y}px) scale(${mapScale})`;
+            mapZones.style.transform = transform;
+            mapSvg.style.transform = transform;
+        }
+
+        // 地图交互事件
+        document.addEventListener('DOMContentLoaded', function() {
+            const mapArea = document.getElementById('map-area');
+
+            // 鼠标滚轮缩放
+            mapArea.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                mapScale = Math.min(Math.max(0.5, mapScale * delta), 3);
+                applyMapTransform();
+            });
+
+            // 拖动开始
+            mapArea.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.zone-node')) return; // 不阻止节点点击
+                isDragging = true;
+                lastMousePos = { x: e.clientX, y: e.clientY };
+                mapArea.style.cursor = 'grabbing';
+            });
+
+            // 拖动中
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const dx = e.clientX - lastMousePos.x;
+                const dy = e.clientY - lastMousePos.y;
+                mapPos.x += dx;
+                mapPos.y += dy;
+                lastMousePos = { x: e.clientX, y: e.clientY };
+                applyMapTransform();
+            });
+
+            // 拖动结束
+            window.addEventListener('mouseup', () => {
+                isDragging = false;
+                mapArea.style.cursor = 'grab';
+            });
+        });
+
+        // 渲染地图
+        function renderMap() {
+            const raid = gameState.raid;
+            if (!raid) {
+                document.getElementById('map-zones').innerHTML = '';
+                document.getElementById('map-svg').innerHTML = '';
+                return;
+            }
+
+            const mapArea = document.getElementById('map-area');
+            const width = mapArea.clientWidth;
+            const height = mapArea.clientHeight;
+
+            // 计算缩放
+            const scaleX = width / (raid.map_width * 60 + 100);
+            const scaleY = height / (raid.map_height * 60 + 100);
+            const scale = Math.min(scaleX, scaleY, 1);
+            const offsetX = 50;
+            const offsetY = 50;
+
+            // 绘制连接线
+            let svgContent = '';
+            for (const [zid, zone] of Object.entries(raid.zones)) {
+                for (const connId of zone.connections) {
+                    const connZone = raid.zones[connId];
+                    if (connZone) {
+                        const x1 = zone.x * 60 * scale + offsetX;
+                        const y1 = zone.y * 60 * scale + offsetY;
+                        const x2 = connZone.x * 60 * scale + offsetX;
+                        const y2 = connZone.y * 60 * scale + offsetY;
+
+                        const isReachable = raid.connections.some(c => c.id === connId) ||
+                                          raid.connections.some(c => c.id === zid);
+
+                        svgContent += `<line class="connection-line ${isReachable ? 'reachable' : ''}"
+                            x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+                    }
+                }
+            }
+            document.getElementById('map-svg').innerHTML = svgContent;
+
+            // 绘制区域节点
+            let zonesHtml = '';
+            for (const [zid, zone] of Object.entries(raid.zones)) {
+                const x = zone.x * 60 * scale + offsetX;
+                const y = zone.y * 60 * scale + offsetY;
+
+                let nodeClass = 'zone-node';
+                if (zid === raid.current_zone) nodeClass += ' current';
+                if (zone.is_extract) nodeClass += ' extract';
+                if (zid === raid.active_extraction) nodeClass += ' active-extract';
+                if (zone.visited) nodeClass += ' visited';
+                else nodeClass += ' unvisited';
+
+                const isReachable = raid.connections.some(c => c.id === zid);
+                const onclick = isReachable ? `onclick="doAction('move', {zone_id: '${zid}'})"` : '';
+
+                zonesHtml += `
+                    <div class="${nodeClass}" style="left: ${x}px; top: ${y}px;" ${onclick}>
+                        <span class="zone-name">${zone.name}</span>
+                        <span class="zone-danger">${'★'.repeat(zone.danger_level)}</span>
+                    </div>
+                `;
+            }
+            document.getElementById('map-zones').innerHTML = zonesHtml;
+        }
+
+        // 渲染行动面板
+        function renderActions() {
             const state = gameState.game_state;
+            const raid = gameState.raid;
+
             let html = '';
 
             // 消息日志
@@ -482,159 +939,370 @@
                 html += '</div>';
             }
 
-            switch (state) {
-                case 'main_menu':
-                    html += renderMainMenu();
-                    break;
-                case 'base':
-                    html += renderBase();
-                    break;
-                case 'raid':
-                    html += renderRaid();
-                    break;
-                case 'combat':
-                    html += renderCombat();
-                    break;
-                case 'dead':
-                    html += renderDead();
-                    break;
-                case 'extracted':
-                    html += '<div class="zone-info"><h3>撤离成功！</h3><p>正在返回基地...</p></div>';
-                    break;
-            }
-
-            document.getElementById('game-content').innerHTML = html;
-        }
-
-        // 主菜单
-        function renderMainMenu() {
-            return `
-                <div class="main-menu">
-                    <h2>欢迎来到暗区</h2>
-                    <p style="margin-bottom: 30px; color: #888;">
-                        进入危险区域，搜集高价值物资，然后撤离！<br>
-                        死亡将丢失背包中所有物品。
-                    </p>
-                    <button class="btn" onclick="doAction('new_game')">开始游戏</button>
-                    <button class="btn btn-secondary" onclick="showHelp()">游戏帮助</button>
-                </div>
-            `;
-        }
-
-        // 基地
-        function renderBase() {
-            return `
-                <div class="base-menu">
-                    <h2 style="text-align: center; margin-bottom: 20px;">基地</h2>
-                    <button class="btn" onclick="doAction('start_raid')">🏭 开始行动 (工业区)</button>
-                    <button class="btn btn-secondary" onclick="doAction('rest')">💤 休息恢复</button>
-                    <button class="btn btn-secondary" onclick="showHelp()">❓ 游戏帮助</button>
-                    <button class="btn btn-danger" onclick="doAction('new_game')">🔄 重新开始</button>
-                </div>
-            `;
-        }
-
-        // 行动中
-        function renderRaid() {
-            const raid = gameState.raid;
-            if (!raid) return '<p>加载中...</p>';
-
-            let html = `
-                <div class="zone-info">
-                    <h3>📍 ${raid.zone_name}</h3>
-                    <p>${raid.zone_description}</p>
-                    <p class="danger-level">危险等级: ${'★'.repeat(raid.danger_level)}${'☆'.repeat(5 - raid.danger_level)}</p>
-                    <p>⏱️ 回合: ${raid.time_elapsed}/${raid.max_time}</p>
-                </div>
-                <h3>可前往区域</h3>
-                <div class="connections">
-            `;
-
-            for (const conn of raid.connections) {
-                const btnClass = conn.is_extract ? 'connection-btn extract' : 'connection-btn';
-                const extractLabel = conn.is_extract ? ' [撤离点]' : '';
+            // 撤离信息
+            if (raid && raid.active_extraction) {
                 html += `
-                    <button class="${btnClass}" onclick="doAction('move', {zone_id: '${conn.id}'})">
-                        ${conn.name}${extractLabel}
-                    </button>
+                    <div class="extract-info">
+                        <h3>🚁 撤离点: ${raid.active_extraction_name}</h3>
+                        <p style="font-size: 0.8em;">找到并到达撤离点撤离</p>
+                    </div>
                 `;
             }
 
-            html += `
-                </div>
-                <div style="margin-top: 20px;">
-                    <button class="btn" onclick="doAction('search')">🔍 搜索区域</button>
-            `;
+            // 行动按钮
+            if (state === 'raid' && raid) {
+                html += '<div class="action-panel">';
 
-            // 检查是否在撤离点
-            const currentZone = raid.connections.find(c => c.is_extract && c.id === raid.current_zone);
-            if (currentZone) {
-                html += `<button class="btn btn-success" onclick="doAction('extract')">🚁 撤离</button>`;
+                // 搜索按钮
+                html += '<button class="btn" onclick="doAction(\'search\')">🔍 搜索区域</button>';
+
+                // 撤离按钮（在激活撤离点时显示）
+                if (raid.current_zone === raid.active_extraction) {
+                    html += '<button class="btn btn-success" onclick="doAction(\'extract\')">🚁 撤离</button>';
+                } else if (raid.is_extract) {
+                    // 在撤离点但不是激活的撤离点
+                    html += `<p style="color: #e94560; font-size: 0.85em; margin: 5px 0;">⚠️ 此撤离点不可用，请前往 ${raid.active_extraction_name || '激活的撤离点'}</p>`;
+                }
+
+                // 紧急撤离
+                html += '<button class="btn btn-danger" onclick="doAction(\'emergency_extract\')">⚠️ 紧急撤离</button>';
+
+                html += '</div>';
             }
 
-            html += `
-                    <button class="btn btn-danger" onclick="doAction('emergency_extract')">⚠️ 紧急撤离</button>
-                </div>
-            `;
+            // 基地
+            if (state === 'base') {
+                html += `
+                    <div class="base-menu">
+                        <button class="btn" onclick="doAction('start_raid')">🏭 开始行动</button>
+                        <button class="btn btn-secondary" onclick="openShop()">🏪 商店</button>
+                        <button class="btn btn-secondary" onclick="openStash()">📦 仓库</button>
+                        <button class="btn btn-warning" onclick="doAction('auto_equip')">⚡ 自动装备</button>
+                        <button class="btn btn-secondary" onclick="doAction('rest')">💤 休息恢复</button>
+                        <button class="btn btn-success" onclick="doAction('save_game')">💾 保存游戏</button>
+                        <button class="btn btn-secondary" onclick="doAction('load_game')">📂 读取存档</button>
+                        <button class="btn btn-danger" onclick="doAction('new_game')">🔄 重新开始</button>
+                    </div>
+                `;
+            }
 
-            return html;
+            document.getElementById('action-content').innerHTML = html;
         }
 
-        // 战斗
+        // 渲染战斗
         function renderCombat() {
+            const state = gameState.game_state;
             const combat = gameState.combat;
-            if (!combat) return '<p>加载中...</p>';
+            const search = gameState.search;
+            const overlay = document.getElementById('combat-overlay');
+
+            // 搜索敌人背包状态
+            if (state === 'search' && search) {
+                overlay.style.display = 'flex';
+                let itemsHtml = '';
+                if (search.items && search.items.length > 0) {
+                    itemsHtml = search.items.map(item => `
+                        <div class="inventory-item" style="background: rgba(30,30,40,0.8); padding: 8px; margin: 4px 0; border-radius: 4px;">
+                            <span style="color: ${item.rarity === '金色' ? '#ffd700' : item.rarity === '紫色' ? '#a855f7' : item.rarity === '蓝色' ? '#3b82f6' : '#9ca3af'}">
+                                ${item.name}
+                            </span>
+                            <span style="color: #ffd700;">$${item.value}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    itemsHtml = '<p style="color: #666;">背包是空的</p>';
+                }
+
+                overlay.innerHTML = `
+                    <h2 style="color: #4ecdc4; margin-bottom: 15px;">📦 搜索 ${search.enemy_name} 的背包</h2>
+                    <div style="max-height: 200px; overflow-y: auto; margin-bottom: 15px;">
+                        ${itemsHtml}
+                    </div>
+                    <div class="combat-actions">
+                        <button class="btn btn-success" onclick="doAction('search_enemy', {search_action: 'take_all'})">📦 全部拿走</button>
+                        <button class="btn btn-secondary" onclick="doAction('search_enemy', {search_action: 'leave'})">🚶 离开</button>
+                    </div>
+                `;
+                return;
+            }
+
+            if (state !== 'combat' || !combat) {
+                overlay.style.display = 'none';
+                return;
+            }
+
+            overlay.style.display = 'flex';
 
             const bossClass = combat.is_boss ? 'boss' : '';
             const hpPercent = (combat.enemy_hp / combat.enemy_max_hp) * 100;
 
-            let html = `
-                <div class="combat-area">
-                    <h2>⚔️ 战斗中</h2>
-                    <div class="enemy-info ${bossClass}">
-                        <h3>${combat.is_boss ? '👑 ' : ''}${combat.enemy_name}</h3>
-                        <div class="stat-bar">
-                            <label><span>HP</span><span>${combat.enemy_hp}/${combat.enemy_max_hp}</span></label>
-                            <div class="bar-container">
-                                <div class="bar-fill bar-hp" style="width: ${hpPercent}%"></div>
-                            </div>
+            overlay.innerHTML = `
+                <h2 style="color: #e94560; margin-bottom: 15px;">⚔️ 战斗中</h2>
+                <div class="enemy-info ${bossClass}">
+                    <h3>${combat.is_boss ? '👑 ' : ''}${combat.enemy_name}</h3>
+                    <div class="stat-bar">
+                        <label><span>HP</span><span>${combat.enemy_hp}/${combat.enemy_max_hp}</span></label>
+                        <div class="bar-container">
+                            <div class="bar-fill bar-hp" style="width: ${hpPercent}%"></div>
                         </div>
                     </div>
-                    <div class="combat-actions">
-                        <button class="btn" onclick="doAction('attack', {target: 'body'})">🎯 攻击躯干</button>
-                        <button class="btn btn-danger" onclick="doAction('attack', {target: 'head'})">💀 瞄准头部</button>
-                        <button class="btn" onclick="doAction('attack', {target: 'legs'})">🦵 瞄准腿部</button>
-                        <button class="btn btn-secondary" onclick="doAction('reload')">🔄 换弹</button>
-                        <button class="btn btn-success" onclick="doAction('heal')">💊 使用医疗</button>
-                        <button class="btn btn-danger" onclick="doAction('flee')">🏃 撤退</button>
-                    </div>
+                </div>
+                <div class="combat-actions">
+                    <button class="btn" onclick="doAction('attack', {target: 'chest'})">🎯 胸部</button>
+                    <button class="btn btn-danger" onclick="doAction('attack', {target: 'head'})">💀 头部</button>
+                    <button class="btn" onclick="doAction('attack', {target: 'legs'})">🦵 腿部</button>
+                    <button class="btn btn-secondary" onclick="doAction('reload')">🔄 换弹</button>
+                    <button class="btn btn-success" onclick="doAction('heal')">💊 治疗</button>
+                    <button class="btn btn-warning" onclick="doAction('flee')">🏃 撤退</button>
                 </div>
             `;
-
-            return html;
         }
 
-        // 死亡
-        function renderDead() {
-            return `
-                <div class="main-menu">
+        // 打开商店页面
+        function openShop() {
+            document.getElementById('shop-page').style.display = 'flex';
+            renderShopPage();
+        }
+
+        function closeShop() {
+            document.getElementById('shop-page').style.display = 'none';
+        }
+
+        // 打开仓库页面
+        function openStash() {
+            document.getElementById('stash-page').style.display = 'flex';
+            renderStashPage();
+        }
+
+        function closeStash() {
+            document.getElementById('stash-page').style.display = 'none';
+        }
+
+        // 渲染商店页面
+        function renderShopPage() {
+            if (!gameState) return;
+            document.getElementById('shop-money').textContent = gameState.player.money;
+
+            let html = '';
+            for (const weapon of gameState.shop_weapons) {
+                html += `
+                    <div class="item-card">
+                        <div class="item-info">
+                            <div class="item-name">${weapon.name}</div>
+                            <div class="item-details">伤害:${weapon.damage} 命中:${Math.round(weapon.accuracy*100)}% 射速:${weapon.fire_rate} 穿透:${weapon.penetration}</div>
+                        </div>
+                        <div class="item-price">$${weapon.value}</div>
+                        <button class="btn item-btn" onclick="doAction('buy_weapon', {weapon_id: '${weapon.id}'})">购买</button>
+                    </div>
+                `;
+            }
+
+            let armorHtml = '';
+            for (const armor of gameState.shop_armors) {
+                armorHtml += `
+                    <div class="item-card">
+                        <div class="item-info">
+                            <div class="item-name">${armor.name}</div>
+                            <div class="item-details">甲级:${armor.armor_class} 耐久:${armor.durability}</div>
+                        </div>
+                        <div class="item-price">$${armor.value}</div>
+                        <button class="btn item-btn" onclick="doAction('buy_armor', {armor_id: '${armor.id}'})">购买</button>
+                    </div>
+                `;
+            }
+
+            document.getElementById('shop-weapons').innerHTML = html || '<p style="color:#666">暂无武器</p>';
+            document.getElementById('shop-armors').innerHTML = armorHtml || '<p style="color:#666">暂无护甲</p>';
+
+            // 头盔
+            let helmetHtml = '';
+            if (gameState.shop_helmets) {
+                for (const helmet of gameState.shop_helmets) {
+                    helmetHtml += `
+                        <div class="item-card">
+                            <div class="item-info">
+                                <div class="item-name">${helmet.name}</div>
+                                <div class="item-details">甲级:${helmet.armor_class} 耐久:${helmet.durability}</div>
+                            </div>
+                            <div class="item-price">$${helmet.value}</div>
+                            <button class="btn item-btn" onclick="doAction('buy_helmet', {helmet_id: '${helmet.id}'})">购买</button>
+                        </div>
+                    `;
+                }
+            }
+            document.getElementById('shop-helmets').innerHTML = helmetHtml || '<p style="color:#666">暂无头盔</p>';
+
+            // 背包
+            let backpackHtml = '';
+            if (gameState.shop_backpacks) {
+                const currentSlots = gameState.current_backpack ? gameState.current_backpack.slots : 20;
+                for (const bag of gameState.shop_backpacks) {
+                    const isCurrent = bag.slots === currentSlots;
+                    const canBuy = bag.slots > currentSlots;
+                    backpackHtml += `
+                        <div class="item-card ${isCurrent ? 'equipped' : ''}">
+                            <div class="item-info">
+                                <div class="item-name">${bag.name}${isCurrent ? '<span class="equipped-badge">当前</span>' : ''}</div>
+                                <div class="item-details">${bag.rows}x${bag.cols}=${bag.slots}格</div>
+                                <div class="item-details" style="font-size:0.8em;color:#888">${bag.description || ''}</div>
+                            </div>
+                            <div class="item-price">$${bag.value}</div>
+                            ${!isCurrent ? `<button class="btn item-btn" onclick="doAction('buy_backpack', {backpack_id: '${bag.id}'})" ${!canBuy ? 'disabled style="opacity:0.5"' : ''}>${canBuy ? '购买' : '已降级'}</button>` : ''}
+                        </div>
+                    `;
+                }
+            }
+            document.getElementById('shop-backpacks').innerHTML = backpackHtml || '<p style="color:#666">暂无背包</p>';
+
+            // 消耗品
+            let consumablesHtml = '';
+            if (gameState.shop_consumables) {
+                for (const item of gameState.shop_consumables) {
+                    const effectText = item.type === 'medical'
+                        ? `治疗${item.effect.heal || 0}HP`
+                        : `修复${item.effect.repair_armor || 0}护甲耐久`;
+                    consumablesHtml += `
+                        <div class="item-card">
+                            <div class="item-info">
+                                <div class="item-name">${item.name}</div>
+                                <div class="item-details">${effectText}</div>
+                            </div>
+                            <div class="item-price">$${item.value}</div>
+                            <button class="btn item-btn" onclick="doAction('buy_consumable', {consumable_id: '${item.id}'})">购买</button>
+                        </div>
+                    `;
+                }
+            }
+            document.getElementById('shop-consumables').innerHTML = consumablesHtml || '<p style="color:#666">暂无物品</p>';
+        }
+
+        // 渲染仓库页面
+        function renderStashPage() {
+            if (!gameState) return;
+            document.getElementById('stash-money').textContent = gameState.player.money;
+
+            const equippedWeaponId = gameState.equipment.weapon_id;
+            const equippedArmorId = gameState.equipment.armor_id;
+
+            let weaponHtml = '';
+            if (gameState.stash_weapons.length === 0) {
+                weaponHtml = '<p style="color:#666">仓库为空</p>';
+            } else {
+                for (const weapon of gameState.stash_weapons) {
+                    const isEquipped = weapon.id === equippedWeaponId;
+                    weaponHtml += `
+                        <div class="item-card">
+                            <div class="item-info">
+                                <div class="item-name">${weapon.name}${isEquipped ? '<span class="equipped-badge">装备中</span>' : ''}</div>
+                                <div class="item-details">伤害:${weapon.damage} 命中:${Math.round(weapon.accuracy*100)}%</div>
+                            </div>
+                            ${!isEquipped ? `<div class="item-price">$${Math.floor(weapon.value/2)}</div>` : ''}
+                            ${!isEquipped ? `<button class="btn item-btn" onclick="doAction('equip_weapon', {weapon_id: '${weapon.id}'})">装备</button>` : ''}
+                            ${!isEquipped ? `<button class="btn item-btn btn-secondary" onclick="doAction('sell_weapon', {weapon_id: '${weapon.id}'})">出售</button>` : ''}
+                        </div>
+                    `;
+                }
+            }
+
+            let armorHtml = '';
+            if (gameState.stash_armors.length === 0) {
+                armorHtml = '<p style="color:#666">仓库为空</p>';
+            } else {
+                for (const armor of gameState.stash_armors) {
+                    const isEquipped = armor.id === equippedArmorId;
+                    armorHtml += `
+                        <div class="item-card">
+                            <div class="item-info">
+                                <div class="item-name">${armor.name}${isEquipped ? '<span class="equipped-badge">装备中</span>' : ''}</div>
+                                <div class="item-details">甲级:${armor.armor_class} 耐久:${armor.durability}/${armor.max_durability}</div>
+                            </div>
+                            ${!isEquipped ? `<div class="item-price">$${Math.floor(armor.value/2)}</div>` : ''}
+                            ${!isEquipped ? `<button class="btn item-btn" onclick="doAction('equip_armor', {armor_id: '${armor.id}'})">装备</button>` : ''}
+                            ${!isEquipped ? `<button class="btn item-btn btn-secondary" onclick="doAction('sell_armor', {armor_id: '${armor.id}'})">出售</button>` : ''}
+                        </div>
+                    `;
+                }
+            }
+
+            document.getElementById('stash-weapons').innerHTML = weaponHtml;
+            document.getElementById('stash-armors').innerHTML = armorHtml;
+
+            // 头盔仓库
+            const equippedHelmetId = gameState.equipment.helmet_id;
+            let helmetHtml = '';
+            if (!gameState.stash_helmets || gameState.stash_helmets.length === 0) {
+                helmetHtml = '<p style="color:#666">仓库为空</p>';
+            } else {
+                for (const helmet of gameState.stash_helmets) {
+                    const isEquipped = helmet.id === equippedHelmetId;
+                    helmetHtml += `
+                        <div class="item-card">
+                            <div class="item-info">
+                                <div class="item-name">${helmet.name}${isEquipped ? '<span class="equipped-badge">装备中</span>' : ''}</div>
+                                <div class="item-details">甲级:${helmet.armor_class} 耐久:${helmet.durability}/${helmet.max_durability}</div>
+                            </div>
+                            ${!isEquipped ? `<div class="item-price">$${Math.floor(helmet.value/2)}</div>` : ''}
+                            ${!isEquipped ? `<button class="btn item-btn" onclick="doAction('equip_helmet', {helmet_id: '${helmet.id}'})">装备</button>` : ''}
+                            ${!isEquipped ? `<button class="btn item-btn btn-secondary" onclick="doAction('sell_helmet', {helmet_id: '${helmet.id}'})">出售</button>` : ''}
+                        </div>
+                    `;
+                }
+            }
+            document.getElementById('stash-helmets').innerHTML = helmetHtml;
+        }
+
+        // 渲染商店内容（旧版，用于兼容）
+        function renderShopContent() {
+            return '<p style="color:#666">点击商店按钮查看</p>';
+        }
+
+        // 渲染仓库内容（旧版，用于兼容）
+        function renderStashContent() {
+            return '<p style="color:#666">点击仓库按钮查看</p>';
+        }
+
+        // 渲染主菜单
+        function renderMainMenu() {
+            const state = gameState.game_state;
+            const menu = document.getElementById('main-menu');
+
+            if (state === 'main_menu') {
+                menu.style.display = 'block';
+                menu.innerHTML = `
+                    <h2>欢迎来到暗区</h2>
+                    <p style="margin-bottom: 20px; color: #888; font-size: 0.9em;">
+                        进入危险区域，搜集物资，找到撤离点撤离！<br>
+                        死亡将丢失背包中所有物品。
+                    </p>
+                    <button class="btn" onclick="doAction('new_game')">开始游戏</button>
+                `;
+            } else if (state === 'dead') {
+                menu.style.display = 'block';
+                menu.innerHTML = `
                     <h2 style="color: #e94560;">💀 你阵亡了</h2>
-                    <p style="margin-bottom: 30px; color: #888;">
-                        你在行动中倒下，丢失了背包中的所有物品...
+                    <p style="margin-bottom: 20px; color: #888;">
+                        丢失了背包中的所有物品...
                     </p>
                     <button class="btn" onclick="doAction('return_base')">返回基地</button>
-                </div>
-            `;
+                `;
+            } else if (state === 'extracted') {
+                menu.style.display = 'block';
+                menu.innerHTML = `
+                    <h2 style="color: #4caf50;">🎉 撤离成功！</h2>
+                    <p style="margin-bottom: 20px; color: #888;">正在返回基地...</p>
+                `;
+            } else {
+                menu.style.display = 'none';
+            }
         }
 
         // 渲染背包
         function renderInventory() {
-            document.getElementById('backpack-value').textContent = `(价值: ${gameState.backpack_value})`;
+            document.getElementById('backpack-value').textContent = `(💰${gameState.backpack_value})`;
 
-            let html = '<h3 style="color: #4a4a6a;">背包</h3>';
-
+            let html = '';
             if (gameState.backpack.length === 0) {
-                html += '<p style="color: #666;">(空)</p>';
+                html = '<p style="color: #666; font-size: 0.85em;">(空)</p>';
             } else {
                 for (const item of gameState.backpack) {
                     const rarityClass = item.rarity === '灰色' ? 'common' :
@@ -643,49 +1311,26 @@
                                        item.rarity === '紫色' ? 'epic' : 'legendary';
                     html += `
                         <div class="inventory-item ${rarityClass}">
-                            <span class="item-name">[${item.rarity}] ${item.name}</span>
-                            <span class="item-value">${item.value}</span>
+                            <span>[${item.rarity}] ${item.name}</span>
+                            <span style="color: #ffd700;">${item.value}</span>
                         </div>
                     `;
-                }
-            }
-
-            html += '<h3 style="color: #4a4a6a; margin-top: 20px;">保险箱</h3>';
-            if (gameState.secure_container.length === 0) {
-                html += '<p style="color: #666;">(空)</p>';
-            } else {
-                for (const item of gameState.secure_container) {
-                    html += `<p>[${item.rarity}] ${item.name}</p>`;
                 }
             }
 
             document.getElementById('inventory-content').innerHTML = html;
         }
 
-        // 显示帮助
-        function showHelp() {
-            alert(`
-【游戏目标】
-进入战区搜集高价值物资，然后成功撤离。
-
-【核心机制】
-- 撤离射击: 进入地图 → 搜刮物资 → 撤离
-- 死亡惩罚: 死亡会丢失背包中所有物品
-- 保险箱: 保险箱中的物品死亡后保留
-
-【战斗系统】
-- 身体部位: 头部(2.5x伤害)、胸部(1x)、四肢(0.7x)
-- 护甲减伤: 根据护甲等级减少伤害
-- 瞄准系统: 可选择瞄准不同部位
-
-【物品稀有度】
-灰色(普通) < 绿色 < 蓝色 < 紫色 < 金色(传说)
-            `);
-        }
-
         // 初始化
         updateState();
-        setInterval(updateState, 5000); // 每5秒更新状态
+        setInterval(updateState, 3000);
+
+        // 窗口大小变化时重新渲染地图
+        window.addEventListener('resize', () => {
+            if (gameState && gameState.raid) {
+                renderMap();
+            }
+        });
     </script>
 </body>
 </html>
