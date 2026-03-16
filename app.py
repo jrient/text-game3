@@ -222,6 +222,8 @@ def do_action():
         if session.get('game_id') in games:
             del games[session['game_id']]
         session['game_id'] = str(uuid.uuid4())
+        new_game = get_game()
+        new_game.state = g.GameState.BASE  # 设置为基地状态
         result['success'] = True
         result['message'] = '新游戏开始'
 
