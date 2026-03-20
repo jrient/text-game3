@@ -237,7 +237,7 @@ try:
 except Exception as e:
     report.fail("小队", "成员状态测试", str(e))
 
-# 3.4 Bug测试：SquadMember.is_ai
+# 3.4 测试：SquadMember.is_ai 属性（已修复）
 try:
     game = g.Game()
     game.create_squad()
@@ -245,14 +245,16 @@ try:
     # 检查SquadMember是否有is_ai属性
     member = game.squad.members[1]
     if hasattr(member, 'is_ai'):
-        report.pass_("小队Bug", "SquadMember.is_ai属性", "属性存在")
+        report.pass_("小队Bug", "SquadMember.is_ai属性", "属性已添加")
     else:
         report.fail("小队Bug", "SquadMember.is_ai属性", "属性不存在，但operator.is_ai存在")
         report.bug("SquadMember类缺少is_ai属性，导致start_raid中访问member.is_ai报错")
         
-    # 正确的访问方式
-    if hasattr(member.operator, 'is_ai') and member.operator.is_ai:
-        report.pass_("小队Bug", "正确的is_ai访问", f"member.operator.is_ai={member.operator.is_ai}")
+    # 验证属性值正确
+    if member.is_ai == member.operator.is_ai:
+        report.pass_("小队Bug", "is_ai属性值正确", f"member.is_ai={member.is_ai}")
+    else:
+        report.fail("小队Bug", "is_ai属性值", "属性值与operator.is_ai不一致")
     
 except Exception as e:
     report.fail("小队", "Bug测试", str(e))
