@@ -891,6 +891,446 @@
             border-radius: 6px;
             margin-bottom: 15px;
         }
+
+        /* ===== 干员系统UI ===== */
+        .operator-panel {
+            background: rgba(20, 20, 35, 0.9);
+            border: 1px solid #4a90d9;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+
+        .operator-panel h3 {
+            color: #4a90d9;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .operator-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .operator-card {
+            background: rgba(30, 30, 50, 0.8);
+            border: 2px solid #333;
+            border-radius: 6px;
+            padding: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .operator-card:hover {
+            border-color: #4a90d9;
+            transform: translateY(-2px);
+        }
+
+        .operator-card.selected {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.15);
+            box-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+        }
+
+        .operator-card .op-icon {
+            font-size: 1.5em;
+            margin-bottom: 2px;
+        }
+
+        .operator-card .op-name {
+            font-size: 0.65em;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .operator-card .op-class {
+            font-size: 0.55em;
+            color: #888;
+        }
+
+        .operator-card .op-hp {
+            font-size: 0.6em;
+            color: #4CAF50;
+            margin-top: 2px;
+        }
+
+        .operator-card .op-down {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: #e94560;
+            color: #fff;
+            font-size: 0.5em;
+            padding: 1px 3px;
+            border-radius: 2px;
+        }
+
+        .operator-skills {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .skill-btn {
+            background: linear-gradient(135deg, #2a4a7a, #1a3a5a);
+            border: 1px solid #4a90d9;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7em;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .skill-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #3a5a8a, #2a4a6a);
+            transform: scale(1.02);
+        }
+
+        .skill-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .skill-btn .cooldown {
+            color: #ffd700;
+            font-size: 0.85em;
+        }
+
+        /* 兵种标签 */
+        .class-tag {
+            font-size: 0.6em;
+            padding: 1px 4px;
+            border-radius: 2px;
+            margin-left: 4px;
+        }
+        .class-tag.assault { background: #e94560; }
+        .class-tag.support { background: #4CAF50; }
+        .class-tag.recon { background: #2196F3; }
+        .class-tag.engineer { background: #FF9800; }
+
+        /* ===== 载具系统UI ===== */
+        .vehicle-marker {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            transform: translate(-50%, -50%);
+            z-index: 30;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .vehicle-marker:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+
+        .vehicle-marker .v-icon {
+            font-size: 1.8em;
+            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+        }
+
+        .vehicle-marker.occupied .v-icon {
+            filter: drop-shadow(0 0 8px rgba(78, 205, 196, 0.8));
+        }
+
+        .vehicle-panel {
+            background: rgba(20, 30, 45, 0.95);
+            border: 1px solid #64b5f6;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 8px;
+        }
+
+        .vehicle-panel h3 {
+            color: #64b5f6;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+        }
+
+        .vehicle-info {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .vehicle-info .v-name {
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .vehicle-info .v-stats {
+            font-size: 0.75em;
+            color: #aaa;
+        }
+
+        .vehicle-hp-bar {
+            background: #1a1a2a;
+            border-radius: 3px;
+            height: 8px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .vehicle-hp-bar .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #64b5f6, #42a5f5);
+        }
+
+        .vehicle-actions {
+            display: flex;
+            gap: 4px;
+            margin-top: 6px;
+        }
+
+        .vehicle-actions .btn {
+            flex: 1;
+            font-size: 0.7em;
+        }
+
+        /* ===== 小队系统UI ===== */
+        .squad-panel {
+            background: rgba(25, 25, 40, 0.9);
+            border: 1px solid #9c27b0;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+
+        .squad-panel h3 {
+            color: #9c27b0;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .squad-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .squad-member {
+            display: grid;
+            grid-template-columns: 32px 1fr auto;
+            gap: 8px;
+            align-items: center;
+            background: rgba(40, 40, 60, 0.6);
+            padding: 6px 8px;
+            border-radius: 6px;
+            border-left: 3px solid #666;
+        }
+
+        .squad-member.leader {
+            border-left-color: #ffd700;
+        }
+
+        .squad-member .m-avatar {
+            width: 32px;
+            height: 32px;
+            background: rgba(156, 39, 176, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+        }
+
+        .squad-member .m-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .squad-member .m-name {
+            font-size: 0.8em;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .squad-member .m-status {
+            font-size: 0.65em;
+            color: #888;
+        }
+
+        .squad-member .m-hp {
+            font-size: 0.7em;
+        }
+
+        .squad-member .m-hp.healthy { color: #4CAF50; }
+        .squad-member .m-hp.wounded { color: #ff9800; }
+        .squad-member .m-hp.critical { color: #e94560; }
+
+        .squad-commands {
+            display: flex;
+            gap: 4px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .squad-commands .btn {
+            font-size: 0.65em;
+            padding: 4px 8px;
+        }
+
+        .squad-empty {
+            text-align: center;
+            color: #666;
+            font-size: 0.75em;
+            padding: 10px;
+        }
+
+        /* ===== 破译系统UI ===== */
+        .decode-panel {
+            background: rgba(30, 20, 40, 0.95);
+            border: 1px solid #ab47bc;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 8px;
+        }
+
+        .decode-panel h3 {
+            color: #ab47bc;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+        }
+
+        .decode-progress {
+            margin-bottom: 10px;
+        }
+
+        .decode-progress .progress-bar {
+            background: #1a1a2a;
+            border-radius: 4px;
+            height: 16px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .decode-progress .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ab47bc, #7b1fa2);
+            transition: width 0.3s ease;
+        }
+
+        .decode-progress .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.7em;
+            color: #fff;
+            text-shadow: 0 0 4px rgba(0,0,0,0.8);
+        }
+
+        .decode-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(40, 30, 50, 0.6);
+            padding: 6px 8px;
+            border-radius: 4px;
+            margin-bottom: 4px;
+            font-size: 0.75em;
+        }
+
+        .decode-item .d-name {
+            color: #fff;
+        }
+
+        .decode-item .d-value {
+            color: #ffd700;
+        }
+
+        .decode-item .d-btn {
+            font-size: 0.85em;
+            padding: 2px 6px;
+        }
+
+        .decode-list {
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        /* 干员选择覆盖层 */
+        .operator-select-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 20px;
+        }
+
+        .operator-select-overlay h2 {
+            color: #4a90d9;
+            margin-bottom: 20px;
+        }
+
+        .operator-select-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            max-width: 800px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .operator-select-card {
+            background: rgba(30, 30, 50, 0.9);
+            border: 2px solid #444;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .operator-select-card:hover {
+            border-color: #4a90d9;
+            transform: scale(1.05);
+        }
+
+        .operator-select-card .op-icon {
+            font-size: 2.5em;
+            margin-bottom: 8px;
+        }
+
+        .operator-select-card .op-name {
+            font-size: 1em;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .operator-select-card .op-class {
+            font-size: 0.75em;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .operator-select-card .op-stats {
+            font-size: 0.7em;
+            color: #aaa;
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body>
@@ -950,6 +1390,20 @@
                             <p>加载中...</p>
                         </div>
                     </div>
+
+                    <!-- 干员系统面板 -->
+                    <div class="operator-panel" id="operator-panel" style="display: none;">
+                        <h3>🎖️ 干员 <button class="btn btn-secondary" style="font-size:0.6em;padding:2px 6px;float:right;" onclick="openOperatorSelect()">切换</button></h3>
+                        <div id="operator-info"></div>
+                        <div class="operator-skills" id="operator-skills"></div>
+                    </div>
+
+                    <!-- 小队系统面板 -->
+                    <div class="squad-panel" id="squad-panel" style="display: none;">
+                        <h3>👥 小队 <span id="squad-count" style="color:#888;font-weight:normal;"></span></h3>
+                        <div class="squad-list" id="squad-list"></div>
+                        <div class="squad-commands" id="squad-commands"></div>
+                    </div>
                 </div>
 
                 <!-- 右侧面板 - 行动与背包 -->
@@ -957,6 +1411,17 @@
                     <h2>行动</h2>
                     <div id="action-content">
                         <p>加载中...</p>
+                    </div>
+                    <!-- 载具面板 -->
+                    <div class="vehicle-panel" id="vehicle-panel" style="display: none;">
+                        <h3>🚗 载具</h3>
+                        <div id="vehicle-info"></div>
+                    </div>
+                    <!-- 破译面板 -->
+                    <div class="decode-panel" id="decode-panel" style="display: none;">
+                        <h3>🔐 破译物资</h3>
+                        <div class="decode-progress" id="decode-progress"></div>
+                        <div class="decode-list" id="decode-list"></div>
                     </div>
                     <!-- 区域战利品面板 -->
                     <div id="zone-loot-panel" style="display: none; margin-top: 10px; padding: 8px; background: rgba(0,100,0,0.2); border-radius: 4px;">
@@ -1056,6 +1521,13 @@
                 <div class="item-grid" id="stash-other"></div>
             </div>
         </div>
+    </div>
+
+    <!-- 干员选择覆盖层 -->
+    <div id="operator-select-overlay" class="operator-select-overlay" style="display: none;">
+        <h2>🎖️ 选择干员</h2>
+        <div class="operator-select-grid" id="operator-select-grid"></div>
+        <button class="btn btn-secondary" style="margin-top: 20px;" onclick="closeOperatorSelect()">取消</button>
     </div>
 
     <script>
@@ -1237,6 +1709,12 @@
             renderInventory();
             renderCombat();
             renderMainMenu();
+
+            // 新系统渲染
+            renderOperator();
+            renderVehicle();
+            renderSquad();
+            renderDecode();
 
             // 如果商店/仓库页面打开中，同步刷新
             if (document.getElementById('shop-page').style.display !== 'none') {
@@ -1455,6 +1933,27 @@
                 // 搜索按钮
                 html += '<button class="btn" onclick="doAction(\'search\')">🔍 搜索</button>';
 
+                // 载具相关按钮（如果附近有载具）
+                if (gameState.nearby_vehicle && !gameState.in_vehicle) {
+                    html += '<button class="btn btn-success" onclick="doActionWithFeedback(this, \'enter_vehicle\')">🚗 上车</button>';
+                }
+                if (gameState.in_vehicle) {
+                    html += '<button class="btn btn-danger" onclick="doActionWithFeedback(this, \'exit_vehicle\')">🚶 下车</button>';
+                    if (gameState.vehicle && gameState.vehicle.weapon) {
+                        html += '<button class="btn" onclick="doActionWithFeedback(this, \'vehicle_attack\')">🎯 载具攻击</button>';
+                    }
+                }
+
+                // 破译按钮（如果有待破译物品）
+                if (gameState.decode_items && gameState.decode_items.length > 0) {
+                    html += '<button class="btn" onclick="doAction(\'open_decode\')">🔐 破译</button>';
+                }
+
+                // 小队指挥按钮
+                if (gameState.squad && gameState.squad.is_leader && gameState.squad.members.length > 1) {
+                    html += '<button class="btn" onclick="doAction(\'open_squad_commands\')">👥 指挥小队</button>';
+                }
+
                 // 撤离按钮（在激活撤离点时显示）
                 if (raid.current_zone === raid.active_extraction) {
                     html += '<button class="btn btn-success" onclick="doAction(\'extract\')">🚁 撤离</button>';
@@ -1485,6 +1984,7 @@
                     <div style="display: flex; gap: 4px; flex-wrap: wrap;">
                         <button class="btn btn-secondary" onclick="openShop()">🏪 商店</button>
                         <button class="btn btn-secondary" onclick="openStash()">📦 仓库</button>
+                        <button class="btn btn-secondary" onclick="openOperatorSelect()">🎖️ 干员</button>
                         <button class="btn btn-secondary" onclick="doAction('rest')">💤 休息</button>
                         <button class="btn btn-warning" onclick="doAction('welfare')">💰 低保</button>
                     </div>
@@ -2097,6 +2597,314 @@
             }
         }
 
+        // ===== 干员系统渲染 =====
+        function renderOperator() {
+            const panel = document.getElementById('operator-panel');
+            const infoEl = document.getElementById('operator-info');
+            const skillsEl = document.getElementById('operator-skills');
+
+            // 检查是否有干员数据
+            if (!gameState.operator) {
+                panel.style.display = 'none';
+                return;
+            }
+
+            panel.style.display = 'block';
+            const op = gameState.operator;
+
+            // 干员信息
+            let classTag = '';
+            if (op.class === '突击') classTag = '<span class="class-tag assault">突击</span>';
+            else if (op.class === '支援') classTag = '<span class="class-tag support">支援</span>';
+            else if (op.class === '侦察') classTag = '<span class="class-tag recon">侦察</span>';
+            else if (op.class === '工程') classTag = '<span class="class-tag engineer">工程</span>';
+
+            const hpPercent = (op.hp / op.max_hp) * 100;
+            const hpColor = hpPercent > 60 ? '#4CAF50' : hpPercent > 30 ? '#ff9800' : '#e94560';
+
+            infoEl.innerHTML = `
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                    <span style="font-size:1.5em;">${op.icon || '👤'}</span>
+                    <div>
+                        <span style="font-weight:bold;color:#fff;">${op.name}</span>
+                        ${classTag}
+                        ${op.is_down ? '<span style="color:#e94560;font-size:0.7em;margin-left:4px;">⚠️ 倒地</span>' : ''}
+                    </div>
+                </div>
+                <div class="stat-bar">
+                    <label style="font-size:0.65em;">
+                        <span>HP</span>
+                        <span>${op.hp}/${op.max_hp}</span>
+                    </label>
+                    <div class="bar-container" style="height:8px;">
+                        <div class="bar-fill bar-hp" style="width:${hpPercent}%;background:${hpColor};"></div>
+                    </div>
+                </div>
+            `;
+
+            // 技能按钮
+            let skillsHtml = '';
+            if (op.skills && op.skills.length > 0) {
+                for (const skill of op.skills) {
+                    const onCooldown = skill.cooldown > 0;
+                    const canUse = !onCooldown && !op.is_down && gameState.player.action_points >= (skill.cost || 1);
+                    skillsHtml += `
+                        <button class="skill-btn" ${!canUse ? 'disabled' : ''} onclick="doActionWithFeedback(this, 'use_skill', {skill_id: '${skill.id}'})">
+                            <span>${skill.icon || '⚡'}</span>
+                            <span>${skill.name}</span>
+                            ${onCooldown ? `<span class="cooldown">(${skill.cooldown})</span>` : ''}
+                        </button>
+                    `;
+                }
+            }
+            skillsEl.innerHTML = skillsHtml;
+        }
+
+        // 打开干员选择界面
+        function openOperatorSelect() {
+            const overlay = document.getElementById('operator-select-overlay');
+            const grid = document.getElementById('operator-select-grid');
+
+            // 8个干员，4兵种
+            const operators = gameState.available_operators || [
+                // 突击兵种
+                { id: 'op1', name: '突击手', class: '突击', icon: '🔫', hp: 100, skills: [{name:'突击', icon:'💥'}] },
+                { id: 'op2', name: '冲锋手', class: '突击', icon: '🎯', hp: 90, skills: [{name:'冲锋', icon:'💨'}] },
+                // 支援兵种
+                { id: 'op3', name: '医疗兵', class: '支援', icon: '💊', hp: 80, skills: [{name:'治疗', icon:'❤️'}] },
+                { id: 'op4', name: '弹药手', class: '支援', icon: '📦', hp: 85, skills: [{name:'补给', icon:'🎒'}] },
+                // 侦察兵种
+                { id: 'op5', name: '侦察兵', class: '侦察', icon: '🔭', hp: 70, skills: [{name:'侦察', icon:'👁️'}] },
+                { id: 'op6', name: '狙击手', class: '侦察', icon: '🎯', hp: 75, skills: [{name:'狙击', icon:'💀'}] },
+                // 工程兵种
+                { id: 'op7', name: '工程师', class: '工程', icon: '🔧', hp: 85, skills: [{name:'建造', icon:'🏗️'}] },
+                { id: 'op8', name: '爆破手', class: '工程', icon: '💣', hp: 90, skills: [{name:'爆破', icon:'💥'}] }
+            ];
+
+            let html = '';
+            for (const op of operators) {
+                const isSelected = gameState.operator && gameState.operator.id === op.id;
+                const classTag = op.class === '突击' ? 'assault' : op.class === '支援' ? 'support' : op.class === '侦察' ? 'recon' : 'engineer';
+                html += `
+                    <div class="operator-select-card ${isSelected ? 'selected' : ''}" onclick="selectOperator('${op.id}')">
+                        <div class="op-icon">${op.icon}</div>
+                        <div class="op-name">${op.name}</div>
+                        <div class="op-class"><span class="class-tag ${classTag}">${op.class}</span></div>
+                        <div class="op-stats">HP: ${op.hp} | 技能: ${op.skills ? op.skills.length : 0}</div>
+                    </div>
+                `;
+            }
+
+            grid.innerHTML = html;
+            overlay.style.display = 'flex';
+        }
+
+        function closeOperatorSelect() {
+            document.getElementById('operator-select-overlay').style.display = 'none';
+        }
+
+        function selectOperator(operatorId) {
+            doAction('select_operator', { operator_id: operatorId });
+            closeOperatorSelect();
+        }
+
+        // ===== 载具系统渲染 =====
+        function renderVehicle() {
+            const panel = document.getElementById('vehicle-panel');
+            const infoEl = document.getElementById('vehicle-info');
+
+            // 渲染地图上的载具标记
+            renderVehicleMarkers();
+
+            // 检查是否有载具数据
+            if (!gameState.vehicle && !gameState.nearby_vehicle) {
+                panel.style.display = 'none';
+                return;
+            }
+
+            const vehicle = gameState.vehicle || gameState.nearby_vehicle;
+            if (!vehicle) {
+                panel.style.display = 'none';
+                return;
+            }
+
+            panel.style.display = 'block';
+
+            const hpPercent = (vehicle.hp / vehicle.max_hp) * 100;
+            const inVehicle = gameState.in_vehicle;
+
+            let infoHtml = `
+                <div class="vehicle-info">
+                    <span style="font-size:1.5em;">${vehicle.icon || '🚗'}</span>
+                    <div>
+                        <div class="v-name">${vehicle.name}</div>
+                        <div class="v-stats">
+                            ${vehicle.weapon ? `🔫 ${vehicle.weapon}` : ''}
+                            ${vehicle.seats ? ` | 👥 ${vehicle.seats}座` : ''}
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:6px;">
+                    <span style="font-size:0.7em;color:#aaa;">血量</span>
+                    <div class="vehicle-hp-bar">
+                        <div class="bar-fill" style="width:${hpPercent}%;"></div>
+                    </div>
+                </div>
+            `;
+
+            // 操作按钮
+            let actionsHtml = '<div class="vehicle-actions">';
+            if (inVehicle) {
+                actionsHtml += `<button class="btn btn-danger" onclick="doActionWithFeedback(this, 'exit_vehicle')">🚶 下车</button>`;
+                if (vehicle.weapon) {
+                    actionsHtml += `<button class="btn" onclick="doActionWithFeedback(this, 'vehicle_attack')">🎯 载具攻击</button>`;
+                }
+            } else {
+                actionsHtml += `<button class="btn btn-success" onclick="doActionWithFeedback(this, 'enter_vehicle')">🚗 上车</button>`;
+            }
+            actionsHtml += '</div>';
+
+            infoEl.innerHTML = infoHtml + actionsHtml;
+        }
+
+        // 渲染地图上的载具标记
+        function renderVehicleMarkers() {
+            if (!gameState.raid || !gameState.raid.vehicles) return;
+
+            const mapZones = document.getElementById('map-zones');
+            const raid = gameState.raid;
+            const scale = Math.min(
+                document.getElementById('map-area').clientWidth / (raid.map_width * 60 + 100),
+                document.getElementById('map-area').clientHeight / (raid.map_height * 60 + 100),
+                1
+            );
+            const offsetX = 50;
+            const offsetY = 50;
+
+            // 移除旧标记
+            document.querySelectorAll('.vehicle-marker').forEach(el => el.remove());
+
+            // 添加新标记
+            for (const vehicle of gameState.raid.vehicles) {
+                const x = vehicle.x * 60 * scale + offsetX;
+                const y = vehicle.y * 60 * scale + offsetY;
+                const isOccupied = vehicle.occupants && vehicle.occupants.length > 0;
+                const isPlayerIn = gameState.in_vehicle && gameState.vehicle && gameState.vehicle.id === vehicle.id;
+
+                const marker = document.createElement('div');
+                marker.className = `vehicle-marker ${isOccupied ? 'occupied' : ''}`;
+                marker.style.left = x + 'px';
+                marker.style.top = y + 'px';
+                marker.innerHTML = `<span class="v-icon">${vehicle.icon || '🚗'}</span>`;
+                if (isPlayerIn) {
+                    marker.innerHTML += '<span style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-size:0.8em;">📍</span>';
+                }
+                marker.title = vehicle.name + (isOccupied ? ` (${vehicle.occupants.length}/${vehicle.seats})` : '');
+                mapZones.appendChild(marker);
+            }
+        }
+
+        // ===== 小队系统渲染 =====
+        function renderSquad() {
+            const panel = document.getElementById('squad-panel');
+            const listEl = document.getElementById('squad-list');
+            const countEl = document.getElementById('squad-count');
+            const commandsEl = document.getElementById('squad-commands');
+
+            if (!gameState.squad || !gameState.squad.members || gameState.squad.members.length === 0) {
+                panel.style.display = 'none';
+                return;
+            }
+
+            panel.style.display = 'block';
+            const squad = gameState.squad;
+            countEl.textContent = `(${squad.members.length}/3)`;
+
+            let listHtml = '';
+            for (const member of squad.members) {
+                const isLeader = member.is_leader;
+                const hpPercent = (member.hp / member.max_hp) * 100;
+                const hpClass = hpPercent > 60 ? 'healthy' : hpPercent > 30 ? 'wounded' : 'critical';
+
+                listHtml += `
+                    <div class="squad-member ${isLeader ? 'leader' : ''}">
+                        <div class="m-avatar">${member.icon || '👤'}</div>
+                        <div class="m-info">
+                            <span class="m-name">${member.name}${isLeader ? ' 👑' : ''}</span>
+                            <span class="m-status">${member.class || ''} ${member.is_down ? '⚠️ 倒地' : ''}</span>
+                        </div>
+                        <span class="m-hp ${hpClass}">${member.hp}/${member.max_hp}</span>
+                    </div>
+                `;
+            }
+            listEl.innerHTML = listHtml;
+
+            // 小队指挥按钮
+            let commandsHtml = '';
+            if (squad.is_leader) {
+                commandsHtml = `
+                    <button class="btn" onclick="doActionWithFeedback(this, 'squad_command', {cmd: 'follow'})">👥 跟随</button>
+                    <button class="btn" onclick="doActionWithFeedback(this, 'squad_command', {cmd: 'hold'})">🛑 原地</button>
+                    <button class="btn btn-danger" onclick="doActionWithFeedback(this, 'squad_command', {cmd: 'attack'})">⚔️ 攻击</button>
+                    <button class="btn btn-secondary" onclick="doActionWithFeedback(this, 'squad_command', {cmd: 'revive'})">❤️ 救援</button>
+                `;
+            }
+            commandsEl.innerHTML = commandsHtml;
+        }
+
+        // ===== 破译系统渲染 =====
+        function renderDecode() {
+            const panel = document.getElementById('decode-panel');
+            const progressEl = document.getElementById('decode-progress');
+            const listEl = document.getElementById('decode-list');
+
+            // 检查是否有破译中的物品或待破译物品
+            if (!gameState.decoding && (!gameState.decode_items || gameState.decode_items.length === 0)) {
+                panel.style.display = 'none';
+                return;
+            }
+
+            panel.style.display = 'block';
+
+            // 破译进度条
+            if (gameState.decoding) {
+                const decoding = gameState.decoding;
+                const percent = (decoding.progress / decoding.total) * 100;
+                progressEl.innerHTML = `
+                    <div style="font-size:0.75em;color:#fff;margin-bottom:4px;">
+                        🔐 ${decoding.name} <span style="color:#ffd700;">💰${decoding.value}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width:${percent}%;"></div>
+                        <span class="progress-text">${Math.round(percent)}%</span>
+                    </div>
+                    <div style="text-align:center;margin-top:6px;">
+                        <button class="btn" onclick="doActionWithFeedback(this, 'continue_decode')">⏳ 继续破译</button>
+                        <button class="btn btn-secondary" onclick="doAction('cancel_decode')">❌ 取消</button>
+                    </div>
+                `;
+            } else {
+                progressEl.innerHTML = '<p style="color:#666;font-size:0.75em;text-align:center;">无破译中的物品</p>';
+            }
+
+            // 待破译物品列表
+            let listHtml = '';
+            if (gameState.decode_items && gameState.decode_items.length > 0) {
+                for (const item of gameState.decode_items) {
+                    listHtml += `
+                        <div class="decode-item">
+                            <span class="d-name">📦 ${item.name}</span>
+                            <span class="d-value">💰${item.value}</span>
+                            <button class="btn d-btn" onclick="doActionWithFeedback(this, 'start_decode', {item_id: '${item.id}'})">破译</button>
+                        </div>
+                    `;
+                }
+            } else {
+                listHtml = '<p style="color:#666;font-size:0.75em;text-align:center;">无可破译物品</p>';
+            }
+            listEl.innerHTML = listHtml;
+        }
+
         // 初始化
         async function init() {
             await checkAuthStatus();
@@ -2115,6 +2923,7 @@
         window.addEventListener('resize', () => {
             if (gameState && gameState.raid) {
                 renderMap();
+                renderVehicleMarkers();
             }
         });
     </script>

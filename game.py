@@ -13,6 +13,7 @@ from enum import Enum
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
 from copy import deepcopy
+import math
 
 # ============== 游戏常量 ==============
 class Rarity(Enum):
@@ -39,6 +40,371 @@ class DamageZone(Enum):
         self.multiplier = multiplier
         self.effect_msg = effect_msg
         self.base_hit_chance = base_hit_chance  # 基础命中率
+
+# ============== 干员系统（三角洲行动核心）==============
+class OperatorClass(Enum):
+    """干员兵种 - 三角洲行动四兵种"""
+    ASSAULT = ("突击", "assault", "高机动突击，擅长近距离作战")
+    SUPPORT = ("支援", "support", "提供火力支援和团队补给")
+    RECON = ("侦查", "recon", "情报收集，远程精确打击")
+    ENGINEER = ("工程", "engineer", "载具操作，爆破与维修")
+
+    def __init__(self, cn_name, code, desc):
+        self.cn_name = cn_name
+        self.code = code
+        self.desc = desc
+
+# 干员技能定义
+OPERATOR_SKILLS = {
+    "assault": {
+        "tactical_sprint": {
+            "name": "战术冲刺",
+            "description": "短时间内大幅提升移动速度",
+            "cooldown": 3,
+            "duration": 2,
+            "effect": {"speed_bonus": 2, "dodge_bonus": 0.3}
+        },
+        "frag_grenade": {
+            "name": "破片手雷",
+            "description": "投掷破片手雷造成范围伤害",
+            "cooldown": 4,
+            "damage": 150,
+            "radius": 3
+        },
+        "breach_charge": {
+            "name": "爆破炸药",
+            "description": "在墙壁或门上放置炸药进行爆破",
+            "cooldown": 5,
+            "damage": 200
+        }
+    },
+    "support": {
+        "ammo_bag": {
+            "name": "弹药补给包",
+            "description": "为队友补充弹药",
+            "cooldown": 5,
+            "effect": {"ammo_refill": True, "uses": 3}
+        },
+        "med_bag": {
+            "name": "医疗包",
+            "description": "为队友恢复生命值",
+            "cooldown": 4,
+            "effect": {"heal_amount": 50, "uses": 3}
+        },
+        "shield_deploy": {
+            "name": "部署护盾",
+            "description": "部署一个可移动的掩体护盾",
+            "cooldown": 6,
+            "effect": {"shield_hp": 200}
+        }
+    },
+    "recon": {
+        "sensor_dart": {
+            "name": "侦察飞镖",
+            "description": "发射侦察飞镖标记敌人位置",
+            "cooldown": 3,
+            "duration": 5,
+            "effect": {"reveal_enemies": True, "range": 4}
+        },
+        "motion_sensor": {
+            "name": "动作感应器",
+            "description": "部署感应器侦测移动的敌人",
+            "cooldown": 4,
+            "duration": 6,
+            "effect": {"detect_motion": True, "range": 5}
+        },
+        "uav_scan": {
+            "name": "无人机扫描",
+            "description": "释放无人机扫描附近区域",
+            "cooldown": 8,
+            "duration": 4,
+            "effect": {"scan_area": True, "range": 6}
+        }
+    },
+    "engineer": {
+        "repair_tool": {
+            "name": "维修工具",
+            "description": "修复载具和装备",
+            "cooldown": 3,
+            "effect": {"repair_amount": 50}
+        },
+        "at_mine": {
+            "name": "反坦克地雷",
+            "description": "部署反载具地雷",
+            "cooldown": 5,
+            "damage": 500,
+            "effect": {"vehicle_damage_mult": 2.0}
+        },
+        "tow_missile": {
+            "name": "线导导弹",
+            "description": "发射线导反坦克导弹",
+            "cooldown": 6,
+            "damage": 400,
+            "effect": {"guided": True, "vehicle_damage_mult": 1.5}
+        }
+    }
+}
+
+# 干员定义
+OPERATORS = {
+    "operator_wyatt": {
+        "name": "怀亚特",
+        "class": OperatorClass.ASSAULT,
+        "description": "前特种部队成员，擅长快速突击作战",
+        "primary_skill": "tactical_sprint",
+        "secondary_skill": "frag_grenade",
+        "bonus": {"damage": 0.1, "speed": 0.15}
+    },
+    "operator_luna": {
+        "name": "露娜",
+        "class": OperatorClass.RECON,
+        "description": "资深狙击手，能精准定位敌人",
+        "primary_skill": "sensor_dart",
+        "secondary_skill": "motion_sensor",
+        "bonus": {"accuracy": 0.15, "headshot_damage": 0.2}
+    },
+    "operator_hack": {
+        "name": "哈克",
+        "class": OperatorClass.ENGINEER,
+        "description": "技术专家，精通载具和爆破",
+        "primary_skill": "repair_tool",
+        "secondary_skill": "at_mine",
+        "bonus": {"vehicle_damage": 0.2, "repair_speed": 0.3}
+    },
+    "operator_doc": {
+        "name": "医生",
+        "class": OperatorClass.SUPPORT,
+        "description": "战地医疗兵，提供关键支援",
+        "primary_skill": "med_bag",
+        "secondary_skill": "ammo_bag",
+        "bonus": {"heal_bonus": 0.3, "revive_speed": 0.5}
+    },
+    "operator_smoke": {
+        "name": "烟鬼",
+        "class": OperatorClass.ASSAULT,
+        "description": "突击专家，擅长爆破突入",
+        "primary_skill": "breach_charge",
+        "secondary_skill": "tactical_sprint",
+        "bonus": {"explosive_damage": 0.25, "speed": 0.1}
+    },
+    "operator_stinger": {
+        "name": "毒刺",
+        "class": OperatorClass.RECON,
+        "description": "情报官，无人侦察专家",
+        "primary_skill": "uav_scan",
+        "secondary_skill": "sensor_dart",
+        "bonus": {"detection_range": 0.3, "intel_bonus": True}
+    },
+    "operator_tower": {
+        "name": "塔楼",
+        "class": OperatorClass.SUPPORT,
+        "description": "重装支援，擅长阵地防御",
+        "primary_skill": "shield_deploy",
+        "secondary_skill": "med_bag",
+        "bonus": {"armor_bonus": 0.2, "suppression": 0.3}
+    },
+    "operator_saw": {
+        "name": "电锯",
+        "class": OperatorClass.ENGINEER,
+        "description": "反载具专家，精通反坦克武器",
+        "primary_skill": "tow_missile",
+        "secondary_skill": "repair_tool",
+        "bonus": {"vehicle_damage": 0.35, "explosive_damage": 0.15}
+    }
+}
+
+# ============== 载具系统（三角洲行动核心）==============
+class VehicleType(Enum):
+    """载具类型"""
+    HELICOPTER = ("直升机", "helicopter", "空中载具，快速机动")
+    TANK = ("坦克", "tank", "重型装甲，火力强大")
+    APC = ("装甲车", "apc", "步兵战车，平衡机动与防护")
+
+    def __init__(self, cn_name, code, desc):
+        self.cn_name = cn_name
+        self.code = code
+        self.desc = desc
+
+# 载具数据
+VEHICLES = {
+    "heli_little_bird": {
+        "name": "小鸟直升机",
+        "type": VehicleType.HELICOPTER,
+        "hp": 800,
+        "max_hp": 800,
+        "armor": 2,
+        "seats": 4,  # 1驾驶员 + 3乘客
+        "speed": 10,
+        "weapons": ["minigun"],
+        "description": "轻型侦察直升机，快速机动",
+        "value": 50000
+    },
+    "heli_black_hawk": {
+        "name": "黑鹰直升机",
+        "type": VehicleType.HELICOPTER,
+        "hp": 1500,
+        "max_hp": 1500,
+        "armor": 3,
+        "seats": 8,  # 1驾驶员 + 2炮手 + 5乘客
+        "speed": 8,
+        "weapons": ["minigun", "rocket_pod"],
+        "description": "中型运输直升机，可装载小队",
+        "value": 100000
+    },
+    "tank_m1a2": {
+        "name": "M1A2主战坦克",
+        "type": VehicleType.TANK,
+        "hp": 3000,
+        "max_hp": 3000,
+        "armor": 6,
+        "seats": 3,  # 驾驶员+炮手+车长
+        "speed": 4,
+        "weapons": ["main_cannon", "coaxial_mg"],
+        "description": "重型主战坦克，火力与防护顶级",
+        "value": 500000
+    },
+    "tank_t90": {
+        "name": "T-90主战坦克",
+        "type": VehicleType.TANK,
+        "hp": 2800,
+        "max_hp": 2800,
+        "armor": 5,
+        "seats": 3,
+        "speed": 5,
+        "weapons": ["main_cannon", "coaxial_mg", "atgm"],
+        "description": "俄制主战坦克，配备反坦克导弹",
+        "value": 450000
+    },
+    "apc_m2_bradley": {
+        "name": "M2步兵战车",
+        "type": VehicleType.APC,
+        "hp": 1200,
+        "max_hp": 1200,
+        "armor": 4,
+        "seats": 6,  # 3车组 + 3步兵
+        "speed": 6,
+        "weapons": ["autocannon", "tow_launcher"],
+        "description": "步兵战车，可运载小队",
+        "value": 200000
+    },
+    "apc_bmp3": {
+        "name": "BMP-3步兵战车",
+        "type": VehicleType.APC,
+        "hp": 1000,
+        "max_hp": 1000,
+        "armor": 3,
+        "seats": 7,  # 3车组 + 4步兵
+        "speed": 7,
+        "weapons": ["autocannon", "coaxial_mg", "atgm"],
+        "description": "俄制步兵战车，火力配置丰富",
+        "value": 180000
+    },
+    "apc_stryker": {
+        "name": "斯崔克装甲车",
+        "type": VehicleType.APC,
+        "hp": 800,
+        "max_hp": 800,
+        "armor": 3,
+        "seats": 9,  # 2车组 + 7步兵
+        "speed": 8,
+        "weapons": ["remote_mg", "grenade_launcher"],
+        "description": "轮式装甲车，高机动性",
+        "value": 150000
+    }
+}
+
+# 载具武器数据
+VEHICLE_WEAPONS = {
+    "minigun": {
+        "name": "米尼岗机枪",
+        "damage": 50,
+        "fire_rate": 10,
+        "accuracy": 0.6,
+        "range": 5,
+        "ammo": 1000,
+        "reload_time": 5
+    },
+    "rocket_pod": {
+        "name": "火箭弹巢",
+        "damage": 200,
+        "fire_rate": 1,
+        "accuracy": 0.7,
+        "range": 8,
+        "ammo": 14,
+        "reload_time": 30,
+        "splash": True,
+        "splash_radius": 2
+    },
+    "main_cannon": {
+        "name": "主炮",
+        "damage": 800,
+        "fire_rate": 1,
+        "accuracy": 0.85,
+        "range": 10,
+        "ammo": 40,
+        "reload_time": 6,
+        "penetration": 6
+    },
+    "coaxial_mg": {
+        "name": "同轴机枪",
+        "damage": 40,
+        "fire_rate": 5,
+        "accuracy": 0.7,
+        "range": 6,
+        "ammo": 2000,
+        "reload_time": 10
+    },
+    "autocannon": {
+        "name": "机关炮",
+        "damage": 150,
+        "fire_rate": 3,
+        "accuracy": 0.75,
+        "range": 7,
+        "ammo": 300,
+        "reload_time": 8,
+        "penetration": 4
+    },
+    "tow_launcher": {
+        "name": "TOW导弹发射器",
+        "damage": 500,
+        "fire_rate": 1,
+        "accuracy": 0.9,
+        "range": 12,
+        "ammo": 4,
+        "reload_time": 15,
+        "guided": True
+    },
+    "atgm": {
+        "name": "反坦克导弹",
+        "damage": 450,
+        "fire_rate": 1,
+        "accuracy": 0.85,
+        "range": 10,
+        "ammo": 4,
+        "reload_time": 12,
+        "guided": True
+    },
+    "remote_mg": {
+        "name": "遥控武器站",
+        "damage": 35,
+        "fire_rate": 6,
+        "accuracy": 0.65,
+        "range": 5,
+        "ammo": 500,
+        "reload_time": 8
+    },
+    "grenade_launcher": {
+        "name": "榴弹发射器",
+        "damage": 100,
+        "fire_rate": 2,
+        "accuracy": 0.6,
+        "range": 4,
+        "ammo": 100,
+        "reload_time": 10,
+        "splash": True,
+        "splash_radius": 1
+    }
+}
 
 # ============== 游戏数据 ==============
 WEAPONS = {
@@ -1333,7 +1699,70 @@ LOOT_ITEMS = {
         "value": 50000,
         "rarity": Rarity.LEGENDARY,
         "description": "通往巴别塔顶层的古铜钥匙"
+    },
+
+    # ===== 可破译的高价值物资 =====
+    "decode_encrypted_drive": {
+        "name": "加密硬盘",
+        "type": "可破译",
+        "grid": 2,
+        "value": 0,
+        "decode_time": 3,
+        "decode_reward": {
+            "money": [50000, 100000, 200000],
+            "items": ["loot_gpu", "loot_document", "loot_bitcoin"]
+        },
+        "rarity": Rarity.EPIC,
+        "description": "加密的军用硬盘，需要3回合破译才能获取其中的价值"
+    },
+    "decode_secret_cache": {
+        "name": "秘密缓存盒",
+        "type": "可破译",
+        "grid": 3,
+        "value": 0,
+        "decode_time": 4,
+        "decode_reward": {
+            "money": [30000, 80000, 150000],
+            "items": ["loot_usb_secret", "loot_military_radio"]
+        },
+        "rarity": Rarity.EPIC,
+        "description": "军用级加密存储盒，需要专业工具破译"
+    },
+    "decode_gold_safe": {
+        "name": "黄金保险箱",
+        "type": "可破译",
+        "grid": 4,
+        "value": 0,
+        "decode_time": 5,
+        "decode_reward": {
+            "money": [100000, 200000, 500000],
+            "items": ["loot_goldbar", "loot_diamond", "loot_rolex"]
+        },
+        "rarity": Rarity.LEGENDARY,
+        "description": "高价值保险箱，需要长时间破译"
+    },
+    "decode_lab_sample": {
+        "name": "实验室样本箱",
+        "type": "可破译",
+        "grid": 2,
+        "value": 0,
+        "decode_time": 2,
+        "decode_reward": {
+            "money": [20000, 50000, 100000],
+            "items": ["loot_water_sample", "med_surgery", "stim_propital"]
+        },
+        "rarity": Rarity.RARE,
+        "description": "生化实验室样本，需要快速处理"
     }
+}
+
+# 破译系统配置
+DECODE_CONFIG = {
+    "base_decode_time_multiplier": 1.0,
+    "engineer_bonus": 0.5,  # 工程师破译时间减半
+    "recon_bonus": 0.25,    # 侦查员减少25%时间
+    "decode_interrupt_penalty": 0.5,  # 被打断时损失50%进度
+    "max_concurrent_decodes": 2  # 最多同时破译2个物品
 }
 
 # ============== 地图数据 ==============
@@ -2538,6 +2967,413 @@ class Debuff:
     damage: int = 0     # 每回合伤害（流血用）
 
 @dataclass
+class OperatorSkill:
+    """干员技能"""
+    skill_id: str
+    name: str
+    description: str
+    cooldown: int
+    current_cooldown: int = 0
+    uses: int = 0
+    max_uses: int = 3   # 每局可使用次数
+
+    def can_use(self) -> bool:
+        return self.current_cooldown == 0 and self.uses < self.max_uses
+
+    def use(self):
+        if self.can_use():
+            self.uses += 1
+            self.current_cooldown = self.cooldown
+            return True
+        return False
+
+    def tick(self):
+        if self.current_cooldown > 0:
+            self.current_cooldown -= 1
+
+@dataclass
+class Operator:
+    """干员实例"""
+    operator_id: str
+    name: str
+    operator_class: OperatorClass
+    description: str
+    primary_skill: OperatorSkill
+    secondary_skill: OperatorSkill
+    bonus: Dict = field(default_factory=dict)
+    is_player: bool = False
+    is_ai: bool = False
+
+    @classmethod
+    def create(cls, operator_id: str, is_player: bool = False, is_ai: bool = False) -> 'Operator':
+        """从模板创建干员"""
+        data = OPERATORS.get(operator_id)
+        if not data:
+            raise ValueError(f"Unknown operator: {operator_id}")
+
+        # 创建技能实例
+        class_code = data["class"].code
+        primary_data = OPERATOR_SKILLS[class_code][data["primary_skill"]]
+        secondary_data = OPERATOR_SKILLS[class_code][data["secondary_skill"]]
+
+        primary_skill = OperatorSkill(
+            skill_id=data["primary_skill"],
+            name=primary_data["name"],
+            description=primary_data["description"],
+            cooldown=primary_data["cooldown"]
+        )
+        secondary_skill = OperatorSkill(
+            skill_id=data["secondary_skill"],
+            name=secondary_data["name"],
+            description=secondary_data["description"],
+            cooldown=secondary_data["cooldown"]
+        )
+
+        return cls(
+            operator_id=operator_id,
+            name=data["name"],
+            operator_class=data["class"],
+            description=data["description"],
+            primary_skill=primary_skill,
+            secondary_skill=secondary_skill,
+            bonus=data.get("bonus", {}),
+            is_player=is_player,
+            is_ai=is_ai
+        )
+
+@dataclass
+class VehicleWeapon:
+    """载具武器状态"""
+    weapon_id: str
+    name: str
+    damage: int
+    fire_rate: int
+    accuracy: float
+    range: int
+    current_ammo: int
+    max_ammo: int
+    reload_time: int
+    reload_remaining: int = 0
+
+    @classmethod
+    def create(cls, weapon_id: str) -> 'VehicleWeapon':
+        data = VEHICLE_WEAPONS.get(weapon_id)
+        if not data:
+            raise ValueError(f"Unknown weapon: {weapon_id}")
+        return cls(
+            weapon_id=weapon_id,
+            name=data["name"],
+            damage=data["damage"],
+            fire_rate=data["fire_rate"],
+            accuracy=data["accuracy"],
+            range=data["range"],
+            current_ammo=data["ammo"],
+            max_ammo=data["ammo"],
+            reload_time=data.get("reload_time", 5)
+        )
+
+    def can_fire(self) -> bool:
+        return self.current_ammo > 0 and self.reload_remaining == 0
+
+    def fire(self) -> int:
+        """开火，返回发射的弹药数"""
+        if not self.can_fire():
+            return 0
+        shots = min(self.fire_rate, self.current_ammo)
+        self.current_ammo -= shots
+        return shots
+
+    def reload(self):
+        if self.current_ammo < self.max_ammo and self.reload_remaining == 0:
+            self.reload_remaining = self.reload_time
+
+    def tick(self):
+        if self.reload_remaining > 0:
+            self.reload_remaining -= 1
+            if self.reload_remaining == 0:
+                self.current_ammo = self.max_ammo
+
+@dataclass
+class Vehicle:
+    """载具实例"""
+    vehicle_id: str
+    name: str
+    vehicle_type: VehicleType
+    hp: int
+    max_hp: int
+    armor: int
+    seats: int
+    speed: int
+    weapons: List[VehicleWeapon]
+    description: str
+    value: int
+    occupants: List[str] = field(default_factory=list)  # 占用者ID列表
+    driver: Optional[str] = None
+    current_zone: str = ""
+    destroyed: bool = False
+
+    @classmethod
+    def create(cls, vehicle_id: str) -> 'Vehicle':
+        data = VEHICLES.get(vehicle_id)
+        if not data:
+            raise ValueError(f"Unknown vehicle: {vehicle_id}")
+
+        weapons = [VehicleWeapon.create(w) for w in data["weapons"]]
+
+        return cls(
+            vehicle_id=vehicle_id,
+            name=data["name"],
+            vehicle_type=data["type"],
+            hp=data["hp"],
+            max_hp=data["max_hp"],
+            armor=data["armor"],
+            seats=data["seats"],
+            speed=data["speed"],
+            weapons=weapons,
+            description=data["description"],
+            value=data["value"]
+        )
+
+    def can_board(self) -> bool:
+        return len(self.occupants) < self.seats and not self.destroyed
+
+    def board(self, player_id: str, as_driver: bool = False) -> bool:
+        if not self.can_board():
+            return False
+        if player_id not in self.occupants:
+            self.occupants.append(player_id)
+        if as_driver and self.driver is None:
+            self.driver = player_id
+        return True
+
+    def exit_vehicle(self, player_id: str) -> bool:
+        if player_id in self.occupants:
+            self.occupants.remove(player_id)
+            if self.driver == player_id:
+                self.driver = self.occupants[0] if self.occupants else None
+            return True
+        return False
+
+    def take_damage(self, damage: int, penetration: int) -> int:
+        """载具受伤，返回实际伤害"""
+        if self.destroyed:
+            return 0
+
+        # 护甲减伤
+        if self.armor > 0:
+            armor_reduction = max(0, (self.armor - penetration) * 0.15)
+            actual_damage = int(damage * (1 - armor_reduction))
+        else:
+            actual_damage = damage
+
+        self.hp -= actual_damage
+        if self.hp <= 0:
+            self.hp = 0
+            self.destroyed = True
+
+        return actual_damage
+
+    def repair(self, amount: int) -> int:
+        """修复载具"""
+        if self.destroyed:
+            return 0
+        repaired = min(amount, self.max_hp - self.hp)
+        self.hp += repaired
+        return repaired
+
+    def get_weapon(self, weapon_id: str = None) -> Optional[VehicleWeapon]:
+        """获取武器"""
+        if weapon_id:
+            for w in self.weapons:
+                if w.weapon_id == weapon_id:
+                    return w
+            return None
+        return self.weapons[0] if self.weapons else None
+
+    def tick(self):
+        """每回合更新"""
+        for weapon in self.weapons:
+            weapon.tick()
+
+@dataclass
+class SquadMember:
+    """小队成员"""
+    member_id: str
+    name: str
+    operator: Operator
+    stats: 'PlayerStats'
+    equipment: 'EquipmentSlots'
+    is_downed: bool = False
+    is_dead: bool = False
+    vehicle_id: Optional[str] = None  # 当前所在的载具
+
+    @property
+    def hp(self):
+        return self.operator.stats.hp if hasattr(self.operator, 'stats') else 100
+
+    @property
+    def is_ai(self):
+        """便捷访问 operator.is_ai"""
+        return self.operator.is_ai if hasattr(self.operator, 'is_ai') else False
+
+    def is_alive(self) -> bool:
+        return not self.is_dead and self.stats.is_alive()
+
+    def revive(self, heal_amount: int = 30):
+        """复活倒地队友"""
+        if self.is_downed and not self.is_dead:
+            self.is_downed = False
+            self.stats.heal(heal_amount)
+
+@dataclass
+class Squad:
+    """3人小队 - 三角洲行动核心机制"""
+    squad_id: str
+    name: str
+    members: List[SquadMember] = field(default_factory=list)
+    vehicles: List[Vehicle] = field(default_factory=list)
+    leader_id: str = ""
+
+    def add_member(self, member: SquadMember):
+        if len(self.members) < 3:  # 三角洲行动：3人小队
+            self.members.append(member)
+            if not self.leader_id:
+                self.leader_id = member.member_id
+
+    def get_alive_members(self) -> List[SquadMember]:
+        return [m for m in self.members if m.is_alive()]
+
+    def get_downed_members(self) -> List[SquadMember]:
+        return [m for m in self.members if m.is_downed and not m.is_dead]
+
+    def all_downed(self) -> bool:
+        return all(m.is_downed or m.is_dead for m in self.members)
+
+    def all_dead(self) -> bool:
+        return all(m.is_dead for m in self.members)
+
+    def get_member(self, member_id: str) -> Optional[SquadMember]:
+        for m in self.members:
+            if m.member_id == member_id:
+                return m
+        return None
+
+    def get_leader(self) -> Optional[SquadMember]:
+        return self.get_member(self.leader_id)
+
+    def add_vehicle(self, vehicle: Vehicle):
+        self.vehicles.append(vehicle)
+
+    def get_vehicle(self, vehicle_id: str) -> Optional[Vehicle]:
+        for v in self.vehicles:
+            if v.vehicle_id == vehicle_id:
+                return v
+        return None
+
+    def tick(self):
+        """每回合更新所有成员和载具状态"""
+        for member in self.members:
+            if member.is_alive() and not member.is_downed:
+                member.stats.tick()
+                member.operator.primary_skill.tick()
+                member.operator.secondary_skill.tick()
+        for vehicle in self.vehicles:
+            vehicle.tick()
+
+@dataclass
+class DecodeProgress:
+    """破译进度"""
+    item_id: str
+    item_name: str
+    total_time: int       # 总破译时间（回合）
+    current_progress: int = 0  # 当前进度
+    decoder_id: str = ""  # 正在破译的成员ID
+    interrupted: bool = False
+
+    def advance(self, bonus: float = 0.0) -> Tuple[bool, str]:
+        """推进破译进度，返回(是否完成, 消息)"""
+        if self.interrupted:
+            return False, "破译已被打断"
+
+        progress = 1 + int(bonus)
+        self.current_progress += progress
+
+        if self.current_progress >= self.total_time:
+            return True, f"破译完成！{self.item_name}已解锁"
+        return False, f"破译进度: {self.current_progress}/{self.total_time}"
+
+    def interrupt(self) -> int:
+        """打断破译，返回损失的进度"""
+        lost = int(self.current_progress * DECODE_CONFIG["decode_interrupt_penalty"])
+        self.current_progress = 0
+        self.interrupted = True
+        return lost
+
+@dataclass
+class DecodeManager:
+    """破译管理器"""
+    active_decodes: List[DecodeProgress] = field(default_factory=list)
+    completed_rewards: List[Dict] = field(default_factory=list)
+
+    def start_decode(self, item_id: str, item_name: str, decode_time: int, decoder_id: str, class_bonus: float = 0.0) -> bool:
+        """开始破译"""
+        if len(self.active_decodes) >= DECODE_CONFIG["max_concurrent_decodes"]:
+            return False
+
+        # 应用职业加成
+        actual_time = max(1, int(decode_time * (1 - class_bonus)))
+
+        progress = DecodeProgress(
+            item_id=item_id,
+            item_name=item_name,
+            total_time=actual_time,
+            decoder_id=decoder_id
+        )
+        self.active_decodes.append(progress)
+        return True
+
+    def tick(self, member_bonuses: Dict[str, float] = None) -> List[Tuple[str, str, Dict]]:
+        """每回合更新破译进度，返回完成的破译列表[(item_id, msg, rewards)]"""
+        completed = []
+        member_bonuses = member_bonuses or {}
+
+        for decode in self.active_decodes[:]:
+            bonus = member_bonuses.get(decode.decoder_id, 0)
+            done, msg = decode.advance(bonus)
+
+            if done:
+                # 从LOOT_ITEMS获取奖励
+                item_data = LOOT_ITEMS.get(decode.item_id, {})
+                reward_config = item_data.get("decode_reward", {})
+                rewards = self._generate_rewards(reward_config)
+                completed.append((decode.item_id, msg, rewards))
+                self.active_decodes.remove(decode)
+
+        return completed
+
+    def interrupt_all(self):
+        """打断所有破译"""
+        for decode in self.active_decodes:
+            decode.interrupt()
+
+    def _generate_rewards(self, reward_config: Dict) -> Dict:
+        """生成破译奖励"""
+        rewards = {"money": 0, "items": []}
+
+        if "money" in reward_config:
+            money_options = reward_config["money"]
+            rewards["money"] = random.choice(money_options)
+
+        if "items" in reward_config:
+            item_ids = reward_config["items"]
+            # 随机选择1-2个物品
+            num_items = random.randint(1, min(2, len(item_ids)))
+            chosen = random.sample(item_ids, num_items)
+            rewards["items"] = chosen
+
+        return rewards
+
+@dataclass
 class ArmorStatus:
     """护甲状态"""
     armor_value: int = 0       # 护甲值
@@ -2657,6 +3493,16 @@ class PlayerStats:
         actual = min(damage, self.hp)
         self.hp -= actual
         return actual
+
+    def reset_for_base(self):
+        """重置状态回基地"""
+        self.hp = self.max_hp
+        self.debuffs = []
+        # 重置护甲
+        if self.head_armor.max_durability > 0:
+            self.head_armor.durability = self.head_armor.max_durability
+        if self.chest_armor.max_durability > 0:
+            self.chest_armor.durability = self.chest_armor.max_durability
 
     def tick(self):
         """每回合更新状态"""
@@ -2906,9 +3752,11 @@ class EquipmentSlots:
 
 # ============== 玩家类 ==============
 class Player:
-    """玩家类"""
-    def __init__(self, name: str = "玩家"):
+    """玩家类 - 支持干员系统和3人小队"""
+    def __init__(self, name: str = "玩家", operator_id: str = "operator_wyatt"):
         self.name = name
+        # 干员系统
+        self.operator = Operator.create(operator_id, is_player=True)
         self.stats = PlayerStats()
         self.equipment = EquipmentSlots()
         self.stash_weapons: List[Weapon] = []  # 武器仓库
@@ -2920,6 +3768,89 @@ class Player:
         self.max_action_points: int = 100
         self.kills: int = 0
         self.total_loot_value: int = 0
+
+        # 载具相关
+        self.current_vehicle: Optional[Vehicle] = None
+        self.is_driver: bool = False
+
+    def set_operator(self, operator_id: str):
+        """切换干员"""
+        if operator_id in OPERATORS:
+            self.operator = Operator.create(operator_id, is_player=True)
+
+    def use_skill(self, skill_type: str = "primary") -> Tuple[bool, str]:
+        """使用干员技能"""
+        skill = self.operator.primary_skill if skill_type == "primary" else self.operator.secondary_skill
+        if not skill.can_use():
+            return False, f"技能冷却中或使用次数已用完"
+
+        skill.use()
+        return True, f"使用技能: {skill.name}"
+
+    def board_vehicle(self, vehicle: Vehicle, as_driver: bool = False) -> Tuple[bool, str]:
+        """登上载具"""
+        if not vehicle.can_board():
+            return False, "载具已满或已损坏"
+
+        if vehicle.board(self.name, as_driver):
+            self.current_vehicle = vehicle
+            self.is_driver = as_driver
+            return True, f"登上了 {vehicle.name}"
+        return False, "无法登上载具"
+
+    def exit_vehicle(self) -> Tuple[bool, str]:
+        """离开载具"""
+        if not self.current_vehicle:
+            return False, "你不在载具中"
+
+        vehicle = self.current_vehicle
+        if vehicle.exit_vehicle(self.name):
+            self.current_vehicle = None
+            self.is_driver = False
+            return True, f"离开了 {vehicle.name}"
+        return False, "无法离开载具"
+
+    def vehicle_attack(self, target, weapon_id: str = None) -> Tuple[int, str]:
+        """使用载具武器攻击"""
+        if not self.current_vehicle or not self.is_driver:
+            return 0, "你需要驾驶载具才能使用武器"
+
+        weapon = self.current_vehicle.get_weapon(weapon_id)
+        if not weapon:
+            return 0, "找不到该武器"
+
+        if not weapon.can_fire():
+            return 0, "武器需要装填或正在冷却"
+
+        # 计算伤害
+        shots = weapon.fire()
+        total_damage = 0
+
+        if isinstance(target, Enemy):
+            for _ in range(shots):
+                if random.random() < weapon.accuracy:
+                    damage = target.take_damage(weapon.damage, getattr(weapon, 'penetration', 1))
+                    total_damage += damage
+
+            msg = f"{self.current_vehicle.name}的{weapon.name}命中！造成{total_damage}伤害"
+
+            if not target.is_alive():
+                self.add_xp(target.xp)
+                self.kills += 1
+                msg += f"\n{target.name}被击毁！获得{target.xp}经验！"
+        elif isinstance(target, Vehicle):
+            for _ in range(shots):
+                if random.random() < weapon.accuracy:
+                    pen = getattr(weapon, 'penetration', 1)
+                    damage = target.take_damage(weapon.damage, pen)
+                    total_damage += damage
+
+            msg = f"{self.current_vehicle.name}的{weapon.name}命中{target.name}！造成{total_damage}伤害"
+
+            if target.destroyed:
+                msg += f"\n{target.name}被击毁！"
+
+        return total_damage, msg
 
     def heal(self, amount: int, body_part: DamageZone = None):
         """治疗统一HP"""
@@ -3175,17 +4106,71 @@ class GameState(Enum):
 
 # ============== 突击行动管理 ==============
 class Raid:
-    """突击行动"""
+    """突击行动 - 支持载具和破译系统"""
     def __init__(self, map_data: dict):
         self.map_data = map_data
         self.zones = deepcopy(map_data["zones"])
         self.enemies: List[Enemy] = []
+        self.vehicles: List[Vehicle] = []  # 地图中的载具
         self.time_elapsed: int = 0
         self.max_time: int = 60  # 最大行动时间（回合）
         self.loot_generated: bool = False
         self.active_extraction: str = ""  # 当前激活的撤离点ID
         self.visited_zones: set = set()  # 玩家访问过的区域
         self.pending_events: List[dict] = []  # 待通知的事件
+        self.decode_manager: DecodeManager = DecodeManager()  # 破译管理器
+
+    def spawn_vehicles(self):
+        """在地图中生成载具"""
+        # 根据地图类型生成不同的载具
+        vehicle_spawns = []
+
+        if "dam" in str(self.map_data.get("name", "")).lower() or "大坝" in self.map_data.get("name", ""):
+            vehicle_spawns = [
+                ("apc_m2_bradley", "dam_barracks"),
+                ("apc_stryker", "dam_admin_district"),
+            ]
+        elif "溪谷" in self.map_data.get("name", ""):
+            vehicle_spawns = [
+                ("heli_little_bird", "valley_radar"),
+                ("apc_bmp3", "valley_checkpoint"),
+            ]
+        elif "航天" in self.map_data.get("name", ""):
+            vehicle_spawns = [
+                ("heli_black_hawk", "space_launch_zone"),
+                ("tank_t90", "space_h4"),
+            ]
+        elif "巴克什" in self.map_data.get("name", ""):
+            vehicle_spawns = [
+                ("apc_stryker", "baksh_bazaar"),
+            ]
+
+        for vehicle_id, zone_id in vehicle_spawns:
+            if zone_id in self.zones:
+                vehicle = Vehicle.create(vehicle_id)
+                vehicle.current_zone = zone_id
+                self.vehicles.append(vehicle)
+
+    def get_vehicles_in_zone(self, zone_id: str) -> List[Vehicle]:
+        """获取区域内的载具"""
+        return [v for v in self.vehicles if v.current_zone == zone_id and not v.destroyed]
+
+    def start_decode(self, item_id: str, item_name: str, decoder_id: str, operator_class: OperatorClass = None) -> Tuple[bool, str]:
+        """开始破译物品"""
+        item_data = LOOT_ITEMS.get(item_id, {})
+        decode_time = item_data.get("decode_time", 3)
+
+        # 计算职业加成
+        class_bonus = 0.0
+        if operator_class == OperatorClass.ENGINEER:
+            class_bonus = DECODE_CONFIG["engineer_bonus"]
+        elif operator_class == OperatorClass.RECON:
+            class_bonus = DECODE_CONFIG["recon_bonus"]
+
+        success = self.decode_manager.start_decode(item_id, item_name, decode_time, decoder_id, class_bonus)
+        if success:
+            return True, f"开始破译 {item_name}，预计需要 {max(1, int(decode_time * (1 - class_bonus)))} 回合"
+        return False, "无法开始破译（可能已达到最大同时破译数量）"
 
     def set_active_extraction(self, spawn_zone: str):
         """设置激活的撤离点（距离出生点较远）"""
@@ -3281,6 +4266,20 @@ class Raid:
         self.time_elapsed += 1
         self.pending_events = []
 
+        # 更新破译进度
+        completed_decodes = self.decode_manager.tick()
+        for item_id, msg, rewards in completed_decodes:
+            self.pending_events.append({
+                "type": "decode_complete",
+                "item_id": item_id,
+                "message": f"🔓 {msg} 获得奖励: ${rewards['money']}",
+                "rewards": rewards
+            })
+
+        # 更新载具状态
+        for vehicle in self.vehicles:
+            vehicle.tick()
+
         # 随机事件系统（每5回合检查一次）
         if self.time_elapsed > 0 and self.time_elapsed % 5 == 0:
             event_roll = random.random()
@@ -3292,6 +4291,8 @@ class Raid:
                 self._event_supply_cache()
             elif event_roll < 0.58:
                 self._event_gas_zone()
+            elif event_roll < 0.68:
+                self._event_vehicle_spawn()  # 新增：载具刷新事件
 
         # 敌人AI行动
         for enemy in self.enemies:
@@ -3306,6 +4307,30 @@ class Raid:
                     if connections:
                         new_zone = random.choice(connections)
                         enemy.current_zone = new_zone
+
+    def _event_vehicle_spawn(self):
+        """载具刷新事件"""
+        zone_ids = [zid for zid, z in self.zones.items()
+                   if not z.get("is_spawn") and not z.get("is_extract")]
+        if not zone_ids:
+            return
+        target = random.choice(zone_ids)
+
+        # 随机选择一种载具
+        vehicle_options = ["apc_stryker", "apc_bmp3", "heli_little_bird"]
+        vehicle_id = random.choice(vehicle_options)
+
+        vehicle = Vehicle.create(vehicle_id)
+        vehicle.current_zone = target
+        self.vehicles.append(vehicle)
+
+        self.pending_events.append({
+            "type": "vehicle_spawn",
+            "zone": target,
+            "zone_name": self.zones[target]["name"],
+            "vehicle_name": vehicle.name,
+            "message": f"🚗 一辆 {vehicle.name} 已部署到 {self.zones[target]['name']}！"
+        })
 
     def _event_airdrop(self):
         """空投事件 - 在随机区域生成高价值物品"""
@@ -3537,12 +4562,14 @@ def generate_missions(count: int = 3) -> List[Mission]:
 
 # ============== 主游戏类 ==============
 class Game:
-    """主游戏类"""
-    def __init__(self):
+    """主游戏类 - 支持3人小队系统"""
+    def __init__(self, player_operator_id: str = "operator_wyatt"):
         self.state = GameState.MAIN_MENU
-        self.player = Player()
+        self.player = Player(operator_id=player_operator_id)
+        self.squad: Optional[Squad] = None  # 3人小队
         self.current_raid: Optional[Raid] = None
         self.current_enemy: Optional[Enemy] = None
+        self.current_vehicle_enemy: Optional[Vehicle] = None  # 载具战斗目标
         self.messages: List[str] = []
         self.game_log: List[str] = []
         self.missions: List[Mission] = generate_missions(3)
@@ -3552,8 +4579,59 @@ class Game:
         self.raid_medical_used: int = 0
         self.total_extractions: int = 0
 
+        # 可解锁的干员列表
+        self.unlocked_operators = ["operator_wyatt"]  # 初始只有一个
+        self.available_operators = list(OPERATORS.keys())
+
         # 初始装备
         self._give_starting_gear()
+
+    def create_squad(self, member_operator_ids: List[str] = None):
+        """创建3人小队"""
+        if member_operator_ids is None:
+            # 默认小队配置
+            member_operator_ids = ["operator_wyatt", "operator_luna", "operator_hack"]
+
+        self.squad = Squad(squad_id=f"squad_{random.randint(1000,9999)}", name="三角洲小队")
+
+        for i, op_id in enumerate(member_operator_ids[:3]):  # 最多3人
+            if op_id in OPERATORS:
+                operator = Operator.create(op_id, is_player=(i == 0), is_ai=(i > 0))
+                stats = PlayerStats()
+                equipment = EquipmentSlots()
+
+                member = SquadMember(
+                    member_id=f"member_{i}",
+                    name=operator.name,
+                    operator=operator,
+                    stats=stats,
+                    equipment=equipment
+                )
+                self.squad.add_member(member)
+
+        # 玩家始终是第一个成员
+        if self.squad.members:
+            self.player.stats = self.squad.members[0].stats
+            self.player.equipment = self.squad.members[0].equipment
+
+    def get_player_member(self) -> Optional[SquadMember]:
+        """获取玩家控制的小队成员"""
+        if self.squad:
+            return self.squad.members[0] if self.squad.members else None
+        return None
+
+    def select_operator(self, operator_id: str) -> Tuple[bool, str]:
+        """切换干员"""
+        if operator_id not in self.unlocked_operators:
+            return False, f"干员 {operator_id} 未解锁"
+        if operator_id not in OPERATORS:
+            return False, f"无效的干员ID"
+        # 创建新干员实例
+        self.player.operator = Operator.create(operator_id, is_player=True)
+        # 如果有小队，更新小队成员
+        if self.squad and self.squad.members:
+            self.squad.members[0].operator = self.player.operator
+        return True, f"已选择干员: {self.player.operator.name}"
 
     def _give_starting_gear(self):
         """给玩家初始装备"""
@@ -3661,6 +4739,7 @@ class Game:
         self.current_raid = Raid(map_data)
         self.current_raid.spawn_enemies(self.player.stats.level)
         self.current_raid.generate_loot()
+        self.current_raid.spawn_vehicles()  # 生成载具
 
         # 随机选择出生点
         spawn_zones = [zid for zid, z in self.current_raid.zones.items() if z.get("is_spawn")]
@@ -3671,11 +4750,26 @@ class Game:
         self.current_raid.set_active_extraction(spawn_zone)
         self.current_raid.visited_zones.add(spawn_zone)
 
+        # 如果有小队，所有成员部署到同一位置
+        if self.squad:
+            for member in self.squad.members:
+                # 为AI成员生成基础装备
+                if member.operator.is_ai:
+                    self._give_ai_gear(member)
+
         self.state = GameState.RAID
         self.add_message(f"=== 行动开始 ===")
         self.add_message(f"你已部署到 {map_data['name']}")
         self.add_message(f"当前位置: {self.current_raid.zones[self.player.current_zone]['name']}")
         self.add_message(f"撤离点: {self.current_raid.zones[self.current_raid.active_extraction]['name']}")
+
+        # 显示干员信息
+        self.add_message(f"干员: {self.player.operator.name} ({self.player.operator.operator_class.cn_name})")
+
+        # 显示区域内的载具
+        vehicles = self.current_raid.get_vehicles_in_zone(spawn_zone)
+        if vehicles:
+            self.add_message(f"发现载具: {', '.join([v.name for v in vehicles])}")
 
         # 显示撤离点距离提示
         distance = get_zone_distance(self.current_raid.zones, spawn_zone, self.current_raid.active_extraction)
@@ -3685,6 +4779,37 @@ class Game:
             self.add_message("撤离点较远，小心行事。")
         else:
             self.add_message("撤离点不算太远。")
+
+    def _give_ai_gear(self, member: SquadMember):
+        """为AI队友生成装备"""
+        # 根据职业给装备
+        op_class = member.operator.operator_class
+
+        if op_class == OperatorClass.ASSAULT:
+            weapon_id = "ar_ak74n"
+        elif op_class == OperatorClass.SUPPORT:
+            weapon_id = "lmg_pkm"
+        elif op_class == OperatorClass.RECON:
+            weapon_id = "dmr_svd"
+        else:  # ENGINEER
+            weapon_id = "shotgun_saiga12"
+
+        weapon_data = WEAPONS.get(weapon_id, WEAPONS["pistol_p226"])
+        weapon = Weapon(
+            id=f"ai_{member.member_id}_weapon",
+            name=weapon_data["name"],
+            weight=weapon_data["weight"],
+            value=weapon_data["value"],
+            rarity=weapon_data["rarity"],
+            damage=weapon_data["damage"],
+            accuracy=weapon_data["accuracy"],
+            fire_rate=weapon_data["fire_rate"],
+            penetration=weapon_data["penetration"],
+            ammo_type=weapon_data.get("ammo_type", ""),
+            mag_size=weapon_data["mag_size"],
+            current_ammo=weapon_data["mag_size"]
+        )
+        member.equipment.equip_weapon(weapon, "primary")
 
     def move_to_zone(self, zone_id: str) -> Tuple[bool, str]:
         """移动到区域"""
@@ -4273,6 +5398,12 @@ class Game:
         for loot_entry in loot_list[:]:
             if loot_entry["id"] == loot_id:
                 item_data = loot_entry["data"]
+
+                # 检查是否是可破译物品
+                if item_data.get("type") == "可破译":
+                    decode_time = item_data.get("decode_time", 3)
+                    return False, f"此物品需要破译！使用 decode 命令开始破译（需要{decode_time}回合）"
+
                 item = LootItem(
                     id=loot_entry["id"],
                     name=item_data["name"],
@@ -4294,6 +5425,72 @@ class Game:
                 return True, f"拾取了 {item.name} ({item.grid}格)"
 
         return False, "找不到该物品"
+
+    def start_decode(self, loot_id: str) -> Tuple[bool, str]:
+        """开始破译物品"""
+        if self.state != GameState.RAID:
+            return False, "当前不在行动中！"
+
+        zone = self.current_raid.get_zone(self.player.current_zone)
+        if not zone:
+            return False, "区域错误！"
+
+        loot_list = zone.get("loot", [])
+        for loot_entry in loot_list[:]:
+            if loot_entry["id"] == loot_id:
+                item_data = loot_entry["data"]
+                if item_data.get("type") != "可破译":
+                    return False, "此物品不需要破译！"
+
+                ap_cost = 2
+                if self.player.action_points < ap_cost:
+                    return False, "行动力不足！"
+
+                self.player.action_points -= ap_cost
+
+                success, msg = self.current_raid.start_decode(
+                    loot_entry["id"],
+                    item_data["name"],
+                    self.player.name,
+                    self.player.operator.operator_class
+                )
+
+                if success:
+                    zone["loot"].remove(loot_entry)
+                    self.add_message(msg)
+
+                return success, msg
+
+        return False, "找不到该物品！"
+
+    def board_vehicle(self, vehicle_id: str, as_driver: bool = False) -> Tuple[bool, str]:
+        """登上载具"""
+        if self.state != GameState.RAID:
+            return False, "当前不在行动中！"
+
+        vehicles = self.current_raid.get_vehicles_in_zone(self.player.current_zone)
+        for vehicle in vehicles:
+            if vehicle.vehicle_id == vehicle_id or vehicle.name == vehicle_id:
+                success, msg = self.player.board_vehicle(vehicle, as_driver)
+                if success:
+                    self.add_message(msg)
+                return success, msg
+
+        return False, "找不到该载具！"
+
+    def exit_vehicle(self) -> Tuple[bool, str]:
+        """离开载具"""
+        success, msg = self.player.exit_vehicle()
+        if success:
+            self.add_message(msg)
+        return success, msg
+
+    def use_operator_skill(self, skill_type: str = "primary") -> Tuple[bool, str]:
+        """使用干员技能"""
+        success, msg = self.player.use_skill(skill_type)
+        if success:
+            self.add_message(f"🎯 {msg}")
+        return success, msg
 
     def move_to_stash(self, item_id: str) -> Tuple[bool, str]:
         """将背包物品移到仓库"""
@@ -4373,29 +5570,14 @@ class Game:
         self.current_raid = None
         self.current_enemy = None
 
-        # 重置玩家状态
+        # 不要创建新对象
         self.player.action_points = self.player.max_action_points
-        self.player.stats = PlayerStats(
-            money=self.player.stats.money,
-            xp=self.player.stats.xp,
-            level=self.player.stats.level
-        )
-
-        # 重新同步护甲状态
-        if self.player.equipment.armor:
-            self.player.stats.chest_armor = ArmorStatus(
-                armor_value=self.player.equipment.armor.armor_class,
-                max_armor=self.player.equipment.armor.armor_class,
-                durability=self.player.equipment.armor.durability,
-                max_durability=self.player.equipment.armor.max_durability
-            )
-        if self.player.equipment.helmet:
-            self.player.stats.head_armor = ArmorStatus(
-                armor_value=self.player.equipment.helmet.armor_class,
-                max_armor=self.player.equipment.helmet.armor_class,
-                durability=self.player.equipment.helmet.durability,
-                max_durability=self.player.equipment.helmet.max_durability
-            )
+        # 重置状态而不是创建新对象
+        self.player.stats.reset_for_base()
+        # 同步小队成员
+        if self.squad and self.squad.members:
+            for member in self.squad.members:
+                member.stats.reset_for_base()
 
 # ============== 存档系统 ==============
 def serialize_weapon(weapon: Weapon) -> dict:

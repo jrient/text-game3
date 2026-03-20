@@ -426,6 +426,84 @@ def get_state():
             'damage': debuff.damage
         })
 
+    # ========== 干员信息 ==========
+    state['operator_info'] = {
+        'operator_id': game.player.operator.operator_id if hasattr(game.player, 'operator') and game.player.operator else None,
+        'operator_class': game.player.operator.operator_class.name if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'operator_class') else None,
+        'operator_name': game.player.operator.name if hasattr(game.player, 'operator') and game.player.operator else None,
+        'primary_skill': {
+            'name': game.player.operator.primary_skill.name if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'primary_skill') else None,
+            'current_cooldown': game.player.operator.primary_skill.current_cooldown if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'primary_skill') else 0,
+            'max_cooldown': game.player.operator.primary_skill.cooldown if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'primary_skill') else 0,
+            'uses_remaining': game.player.operator.primary_skill.uses_remaining if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'primary_skill') else 0,
+            'can_use': game.player.operator.primary_skill.can_use() if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'primary_skill') else False
+        },
+        'secondary_skill': {
+            'name': game.player.operator.secondary_skill.name if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'secondary_skill') else None,
+            'current_cooldown': game.player.operator.secondary_skill.current_cooldown if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'secondary_skill') else 0,
+            'max_cooldown': game.player.operator.secondary_skill.cooldown if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'secondary_skill') else 0,
+            'uses_remaining': game.player.operator.secondary_skill.uses_remaining if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'secondary_skill') else 0,
+            'can_use': game.player.operator.secondary_skill.can_use() if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'secondary_skill') else False
+        },
+        'unlocked_operators': game.unlocked_operators if hasattr(game, 'unlocked_operators') else ['operator_wyatt'],
+        'available_operators': game.available_operators if hasattr(game, 'available_operators') else list(g.OPERATORS.keys())
+    }
+
+    # ========== 载具信息 ==========
+    state['vehicle_info'] = {
+        'in_vehicle': game.player.current_vehicle is not None if hasattr(game.player, 'current_vehicle') else False,
+        'is_driver': game.player.is_driver if hasattr(game.player, 'is_driver') else False,
+        'current_vehicle': None,
+        'zone_vehicles': []
+    }
+    
+    # 当前载具详情
+    if hasattr(game.player, 'current_vehicle') and game.player.current_vehicle:
+        v = game.player.current_vehicle
+        state['vehicle_info']['current_vehicle'] = {
+            'vehicle_id': v.vehicle_id,
+            'name': v.name,
+            'hp': v.hp,
+            'max_hp': v.max_hp,
+            'destroyed': v.destroyed,
+            'passengers': v.passengers if hasattr(v, 'passengers') else [],
+            'weapons': [{'name': w.name, 'ammo': w.current_ammo, 'max_ammo': w.mag_size} for w in v.weapons] if hasattr(v, 'weapons') else []
+        }
+
+    # ========== 小队信息 ==========
+    state['squad_info'] = {
+        'has_squad': game.squad is not None if hasattr(game, 'squad') else False,
+        'members': []
+    }
+    
+    if hasattr(game, 'squad') and game.squad:
+        for member in game.squad.members:
+            state['squad_info']['members'].append({
+                'id': member.id,
+                'name': member.name,
+                'is_player': member.is_player if hasattr(member, 'is_player') else False,
+                'is_ai': member.is_ai if hasattr(member, 'is_ai') else False,
+                'hp': member.stats.hp if hasattr(member, 'stats') else 0,
+                'max_hp': member.stats.max_hp if hasattr(member, 'stats') else 0
+            })
+
+    # ========== 破译进度 ==========
+    state['decode_progress'] = {
+        'active_decodes': [],
+        'max_concurrent': g.DECODE_CONFIG.get('max_concurrent_decodes', 2) if hasattr(g, 'DECODE_CONFIG') else 2
+    }
+    
+    if game.state == g.GameState.RAID and game.current_raid and hasattr(game.current_raid, 'decode_manager'):
+        for decode in game.current_raid.decode_manager.active_decodes:
+            state['decode_progress']['active_decodes'].append({
+                'item_id': decode.item_id,
+                'item_name': decode.item_name,
+                'current_progress': decode.current_progress,
+                'total_time': decode.total_time,
+                'decoder_id': decode.decoder_id,
+                'interrupted': decode.interrupted
+            })
+
     # 背包物品
     for item in game.player.equipment.backpack.get_all_items():
         # 确定物品分类
@@ -519,6 +597,28 @@ def get_state():
                 'is_extract': conn_zone.get('is_extract', False),
                 'is_active_extract': is_active_extract
             })
+
+        # 当前区域载具
+        state['raid']['zone_vehicles'] = []
+        if hasattr(game.current_raid, 'get_vehicles_in_zone'):
+            vehicles = game.current_raid.get_vehicles_in_zone(game.player.current_zone)
+            for v in vehicles:
+                state['raid']['zone_vehicles'].append({
+                    'vehicle_id': v.vehicle_id,
+                    'name': v.name,
+                    'hp': v.hp,
+                    'max_hp': v.max_hp,
+                    'destroyed': v.destroyed,
+                    'passenger_count': len(v.passengers) if hasattr(v, 'passengers') else 0,
+                    'max_passengers': v.max_passengers if hasattr(v, 'max_passengers') else 0
+                })
+                # 同时更新 vehicle_info 中的 zone_vehicles
+                state['vehicle_info']['zone_vehicles'].append({
+                    'vehicle_id': v.vehicle_id,
+                    'name': v.name,
+                    'hp': v.hp,
+                    'max_hp': v.max_hp
+                })
 
     # 战斗状态
     if game.state == g.GameState.COMBAT and game.current_enemy:
@@ -983,6 +1083,119 @@ def do_action():
         else:
             result['success'] = False
             result['message'] = '没有找到存档文件！'
+
+    # ========== 干员系统 ==========
+    elif action == 'select_operator':
+        operator_id = params.get('operator_id')
+        if operator_id:
+            if operator_id in game.unlocked_operators:
+                game.player.set_operator(operator_id)
+                result['success'] = True
+                result['message'] = f'已切换干员：{g.OPERATORS.get(operator_id, {}).get("name", operator_id)}'
+            else:
+                result['success'] = False
+                result['message'] = '该干员尚未解锁！'
+        else:
+            result['success'] = False
+            result['message'] = '请指定干员ID'
+
+    elif action == 'use_skill':
+        skill_type = params.get('skill_type', 'primary')
+        success, msg = game.use_operator_skill(skill_type)
+        result['success'] = success
+        result['message'] = msg
+
+    # ========== 载具系统 ==========
+    elif action == 'board_vehicle':
+        vehicle_id = params.get('vehicle_id')
+        as_driver = params.get('as_driver', False)
+        if vehicle_id:
+            success, msg = game.board_vehicle(vehicle_id, as_driver)
+            result['success'] = success
+            result['message'] = msg
+        else:
+            result['success'] = False
+            result['message'] = '请指定载具ID'
+
+    elif action == 'exit_vehicle':
+        success, msg = game.exit_vehicle()
+        result['success'] = success
+        result['message'] = msg
+
+    elif action == 'vehicle_attack':
+        target = params.get('target')
+        if target:
+            # target可能是enemy_id或vehicle_id
+            # 查找目标
+            enemy = None
+            target_vehicle = None
+            if game.current_raid:
+                for e in game.current_raid.enemies:
+                    if e.id == target and e.is_alive():
+                        enemy = e
+                        break
+                for v in game.current_raid.vehicles:
+                    if v.vehicle_id == target and not v.destroyed:
+                        target_vehicle = v
+                        break
+            if enemy:
+                damage, msg = game.player.vehicle_attack(enemy)
+                result['success'] = damage > 0
+                result['message'] = msg
+            elif target_vehicle:
+                damage, msg = game.player.vehicle_attack(target_vehicle)
+                result['success'] = damage > 0
+                result['message'] = msg
+            else:
+                result['success'] = False
+                result['message'] = '找不到目标'
+        else:
+            result['success'] = False
+            result['message'] = '请指定攻击目标'
+
+    # ========== 破译系统 ==========
+    elif action == 'start_decode':
+        loot_id = params.get('loot_id')
+        if loot_id:
+            success, msg = game.start_decode(loot_id)
+            result['success'] = success
+            result['message'] = msg
+        else:
+            result['success'] = False
+            result['message'] = '请指定要破译的物品ID'
+
+    elif action == 'continue_decode':
+        # 破译进度在move/search等行动时自动推进，此action用于手动推进
+        if game.state == g.GameState.RAID and game.current_raid:
+            game.current_raid.tick()
+            result['success'] = True
+            result['message'] = '破译进度已推进'
+        else:
+            result['success'] = False
+            result['message'] = '当前不在行动中'
+
+    elif action == 'cancel_decode':
+        if game.state == g.GameState.RAID and game.current_raid:
+            item_id = params.get('item_id')
+            if item_id:
+                for decode in game.current_raid.decode_manager.active_decodes:
+                    if decode.item_id == item_id:
+                        game.current_raid.decode_manager.active_decodes.remove(decode)
+                        result['success'] = True
+                        result['message'] = f'已取消破译：{decode.item_name}'
+                        break
+                else:
+                    result['success'] = False
+                    result['message'] = '找不到该破译任务'
+            else:
+                # 取消所有破译
+                count = len(game.current_raid.decode_manager.active_decodes)
+                game.current_raid.decode_manager.active_decodes.clear()
+                result['success'] = True
+                result['message'] = f'已取消{count}个破译任务'
+        else:
+            result['success'] = False
+            result['message'] = '当前不在行动中'
 
     # 检查死亡
     if game.state == g.GameState.DEAD:
