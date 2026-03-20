@@ -435,14 +435,14 @@ def get_state():
             'name': game.player.operator.primary_skill.name if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'primary_skill') else None,
             'current_cooldown': game.player.operator.primary_skill.current_cooldown if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'primary_skill') else 0,
             'max_cooldown': game.player.operator.primary_skill.cooldown if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'primary_skill') else 0,
-            'uses_remaining': game.player.operator.primary_skill.uses_remaining if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'primary_skill') else 0,
+            'uses_remaining': (game.player.operator.primary_skill.max_uses - game.player.operator.primary_skill.uses) if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'primary_skill') else 0,
             'can_use': game.player.operator.primary_skill.can_use() if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'primary_skill') else False
         },
         'secondary_skill': {
             'name': game.player.operator.secondary_skill.name if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'secondary_skill') else None,
             'current_cooldown': game.player.operator.secondary_skill.current_cooldown if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'secondary_skill') else 0,
             'max_cooldown': game.player.operator.secondary_skill.cooldown if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'secondary_skill') else 0,
-            'uses_remaining': game.player.operator.secondary_skill.uses_remaining if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'secondary_skill') else 0,
+            'uses_remaining': (game.player.operator.secondary_skill.max_uses - game.player.operator.secondary_skill.uses) if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'secondary_skill') else 0,
             'can_use': game.player.operator.secondary_skill.can_use() if hasattr(game.player, 'operator') and game.player.operator and hasattr(game.player.operator, 'secondary_skill') else False
         },
         'unlocked_operators': game.unlocked_operators if hasattr(game, 'unlocked_operators') else ['operator_wyatt'],
